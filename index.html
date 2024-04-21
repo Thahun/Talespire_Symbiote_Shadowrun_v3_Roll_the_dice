@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Shadowrun v3 - Roll the dice</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/sheet.css">
+        <script src="js/boot.js" defer></script>
+    </head>
+    <body>
+        <div id="loading">
+            <div id="loading-animation" class="ts-icon-hourglass"></div>
+        </div>
+        <div id="error" style="display:none">
+            <span class="error-label">Fehler:</span>
+            <pre id="error-message"class="error-message">None</pre>
+        </div>
+
+        <div id="content">
+            <div class="ts-icon-refresh symbiote-reload" onclick="location.reload();"></div>
+            
+            <div id="info" style="display:none">
+                <span class="info-label">Hinweis:</span>
+                <span id="info-message"class="info-message">None</span>
+                <div class="info-close" onclick="info.hide()">X</div>
+            </div>
+
+            <div id="gm-mode" class="section-grid-container" style="grid-template-columns: 20px auto;">
+                <div class="grid-item-data" style="grid-column-end: span 1;">
+                    <input type="checkbox" value="true" onchange="diceService.toggleGMMode(this.checked);"></input>
+                </div>
+                <div class="grid-item-label" style="grid-column-end: span 1;">
+                    <label>GM-Modus</label>
+                </div>
+            </div>
+            <br/>
+
+            <div id="section-dice-sets" class="section">
+                <div class="section-header">
+                    <span class="section-title">Würfel Sets</span>
+                </div>
+                <div class="section-body">
+                    <div class="section-grid-container" style="grid-template-columns: 40px repeat(3,auto) 20px;">
+
+                        <div class="grid-item" style="grid-column-end: span 1;">
+                            &nbsp;
+                        </div>
+                        <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
+                            <label>Name</label>
+                        </div>
+                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                            <label>Mindestwurf</label>
+                        </div>
+                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                            <label>Anzahl W6</label>
+                        </div>
+                        <div class="grid-item" style="grid-column-end: span 1;">
+                            &nbsp;
+                        </div>
+
+                        <div id="dice-sets-add-row" class="grid-item" style="grid-column-end: span 4;">
+                            &nbsp;
+                        </div>
+                        <div class="grid-item" style="grid-column-end: span 1;">
+                            <div class="addRemoveIcon" onclick="diceService.sectionDiceSets.addDiceSet(); diceService.persistDiceSets();">+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-info">
+            <span id="app-name">-</span> Symbiote&nbsp;
+            Version: <span id="app-version-number">-</span><br/>
+            Created by: <span id="app-author-names">-</span>
+        </div>
+
+        <div id="debug" style="display: none;">
+            <div class="debug-header" onclick="debug.toggleSection(this);">
+                <span class="debug-title">Debug log</span>
+                <div class="debug-open" style="display: block;">▲</div>
+                <div class="debug-close" style="display: none;">▼</div>
+            </div>
+            <pre id="debug-log" class="debug-log" style="display: none;"></pre>
+        </div>
+    </body>
+</html>

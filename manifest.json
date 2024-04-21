@@ -1,0 +1,33 @@
+{
+  "manifestVersion": 1,
+  "name": "Shadowrun v3 - Roll the dice",
+  "summary": "This symbiote enables you to easier roll dices for Shadowrun v3, providing you the ones to reroll and telling you how many dices got above the defined threshold.",
+  "descriptionFilePath": "/README.md",
+  "version": "0.1.0",
+  "about": {
+    "authors": ["Thahun"]
+  },
+  "kind": "webView",
+  "entryPoint": "/index.html",
+  "api": {
+    "version": "0.1",
+    "initTimeout": 10,
+    "subscriptions": {
+      "symbiote": {
+        "onVisibilityEvent": "logSymbioteEvent",
+        "onStateChangeEvent": "logSymbioteEvent"
+      },
+      "dice": {
+        "onRollResults": "onRollResults"
+      }
+    }
+  },
+  "environment": {
+    "extras": [
+      "colorStyles",
+      "fonts",
+      "icons"
+    ],
+    "webViewBackgroundColor": "#000000"
+  }
+}

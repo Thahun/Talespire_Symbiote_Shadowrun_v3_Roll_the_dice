@@ -1,0 +1,375 @@
+/**
+ * ################################
+ * # CSS section: Scrollbar
+ * ################################
+ */
+
+::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+    background: #262626;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4d4d4d;
+    -webkit-border-radius: 1ex;
+    -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.75);
+}
+
+::-webkit-scrollbar-corner {
+    background: #262626;
+}
+
+/**
+ * ################################
+ * # CSS section: General elements (button, input, textarea)
+ * ################################
+ */
+
+body {
+    background-color: var(--ts-background-primary);
+    color: var(--ts-color-primary);
+    font-family: 'OptimusPrinceps', sans-serif;
+    font-size: 1.0rem;
+    padding-top: 25px;
+}
+
+.standard-font {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button, input {
+    background-color: var(--ts-background-secondary);
+    color: var(--ts-color-primary);
+    font-family: 'OptimusPrinceps', sans-serif;
+
+    border: 1px solid var(--ts-accessibility-border);
+    border-radius: 4px;
+    font-size: 1.2em;
+
+    transition: ease-in-out 0.1s;
+}
+
+button {
+    background-color: var(--ts-button-background);
+}
+
+input:disabled {
+    background-color: var(--ts-background-secondary);
+    color: var(--ts-color-secondary);
+}
+
+input:read-only {
+    color:#737373;
+}
+
+button:hover, input:hover {
+    background-color: var(--ts-background-primary);
+    transition: ease-in-out 0.2s;
+}
+
+button:focus-visible, input:focus-visible {
+    outline: 3px solid var(--ts-accessibility-focus);
+    outline-offset: -1px;
+    background-color: var(--ts-background-primary);
+    transition: outline-color 0s;
+}
+
+button:disabled, button:disabled:hover {
+    background-color: var(--ts-background-tertiary);
+    color: var(--ts-color-secondary);
+}
+
+button:hover, button.interactible-title:hover {
+    background-color: var(--ts-button-hover);
+    color: var(--ts-color-primary);
+}
+
+button:focus-visible {
+    background-color: var(--ts-button-hover);
+}
+
+/*number input styling*/
+input[type=number]::-webkit-inner-spin-button {
+    color-scheme: dark;
+}
+
+/*checkbox input styling*/
+input[type="checkbox"] {
+    appearance: none;
+    background-color: var(--ts-background-secondary);
+    margin: 0.2em auto;
+    font: inherit;
+    color: var(--ts-color-primary);
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid #4d4d4d;
+    border-radius: 0.15em;
+    transform: translateY(-0.075em);
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+}
+
+input[type="checkbox"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--form-control-color);
+    background-color: var(--ts-color-primary);
+    transform-origin: bottom left;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type="checkbox"]:checked::before {
+    transform: scale(1);
+    transform-origin: bottom left;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type="checkbox"]:disabled::before {
+    background-color: #737373;
+    color: #737373;
+}
+
+
+/**
+ * ################################
+ * # CSS section: Debug container
+ * ################################
+ */
+
+div#debug {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--ts-accent-background);
+    border: 2px solid var(--ts-accent-primary);
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--ts-accent-primary);
+}
+
+div.debug-header {
+    position: relative;
+    padding: 5px;
+    border-bottom: solid 2px var(--ts-accent-primary);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+span.debug-title {
+    padding: 10px;
+}
+
+div.debug-open, div.debug-close {
+    position: absolute;
+    top: 3px;
+    right: 2px;
+    border: solid 2px var(--ts-accent-primary);
+    width: 20px;
+    height: 20px;
+    color:var(--ts-accent-primary);
+    font-size: 1.2em;
+    text-align: center;
+}
+
+div#debug .debug-log {
+    display: flex;
+    flex-direction: column-reverse;
+    overflow:auto;
+    max-height:200px;
+    padding: 10px;
+    margin: 0px;
+}
+
+/**
+ * ################################
+ * # CSS section: Error container
+ * ################################
+ */
+
+div#error {
+    position: sticky;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px 10px;
+    background-color: var(--ts-color-danger);
+    border-top: 2px solid var(--ts-color-primary);
+    border-bottom: 2px solid var(--ts-color-primary);
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--ts-color-primary);
+}
+
+div#error .error-label {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+div#error .error-message {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/**
+ * ################################
+ * # CSS section: Info container
+ * ################################
+ */
+
+div#info {
+    position: sticky;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px 10px;
+    background-color: #006622;
+    border-top: 2px solid #33cc33;
+    border-bottom: 2px solid #33cc33;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #33cc33;
+}
+
+div#info .info-label {
+    font-weight: bold;
+}
+
+div#info .info-message {
+    color: #f2f2f2;
+}
+
+div#info .info-close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #33cc33;
+    color: #33cc33;
+    text-align: center;
+    cursor: pointer;
+}
+
+
+/**
+ * ################################
+ * # CSS section: Loading panel
+ * ################################
+ */
+ div#loading {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    background-color: #262626;
+    opacity: 0.8;
+    text-align: center;
+ }
+
+ div#loading > div#loading-animation {
+    top:50%;
+ }
+
+ div#loading-animation {
+    animation-name: rotate;
+    animation-duration:2s;
+    animation-iteration-count:infinite;
+    animation-timing-function:linear;
+    -webkit-animation-name: rotate;
+    -webkit-animation-duration:2s;
+    -webkit-animation-iteration-count:infinite;
+    -webkit-animation-timing-function:linear;
+}
+  
+@keyframes rotate {
+    from {-webkit-transform:rotate(0deg);}
+    to { -webkit-transform:rotate(360deg);}
+}
+@-webkit-keyframes rotate {
+    from {-webkit-transform:rotate(0deg);}
+    to { -webkit-transform:rotate(360deg);}
+}
+
+
+/**
+ * ################################
+ * # CSS section: Reload button
+ * ################################
+ */
+
+div.symbiote-reload::before {
+    width: 17px;
+    height: 17px;
+    background-size: 17px;
+}
+
+div.symbiote-reload {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    z-index: 1000;
+    margin: 5px;
+    padding: 1px;
+    padding-bottom: 0;
+    border: solid 2px #4d4d4d;
+    border-radius: 4px;
+    width: 17px;
+    height: 17px;
+}
+
+/**
+ * ################################
+ * # CSS section: App info
+ * ################################
+ */
+
+div.app-info {
+    position: relative;
+    margin: 5px;
+    width: 100%;
+    font-size: 0.7rem;
+    color: var(--ts-color-secondary);
+    text-align: center;
+}
+
+/**
+ * ################################
+ * # CSS section: Sections
+ * ################################
+ */
+
+div.section {
+    border: solid 1px #4d4d4d;
+    background-color: #262626;
+    margin-bottom: 3px;
+    font-size: 1rem;
+    color: var(--ts-color-secondary);
+}
+
+div.section-header {
+    position: relative;
+    padding-top: 3px;
+    cursor: pointer;
+}
+
+span.section-title {
+    padding: 10px;
+    font-size: 1.1rem;
+}
+
+div.section-body {
+    padding: 10px;
+    border-top: solid 1px #4d4d4d;
+    font-size: 0.9rem;
+}
+
+div.section-body button, div.section-body input {
+    font-size: 1em;
+}
+
+div.sub-section-header label {
+    padding: 0 0.5em;
+}
