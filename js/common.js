@@ -93,23 +93,71 @@ class ErrorBox {
 class InfoBox {
     divInfo;
     spanInfoMessage;
+    buttonInfo;
+    currentSuccesses; // To store the current successes
+    hideTimeout; // To store the timeout ID
+    timerElement; // To reference the timer element
 
     constructor() {
         this.divInfo = document.getElementById("info");
         this.spanInfoMessage = document.getElementById("info-message");
+        this.buttonInfo = document.getElementById("info-button");
+        this.timerElement = document.getElementById("info-timer"); // Initialize the timer element
+        this.currentSuccesses = 0; // Initialize with 0
+
         debug.log("Info class loaded");
+
+        // Event listener for button
+        this.buttonInfo.addEventListener("click", () => {
+            debug.log("Info button clicked");
+            diceService.repeatLastRoll(this.currentSuccesses); // Pass the current successes
+        });
     }
 
-    show(msg) {
+    show(msg, showButton = false, successes = 0) {
         this.divInfo.style.display = "block";
         this.spanInfoMessage.textContent = msg;
+        this.currentSuccesses = successes; // Update the current successes
+
+        if (showButton) {
+            this.buttonInfo.style.display = "inline-block"; // Show the button
+            this.timerElement.style.display = "none"; // Hide the timer element
+        } else {
+            this.buttonInfo.style.display = "none"; // Hide the button
+            this.timerElement.style.display = "block"; // Show the timer element
+
+            // Add the timer fill element
+            this.timerElement.innerHTML = '<div class="info-timer-fill"></div>';
+
+            // Clear any existing timeout to avoid multiple timers
+            if (this.hideTimeout) {
+                clearTimeout(this.hideTimeout);
+            }
+
+            // Set a timeout to hide the info box after 30 seconds
+            this.hideTimeout = setTimeout(() => {
+                this.hide();
+            }, 30000);
+        }
     }
 
     hide() {
         this.divInfo.style.display = "none";
         this.spanInfoMessage.textContent = "";
+        this.buttonInfo.style.display = "none"; // Hide the button
+        this.currentSuccesses = 0; // Reset the current successes
+
+        // Clear the timer element
+        this.timerElement.innerHTML = '';
+
+        // Clear the timeout when hiding manually
+        if (this.hideTimeout) {
+            clearTimeout(this.hideTimeout);
+            this.hideTimeout = null;
+        }
     }
 }
+
 
 class VersionSegments {
     mayor;

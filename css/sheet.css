@@ -6,30 +6,39 @@
 
 .section-grid-container {
     display: grid;
-    grid-template-columns: repeat(10,auto);
+    grid-template-columns: repeat(10, auto);
     grid-auto-rows: 1.3rem;
     grid-gap: 0.4rem;
     grid-auto-flow: row;
+}
+
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: #333; /* Adjust to match your theme */
+    color: white;
+    padding: 10px;
+    z-index: 1000; /* Ensure it stays on top */
 }
 
 /**
  * Used for grid with +/- icons in the last column
  */
 .section-grid-container-icon {
-    grid-template-columns: repeat(9,auto) 20px;
+    grid-template-columns: repeat(9, auto) 20px;
 }
 
 .section-grid-container > div,
 .other-modifier-grid-container > div {
     /* Activate one of the following two, to highlight grid cells */
-    /*background-color: rgba(255, 255, 255, 0.2);*/
-    /*border: dashed 1px beige;*/
-    color: var(--ts-color-secondary);
+    /* background-color: rgba(255, 255, 255, 0.2); */
+    /* border: dashed 1px beige; */
+    /* color: var(--ts-color-secondary); */
 }
 
 .grid-item {
     text-align: center;
-    white-space:nowrap;
+    white-space: nowrap;
 }
 
 .grid-item.align-left {
@@ -49,7 +58,7 @@
     text-align: center;
 }
 
-.section-grid-container > .grid-item-label, 
+.section-grid-container > .grid-item-label,
 .section-grid-container > .grid-item-header-label {
     padding-top: 0.2em;
 }
@@ -95,21 +104,21 @@
     white-space: nowrap;
 }
 
-.section-grid-container > .grid-item-label.align-left, 
+.section-grid-container > .grid-item-label.align-left,
 .section-grid-container > .grid-item-header-label.align-left,
 .section-grid-container > .grid-item-subtitel-label.align-left,
 .section-grid-container > .grid-item-data.align-left {
     text-align: left;
 }
 
-.section-grid-container > .grid-item-label.align-right, 
+.section-grid-container > .grid-item-label.align-right,
 .section-grid-container > .grid-item-header-label.align-right,
 .section-grid-container > .grid-item-subtitel-label.align-right,
 .section-grid-container > .grid-item-data.align-right {
     text-align: right;
 }
 
-.grid-item-data > input:not([type=checkbox],[class=field-data-largest],[class=field-data-larger],[class=field-data-large],[class=field-data-medium],[class=field-data-short]) {
+.grid-item-data > input:not([type=checkbox], [class=field-data-largest], [class=field-data-larger], [class=field-data-large], [class=field-data-medium], [class=field-data-short]) {
     width: calc(100% - 6px);
 }
 
@@ -144,7 +153,6 @@
     height: 0.5em;
 }
 
-
 /**
  * ################################
  * # CSS section: Icons
@@ -155,7 +163,7 @@ div.addRemoveIcon {
     border-radius: 4px;
     width: 17px;
     height: 17px;
-    color:#737373;
+    color: #737373;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1.0em;
     text-align: center;
@@ -165,10 +173,324 @@ div.addRemoveIcon {
 i.icon-dice {
     display: block;
     position: relative;
-    margin-top:-0.1em;
+    margin-top: -0.1em;
     cursor: pointer;
 }
 
 div.icon-center {
     text-align: center;
 }
+
+.player-npc-rolls-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-npc-rolls-inline label {
+    margin-right: 5px;
+}
+
+.player-npc-rolls-inline input {
+    width: 100px;
+}
+
+/* Added styles for the new section */
+#section-player-npc-rolls .section-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.player-npc-rolls-container {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 10px;
+}
+
+#player-npc-rolls-text {
+    width: 100%;
+    height: 150px; /* Adjust height as needed */
+    resize: none;
+    box-sizing: border-box;
+    white-space: pre; /* Preserve whitespace for strikethrough effect */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+#player-npc-rolls-compact {
+    width: 60px;
+    margin-left: 10px;
+}
+
+.player-npc-rolls-buttons {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.player-npc-rolls-buttons button {
+    margin-bottom: 5px;
+}
+
+.breadcrumbs {
+    display: flex; !important;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.breadcrumb {
+    margin: 2px;
+    padding: 5px;
+    background-color: #502e58;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.control-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.control-buttons button {
+    flex: 1;
+}
+
+#checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Adjust the gap between items as needed */
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Adjust the gap between checkbox and label as needed */
+}
+
+.checkbox-item input[type="checkbox"] {
+    vertical-align: middle; /* Ensures the checkbox aligns vertically with the label */
+}
+
+.checkbox-item label {
+    margin-left: 5px; /* Adds some spacing between checkbox and label */
+}
+
+.condition-monitor-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.row {
+    display: flex;
+    gap: 5px;
+}
+
+.box {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer; /* Add pointer cursor */
+}
+
+.box.selected {
+    background-color: #502e58; /* Change background color when selected */
+}
+
+.small-orange-button {
+    padding: 5px 10px;
+    background-color: orange;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 3px;
+    margin-left: 5px;
+}
+
+.small-orange-button:hover {
+    background-color: darkorange;
+}
+
+
+/* Sticky header styles */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: #333; /* Adjust to match your theme */
+    color: white;
+    padding: 10px;
+    z-index: 1000; /* Ensure it stays on top */
+}
+
+/* CSS for GM-sent dice sets */
+.gm-dice-set {
+}
+
+.gm-dice-set .field-data {
+    color: darkorange; /* Dark orange text color for input fields */
+    background-color: rgba(255, 165, 0, 0.2); /* Light orange background for visibility */
+    border: 2px solid orange; /* Orange border for emphasis */
+    border-radius: 5px; /* Rounded corners for a polished look */
+}
+
+.gm-dice-set .field-data-short {
+    color: darkorange; !important; /* Dark orange text color for input fields */
+    background-color: rgba(255, 165, 0, 0.2); !important; /* Light orange background for visibility */
+    border: 2px solid orange; !important;/* Orange border for emphasis */
+    border-radius: 5px; !important;/* Rounded corners for a polished look */
+}
+
+
+/* Optional: Hover effect to make it even more distinguishable */
+.gm-dice-set:hover {
+    border-color: orangered; /* Darker border on hover */
+}
+
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+.gm-dice-set .ts-icon-character-gamemaster {
+    animation: pulse 1s infinite;
+}
+
+#select-throw-type {
+    text-align: left;
+    white-space: nowrap;
+    padding-top: 0.2em;
+    color: white; /* White font color */
+    border-radius: 5px; /* Optional: Rounded corners */
+}
+
+.radio-group.compact-radio-group {
+    display: flex;
+    align-items: center;
+}
+
+.compact-radio-group input[type="radio"] {
+    margin-right: 2px; /* Reduced margin to make it compact */
+    color: white; /* White font color */
+    border: 1px solid white; /* White border */
+}
+
+.compact-radio-group label {
+    font-size: 0.8rem; /* Smaller font size */
+    color: white; /* White font color */
+}
+
+.breadcrumb.selected {
+   background-color: #ff6e00; /* Change to your desired highlight color */
+}
+
+.breadcrumb-container {
+    display: inline-block; /* Ensure horizontal flow */
+    margin-right: 5px; /* Space between breadcrumbs */
+}
+
+.breadcrumb {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #502e58;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.breadcrumb.selected {
+    background-color: #ff6e00; /* Darker shade when selected */
+}
+
+#gm-box-body {
+    white-space: nowrap;
+    overflow-x: auto;
+    padding: 5px;
+}
+
+#throw-log {
+    max-height: 70px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.log-message {
+    display: block;
+}
+
+.player-name {
+    font-weight: bold;
+}
+
+.log-container {
+    max-height: calc(4 * 1.3rem);
+    overflow-y: auto;
+}
+
+.timestamp {
+    color: gray;
+    font-weight: normal;
+}
+
+#player-filter-input {
+    height: 15px;
+    width: 120px;
+    margin-left: 50%;
+    font-size: 13px; /* Smaller placeholder text */
+    color: #ff6e00;
+    margin-bottom: 3px;
+}
+
+#player-filter-input::placeholder {
+    font-size: 13px; /* Smaller placeholder text */
+}
+
+.initiative-message {
+    white-space: pre-wrap; /* Ensure the message retains its formatting */
+}
+
+.ini-span {
+    color: #ff6e00;
+}
+
+.red-border {
+    border: 2px solid red;
+}
+
+.info-timer {
+    position: absolute;
+    bottom: 0px;
+    left: 10px;
+    width: calc(100% - 20px);
+    height: 5px;
+    background-color: #ddd;
+}
+
+.info-timer-fill {
+    height: 100%;
+    width: 100%;
+    background-color: #502e58;
+    animation: countdown 30s linear;
+}
+
+@keyframes countdown {
+    from { width: 100%; }
+    to { width: 0; }
+}
+

@@ -3,9 +3,9 @@
   "name": "Shadowrun v3 - Roll the dice",
   "summary": "This symbiote enables you to easier roll dices for Shadowrun v3, providing you the ones to reroll and telling you how many dices got above the defined threshold.",
   "descriptionFilePath": "/README.md",
-  "version": "0.1.0",
+  "version": "0.8.0",
   "about": {
-    "authors": ["Thahun"]
+    "authors": ["Thahun","Modemuser"]
   },
   "kind": "webView",
   "entryPoint": "/index.html",
@@ -16,10 +16,19 @@
       "symbiote": {
         "onVisibilityEvent": "logSymbioteEvent",
         "onStateChangeEvent": "logSymbioteEvent"
-      },
+              },
       "dice": {
         "onRollResults": "onRollResults"
+      },
+      "sync" : {
+        "onSyncMessage" : "onSyncMessage"
+      },
+      "chat" : {
+        "onChatMessage" : "onChatMessage"
       }
+    },
+    "interop": {
+      "id": "d9eda1bf-03f9-4e7e-b38f-6cf2ad64597b"
     }
   },
   "environment": {

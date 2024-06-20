@@ -5,23 +5,21 @@ class StorageService {
     storage;
 
     /**
-     * @param {DiceSetsDTO} storage 
+     * @param {DiceSetsDTO} storage
      */
-    constructor(
-        storage = new DiceSetsDTO()
-    ) {
+    constructor(storage = new DiceSetsDTO()) {
         this.storage = storage;
     }
 
     /**
-     * @return {String} 
+     * @return {String}
      */
     getStorageAsString() {
         return this.convertToString(this.storage);
     }
 
     /**
-     * @param {String} data 
+     * @param {DiceSetsDTO} data
      */
     setStorageAsString(data) {
         data = this.convertToObject(data);
@@ -31,14 +29,14 @@ class StorageService {
 
 
     /**
-     * @return {DiceSetsDTO} 
+     * @return {DiceSetsDTO}
      */
     getStorageAsObject() {
         return this.storage;
     }
 
     /**
-     * @param {DiceSetsDTO} data 
+     * @param {DiceSetsDTO} data
      */
     setStorageAsObject(data) {
         this.validateStorageObject(data);
@@ -47,8 +45,8 @@ class StorageService {
 
 
     /**
-     * @param {DiceSetsDTO} data 
-     * @return {String} 
+     * @param {DiceSetsDTO} data
+     * @return {String}
      */
     convertToString(data) {
         try {
@@ -60,8 +58,8 @@ class StorageService {
     }
 
     /**
-     * @param {String} data 
-     * @return {DiceSetsDTO} 
+     * @param {DiceSetsDTO} data
+     * @return {DiceSetsDTO}
      */
     convertToObject(data) {
         try {
@@ -75,18 +73,18 @@ class StorageService {
     }
 
     /**
-     * @param {DiceSetsDTO} data 
+     * @param {DiceSetsDTO} data
      */
     validateStorageObject(data) {
-        if(!data || typeof data !== 'object' || Array.isArray(data)){
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
             error.show("Invalid storage object: Not an Object.");
             console.log("Invalid storage object: Not an Object.", data);
             throw new Error("Invalid storage object: Not an Object.");
         }
 
-        if(!data instanceof DiceSetsDTO) {
+        if (!(data instanceof DiceSetsDTO)) {
             error.show("Invalid storage object: Element isn't of type {DiceSetsDTO}.");
-            console.log("Invalid storage object: Element  isn't of type {DiceSetsDTO}.", data);
+            console.log("Invalid storage object: Element isn't of type {DiceSetsDTO}.", data);
             throw new Error("Invalid storage object: Element isn't of type {DiceSetsDTO}.");
         }
     }
