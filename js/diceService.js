@@ -280,7 +280,13 @@ class DiceService extends AbstractSheetHelper {
         //let message = aboveThreshold + ' of ' + diceSet.amount + ' dices of "' + diceSet.name + '" ' + (aboveThreshold == 1 ? 'was' : 'were')  + ' successful.';
         let message = aboveThreshold + ' von ' + diceSet.amount + ' Würfeln des "' + diceSet.name + '" Wurfes ' + (aboveThreshold == 1 ? 'war' : 'waren')  + ' erfolgreich.';
         if (damageCode !== null) {
-            message += ' Effektiver Schaden: ' + damageCode;
+            if(aboveThreshold > 0){
+                info.show( diceSet.name + ' => ' + aboveThreshold + ' Erfolg(e)  =>  Effektiver Schaden: ' + damageCode);
+                message += ' Effektiver Schaden: ' + damageCode;
+            } else {
+                info.show('Kein Treffer => kein Schaden');
+                message += ' Kein effektiver Schaden.' ;
+            }
         }
 
         if(this.gmMode) {
@@ -293,12 +299,12 @@ class DiceService extends AbstractSheetHelper {
 
     /**
      * Remove a rollId from tracking, if it's a tracked one
-     * 
-     * @param {String} rollId 
+     *
+     * @param {String} rollId
      */
     removeRollId(rollId) {
         debug.log("DiceService.removeRollId");
-        
+
         if(this.diceTracker.hasDiceTrack(rollId)) {
             this.diceTracker.removeDiceTrack(rollId);
         }
@@ -318,6 +324,7 @@ class DiceService extends AbstractSheetHelper {
         let damageIndex = damageLevels.indexOf(damageLevel);
 
         if (damageIndex === -1) {
+            info.show("Invalid damage level: " + damageIndex);
             throw new Error("Invalid damage level");
         }
 
@@ -365,15 +372,17 @@ class DiceService extends AbstractSheetHelper {
      * @returns {{ powerLevel: number, damageLevel: string }} - An object with powerLevel and damageLevel.
      */
     parseDamageCode(damageCode) {
-        const regex = /^(\d+)([LMST](?:\+\d+)?)$/;
+        console.log(damageCode);
+        const regex = /^(\d+)([LMSTlmst](?:\+\d+)?)$/;
         const match = damageCode.match(regex);
 
         if (!match) {
+            info.show( damageCode + " Invalid damage code format us something like 9M or 14S.");
             throw new Error("Invalid damage code format");
         }
 
         const powerLevel = parseInt(match[1], 10);
-        const damageLevel = match[2];
+        const damageLevel = match[2].toUpperCase(); // Convert to uppercase
 
         return { powerLevel, damageLevel };
     }
