@@ -6,30 +6,40 @@
 
 .section-grid-container {
     display: grid;
-    grid-template-columns: repeat(10,auto);
+    grid-template-columns: repeat(10, auto);
     grid-auto-rows: 1.3rem;
     grid-gap: 0.4rem;
     grid-auto-flow: row;
+}
+
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: #333; /* Adjust to match your theme */
+    color: white;
+    padding: 10px;
+    z-index: 1000; /* Ensure it stays on top */
 }
 
 /**
  * Used for grid with +/- icons in the last column
  */
 .section-grid-container-icon {
-    grid-template-columns: repeat(9,auto) 20px;
+    grid-template-columns: repeat(9, auto) 20px;
 }
 
 .section-grid-container > div,
 .other-modifier-grid-container > div {
     /* Activate one of the following two, to highlight grid cells */
-    /*background-color: rgba(255, 255, 255, 0.2);*/
-    /*border: dashed 1px beige;*/
-    color: var(--ts-color-secondary);
+    /* background-color: rgba(255, 255, 255, 0.2); */
+    /* border: dashed 1px beige; */
+    /* color: #c0c0c0; */
 }
 
 .grid-item {
     text-align: center;
-    white-space:nowrap;
+    white-space: nowrap;
+    color: #00ffcc; /* Neon teal text */
 }
 
 .grid-item.align-left {
@@ -49,7 +59,7 @@
     text-align: center;
 }
 
-.section-grid-container > .grid-item-label, 
+.section-grid-container > .grid-item-label,
 .section-grid-container > .grid-item-header-label {
     padding-top: 0.2em;
 }
@@ -95,21 +105,21 @@
     white-space: nowrap;
 }
 
-.section-grid-container > .grid-item-label.align-left, 
+.section-grid-container > .grid-item-label.align-left,
 .section-grid-container > .grid-item-header-label.align-left,
 .section-grid-container > .grid-item-subtitel-label.align-left,
 .section-grid-container > .grid-item-data.align-left {
     text-align: left;
 }
 
-.section-grid-container > .grid-item-label.align-right, 
+.section-grid-container > .grid-item-label.align-right,
 .section-grid-container > .grid-item-header-label.align-right,
 .section-grid-container > .grid-item-subtitel-label.align-right,
 .section-grid-container > .grid-item-data.align-right {
     text-align: right;
 }
 
-.grid-item-data > input:not([type=checkbox],[class=field-data-largest],[class=field-data-larger],[class=field-data-large],[class=field-data-medium],[class=field-data-short]) {
+.grid-item-data > input:not([type=checkbox], [class=field-data-largest], [class=field-data-larger], [class=field-data-large], [class=field-data-medium], [class=field-data-short]) {
     width: calc(100% - 6px);
 }
 
@@ -144,19 +154,17 @@
     height: 0.5em;
 }
 
-
 /**
  * ################################
  * # CSS section: Icons
  * ################################
  */
 div.addRemoveIcon {
-    border: solid 2px #4d4d4d;
+    border: solid 2px #007f7f; /* Neon green/teal */
     border-radius: 4px;
     width: 17px;
     height: 17px;
-    color:#737373;
-    font-family: Arial, Helvetica, sans-serif;
+    color: #ff5500;
     font-size: 1.0em;
     text-align: center;
     cursor: pointer;
@@ -165,10 +173,723 @@ div.addRemoveIcon {
 i.icon-dice {
     display: block;
     position: relative;
-    margin-top:-0.1em;
+    margin-top: -0.1em;
     cursor: pointer;
+    color: #00ffcc; /* Neon teal */
+    transition: transform 0.3s;
+}
+
+i.icon-dice:hover {
+    transform: rotate(15deg);
 }
 
 div.icon-center {
     text-align: center;
+}
+
+.player-npc-rolls-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-npc-rolls-inline label {
+    margin-right: 5px;
+}
+
+.player-npc-rolls-inline input {
+    width: 100px;
+}
+
+/* Added styles for the new section */
+#section-player-npc-rolls .section-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.player-npc-rolls-container {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 10px;
+}
+
+#player-npc-rolls-text {
+    width: 100%;
+    height: 150px; /* Adjust height as needed */
+    resize: none;
+    box-sizing: border-box;
+    white-space: pre; /* Preserve whitespace for strikethrough effect */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+#player-npc-rolls-compact {
+    width: 60px;
+    margin-left: 10px;
+}
+
+.player-npc-rolls-buttons {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.player-npc-rolls-buttons button {
+    margin-bottom: 5px;
+}
+
+.breadcrumbs {
+    display: flex; !important;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.breadcrumb {
+    margin: 2px;
+    padding: 5px;
+    background-color: #502e58;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.control-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.control-buttons button {
+    flex: 1;
+}
+
+#checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Adjust the gap between items as needed */
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Adjust the gap between checkbox and label as needed */
+}
+
+.checkbox-item input[type="checkbox"] {
+    vertical-align: middle; /* Ensures the checkbox aligns vertically with the label */
+}
+
+.checkbox-item label {
+    margin-left: 5px; /* Adds some spacing between checkbox and label */
+}
+
+.condition-monitor-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.row {
+    display: flex;
+    gap: 5px;
+}
+
+.box {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer; /* Add pointer cursor */
+}
+
+.box.selected {
+    background-color: #502e58; /* Change background color when selected */
+}
+
+.small-orange-button {
+    padding: 5px 10px;
+    background-color: #ff5500;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 3px;
+    margin-left: 5px;
+}
+
+.small-orange-button:hover {
+    background-color: #ff7700;
+}
+
+
+/* Sticky header styles */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: #333; /* Adjust to match your theme */
+    color: white;
+    padding: 10px;
+    z-index: 1000; /* Ensure it stays on top */
+}
+
+/* CSS for GM-sent dice sets */
+.gm-dice-set {
+}
+
+.gm-dice-set .field-data {
+    color: #ff5500; /* Dark orange text color for input fields */
+    background-color: rgba(255, 85, 0, 0.2); /* Light orange background for visibility */
+    border: 2px solid #ff5500; /* Orange border for emphasis */
+    border-radius: 5px; /* Rounded corners for a polished look */
+}
+
+.gm-dice-set .field-data-short {
+    color: #ff5500 !important; /* Dark orange text color for input fields */
+    background-color: rgba(255, 85, 0, 0.2) !important; /* Light orange background for visibility */
+    border: 2px solid #ff5500 !important;/* Orange border for emphasis */
+    border-radius: 5px !important;/* Rounded corners for a polished look */
+}
+
+
+/* Optional: Hover effect to make it even more distinguishable */
+.gm-dice-set:hover {
+    border-color: #ff7700; /* Darker border on hover */
+}
+
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+.gm-dice-set .ts-icon-character-gamemaster {
+    animation: pulse 1s infinite;
+}
+
+#select-throw-type {
+    text-align: left;
+    white-space: nowrap;
+    padding-top: 0.2em;
+    color: white; /* White font color */
+    border-radius: 5px; /* Optional: Rounded corners */
+}
+
+.radio-group.compact-radio-group {
+    display: flex;
+    align-items: center;
+}
+
+.compact-radio-group input[type="radio"] {
+    margin-right: 2px; /* Reduced margin to make it compact */
+    color: white; /* White font color */
+    border: 1px solid white; /* White border */
+}
+
+.compact-radio-group label {
+    font-size: 0.8rem; /* Smaller font size */
+    color: white; /* White font color */
+}
+
+.breadcrumb.selected {
+    background-color: #ff6e00; /* Change to your desired highlight color */
+}
+
+.breadcrumb-container {
+    display: inline-block; /* Ensure horizontal flow */
+    margin-right: 5px; /* Space between breadcrumbs */
+}
+
+.breadcrumb {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #502e58;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.breadcrumb.selected {
+    background-color: #ff6e00; /* Darker shade when selected */
+}
+
+#gm-box-body {
+    white-space: nowrap;
+    overflow-x: auto;
+    padding: 5px;
+}
+
+#throw-log {
+    max-height: 70px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: #202020;
+    color: #00ffcc; /* Neon teal text */
+}
+
+.log-message {
+    display: block;
+}
+
+.player-name {
+    font-weight: bold;
+}
+
+.log-container {
+    max-height: calc(4 * 1.3rem);
+    overflow-y: auto;
+}
+
+.timestamp {
+    color: gray;
+    font-weight: normal;
+}
+
+#player-filter-input {
+    height: 15px;
+    width: 120px;
+    margin-left: 50%;
+    font-size: 13px; /* Smaller placeholder text */
+    color: #ff5500;
+    margin-bottom: 3px;
+    background-color: #101010;
+    border: 1px solid #444444;
+}
+
+#player-filter-input::placeholder {
+    font-size: 13px; /* Smaller placeholder text */
+    color: #ff5500;
+}
+
+.initiative-message {
+    white-space: pre-wrap; /* Ensure the message retains its formatting */
+}
+
+.ini-span {
+    color: #ff5500;
+}
+
+.red-border {
+    border: 2px solid red;
+}
+
+.info-timer {
+    position: absolute;
+    bottom: 0px;
+    left: 10px;
+    width: calc(100% - 20px);
+    height: 5px;
+    background-color: #ddd;
+}
+
+.info-timer-fill {
+    height: 100%;
+    width: 100%;
+    background-color: #502e58;
+    animation: countdown 30s linear;
+}
+
+@keyframes countdown {
+    from { width: 100%; }
+    to { width: 0; }
+}
+
+.icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#glitch-body {
+    background: url('assets/glitch-background.gif') no-repeat center center;
+    background-size: cover;
+    position: relative;
+    overflow: hidden;
+}
+
+#glitch-body .icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: relative;
+    z-index: 2; /* Ensures the icon is above the glitch effect */
+}
+
+#glitch-body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    mix-blend-mode: multiply; /* Multiply blend mode for the overlay */
+    z-index: 1;
+    pointer-events: none;
+    animation: glitch-effect 2s infinite;
+}
+
+@keyframes glitch-effect {
+    0% {
+        clip-path: inset(0 0 50% 0);
+        transform: translate(-20px, -10px);
+    }
+    10% {
+        clip-path: inset(10% 0 45% 0);
+        transform: translate(10px, 10px);
+    }
+    20% {
+        clip-path: inset(25% 0 30% 0);
+        transform: translate(-10px, 10px);
+    }
+    30% {
+        clip-path: inset(50% 0 10% 0);
+        transform: translate(0, 5px);
+    }
+    40% {
+        clip-path: inset(0 0 70% 0);
+        transform: translate(10px, 0);
+    }
+    50% {
+        clip-path: inset(15% 0 30% 0);
+        transform: translate(-20px, -20px);
+    }
+    60% {
+        clip-path: inset(30% 0 20% 0);
+        transform: translate(20px, 10px);
+    }
+    70% {
+        clip-path: inset(5% 0 50% 0);
+        transform: translate(-10px, 10px);
+    }
+    80% {
+        clip-path: inset(0 0 20% 0);
+        transform: translate(10px, -10px);
+    }
+    90% {
+        clip-path: inset(10% 0 10% 0);
+        transform: translate(0, -5px);
+    }
+    100% {
+        clip-path: inset(0 0 0 0);
+        transform: translate(0, 0);
+    }
+}
+.glitching{
+    filter: brightness(150%) contrast(200%) hue-rotate(90deg);
+    animation: glitch-animation 3s steps(20) infinite, glitch-fade 5s steps(10) infinite;
+}
+
+.ts-icon-d6.ts-icon-xlarge{
+    filter: brightness(150%) contrast(200%) hue-rotate(90deg);
+    animation: glitch-animation 3s steps(20) infinite, glitch-fade 5s steps(10) infinite;
+}
+
+@keyframes glitch-animation {
+    0% {
+        transform: translate(0);
+        filter: brightness(150%) contrast(200%) hue-rotate(90deg);
+    }
+    3% {
+        transform: translate(-2px, 2px) skew(0.5deg);
+        filter: brightness(200%) contrast(250%) hue-rotate(180deg);
+    }
+    8% {
+        transform: translate(2px, -2px) skew(-0.5deg);
+        filter: brightness(100%) contrast(100%) hue-rotate(270deg);
+    }
+    13% {
+        transform: translate(-1px, 1px) skew(0.3deg);
+        filter: brightness(250%) contrast(300%) hue-rotate(360deg);
+    }
+    21% {
+        transform: translate(3px, -3px) skew(-0.2deg);
+        filter: brightness(200%) contrast(200%) hue-rotate(45deg);
+    }
+    34% {
+        transform: translate(0) skew(0);
+        filter: brightness(150%) contrast(200%) hue-rotate(0deg);
+    }
+    55% {
+        transform: translate(-1px, 2px) skew(-0.1deg);
+        filter: brightness(100%) contrast(150%) hue-rotate(90deg);
+    }
+    72% {
+        transform: translate(1px, -1px) skew(0.1deg);
+        filter: brightness(250%) contrast(250%) hue-rotate(180deg);
+    }
+    81% {
+        transform: translate(-3px, 3px) skew(0.2deg);
+        filter: brightness(200%) contrast(300%) hue-rotate(270deg);
+    }
+    90% {
+        transform: translate(1px, -3px) skew(-0.3deg);
+        filter: brightness(250%) contrast(300%) hue-rotate(360deg);
+    }
+    100% {
+        transform: translate(0);
+        filter: brightness(150%) contrast(200%) hue-rotate(90deg);
+    }
+}
+
+@keyframes glitch-fade {
+    0% {
+        opacity: 1;
+    }
+    15% {
+        opacity: 0.6;
+    }
+    22% {
+        opacity: 0.8;
+    }
+    37% {
+        opacity: 0.4;
+        filter: grayscale(100%);
+    }
+    49% {
+        opacity: 0.7;
+    }
+    65% {
+        opacity: 0.5;
+    }
+    73% {
+        opacity: 1;
+    }
+    82% {
+        opacity: 0.3;
+        filter: none;
+    }
+    97% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Glitch effect background */
+.glitch-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10; /* Ensure it stays behind all content */
+    pointer-events: none; /* Make sure it doesn't interfere with UI interactions */
+    background: url('assets/error.gif') repeat top left;
+    opacity: 0.5; /* Adjust the opacity for subtlety */
+    animation: glitch-background-animation 1.5s infinite;
+}
+
+/* Glitch effect foreground with multiple icons */
+.glitch-foreground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000; /* Ensure it stays in front of all content */
+    pointer-events: none; /* Make sure it doesn't interfere with UI interactions */
+    background: none;
+    animation: glitch-foreground-animation 1.5s infinite;
+}
+
+/* Create multiple glitching icons */
+.glitch-icon {
+    position: absolute;
+    background: url('assets/skull-trans.gif') no-repeat center center;
+    background-size: contain;
+    opacity: 0.7;
+    pointer-events: none; /* Make sure it doesn't interfere with UI interactions */
+    animation: glitch-icon-animation 3s infinite;
+}
+
+/* Glitch Effect */
+.glitch-loader-icon {
+    background: url('assets/edgeloaderclear.gif') no-repeat center center !important;
+   /* background-size: contain;
+   /* animation: glitch-icon-animation 1s infinite; */
+    background-size: contain !important;
+}
+
+@keyframes glitch-background-animation {
+    0% {
+        transform: translate(0, 0);
+    }
+    20% {
+        transform: translate(-10px, 10px);
+    }
+    40% {
+        transform: translate(10px, -10px);
+    }
+    60% {
+        transform: translate(-10px, -10px);
+    }
+    80% {
+        transform: translate(10px, 10px);
+    }
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes glitch-foreground-animation {
+    0% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(-5px, 5px);
+    }
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes glitch-icon-animation {
+    0% {
+        opacity: 0.7;
+        transform: translate(0, 0) scale(1);
+    }
+    10% {
+        opacity: 0.5;
+        transform: translate(-10px, 10px) scale(0.9);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(10px, -10px) scale(1.1);
+    }
+    30% {
+        opacity: 0.6;
+        transform: translate(-5px, -5px) scale(0.8);
+    }
+    40% {
+        opacity: 0.8;
+        transform: translate(10px, 10px) scale(1.2);
+    }
+    50% {
+        opacity: 0.4;
+        transform: translate(-10px, -10px) scale(0.7);
+    }
+    60% {
+        opacity: 1;
+        transform: translate(5px, 5px) scale(1.3);
+    }
+    70% {
+        opacity: 0.5;
+        transform: translate(-5px, 10px) scale(0.9);
+    }
+    80% {
+        opacity: 0.8;
+        transform: translate(10px, -5px) scale(1.1);
+    }
+    90% {
+        opacity: 0.6;
+        transform: translate(-10px, 5px) scale(1);
+    }
+    100% {
+        opacity: 0.7;
+        transform: translate(0, 0) scale(1);
+    }
+}
+
+/* Glitch effect when showing the section */
+.glitch-show {
+    animation: glitch-in 1s forwards, glitch-animation 1s;
+    display: block;
+}
+
+.glitch-hide {
+    animation: glitch-out 0.3s forwards;
+    display: none;
+}
+
+/* Keyframes for glitch-in (appearing) effect */
+@keyframes glitch-in {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+        filter: blur(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+}
+
+/* Keyframes for glitch-out (disappearing) effect */
+@keyframes glitch-out {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+        filter: blur(5px);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8);
+        filter: blur(10px);
+    }
+}
+
+/* General glitch animation to be applied while visible */
+@keyframes glitch-animation {
+    0% {
+        transform: translate(0, 0);
+    }
+    20% {
+        transform: translate(-2px, -2px);
+    }
+    40% {
+        transform: translate(2px, 2px);
+    }
+    60% {
+        transform: translate(-2px, 2px);
+    }
+    80% {
+        transform: translate(2px, -2px);
+    }
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+/* latin */
+@font-face {
+    font-family: 'Orbitron';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/orbitron/v31/yMJRMIlzdpvBhQQL_Qq7dy1biN15.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin */
+@font-face {
+    font-family: 'Orbitron';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/orbitron/v31/yMJRMIlzdpvBhQQL_Qq7dy1biN15.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }

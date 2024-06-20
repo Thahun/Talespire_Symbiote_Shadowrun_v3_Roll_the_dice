@@ -15,12 +15,13 @@ class SymbioteStorage {
     async init() {
         debug.log("SymbioteStorage.init");
         // Wait to ensure TS is loaded and available
-        await sleep(500);
+        await sleep(300);
         // Enable to flush storage in case it's broken
         //this.flushAll();
 
         TS.localStorage.global.getBlob().then((storedData) => {
             debug.log("storedData: " + storedData);
+            console.log("storedData: ", storedData);
             this.storage.setStorageAsString(storedData || "{}");
             this.initState = true;
             debug.log("SymbioteStorage.load success")
@@ -37,20 +38,44 @@ class SymbioteStorage {
         return this.initState;
     }
 
+    load() {
+        return TS.localStorage.global.getBlob()
+            .then((storedData) => {
+                debug.log("storedData: " + storedData);
+                console.log("storedData: ", storedData);
+                this.storage.setStorageAsString(storedData || "{}");
+                this.initState = true;
+                debug.log("SymbioteStorage.load success");
+
+                return storedData; // Return the data after loading and processing
+            })
+            .catch((e) => {
+                error.show("Failed to load from local storage: " + e.message);
+                TS.debug.log("Failed to load from local storage: " + e.message);
+                console.error("Failed to load from local storage:", e);
+                throw new SyntaxError("Failed to load from local storage: " + e.message);
+            });
+    }
+
+
     flushAll() {
         debug.log("SymbioteStorage.flush");
         TS.localStorage.global.deleteBlob();
     }
 
-    persist() {
+    persist(override = null) {
         debug.log("SymbioteStorage.persist");
-        TS.localStorage.global.setBlob(this.storage.getStorageAsString()).then(() => {
-            debug.log("SymbioteStorage.persist success")
+
+        const dataToPersist = override !== null ? override : this.storage.getStorageAsString();
+
+        TS.localStorage.global.setBlob(dataToPersist).then(() => {
+            debug.log("SymbioteStorage.persist success");
         }).catch(e => {
             error.show("Failed to persist to local storage: " + e.message);
             TS.debug.log("Failed to persist to local storage: " + e.message);
-            console.error("Failed to persist to local storage:", e); 
+            console.error("Failed to persist to local storage:", e);
             throw new SyntaxError("Failed to persist to local storage: " + e.message);
         });
     }
+
 }

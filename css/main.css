@@ -7,17 +7,17 @@
 ::-webkit-scrollbar {
     height: 12px;
     width: 12px;
-    background: #262626;
+    background: #1b1b1b;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #4d4d4d;
+    background: #3a3a3a;
     -webkit-border-radius: 1ex;
-    -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 ::-webkit-scrollbar-corner {
-    background: #262626;
+    background: #1b1b1b;
 }
 
 /**
@@ -27,9 +27,9 @@
  */
 
 body {
-    background-color: var(--ts-background-primary);
-    color: var(--ts-color-primary);
-    font-family: 'OptimusPrinceps', sans-serif;
+    background-color: #101010; /* Dark background */
+    color: #c0c0c0; /* Soft light grey for readability */
+    font-family: 'Orbitron', sans-serif; /* A more tech-like font */
     font-size: 1.0rem;
     padding-top: 25px;
 }
@@ -39,54 +39,32 @@ body {
 }
 
 button, input {
-    background-color: var(--ts-background-secondary);
-    color: var(--ts-color-primary);
-    font-family: 'OptimusPrinceps', sans-serif;
+    background-color: #2a2a2a;
+    color: #b8b8b8;
+    font-family: 'Orbitron', sans-serif;
 
-    border: 1px solid var(--ts-accessibility-border);
+    border: 1px solid #444444;
     border-radius: 4px;
     font-size: 1.2em;
 
     transition: ease-in-out 0.1s;
 }
 
-button {
-    background-color: var(--ts-button-background);
-}
-
-input:disabled {
-    background-color: var(--ts-background-secondary);
-    color: var(--ts-color-secondary);
-}
-
-input:read-only {
-    color:#737373;
-}
-
 button:hover, input:hover {
-    background-color: var(--ts-background-primary);
+    background-color: #333333;
     transition: ease-in-out 0.2s;
 }
 
 button:focus-visible, input:focus-visible {
-    outline: 3px solid var(--ts-accessibility-focus);
+    outline: 3px solid #007f7f; /* Neon-like border for focus */
     outline-offset: -1px;
-    background-color: var(--ts-background-primary);
+    background-color: #333333;
     transition: outline-color 0s;
 }
 
 button:disabled, button:disabled:hover {
-    background-color: var(--ts-background-tertiary);
-    color: var(--ts-color-secondary);
-}
-
-button:hover, button.interactible-title:hover {
-    background-color: var(--ts-button-hover);
-    color: var(--ts-color-primary);
-}
-
-button:focus-visible {
-    background-color: var(--ts-button-hover);
+    background-color: #2a2a2a;
+    color: #737373;
 }
 
 /*number input styling*/
@@ -97,10 +75,10 @@ input[type=number]::-webkit-inner-spin-button {
 /*checkbox input styling*/
 input[type="checkbox"] {
     appearance: none;
-    background-color: var(--ts-background-secondary);
+    background-color: #2a2a2a;
     margin: 0.2em auto;
     font: inherit;
-    color: var(--ts-color-primary);
+    color: #b8b8b8;
     width: 1.15em;
     height: 1.15em;
     border: 0.15em solid #4d4d4d;
@@ -118,7 +96,7 @@ input[type="checkbox"]::before {
     transform: scale(0);
     transition: 120ms transform ease-in-out;
     box-shadow: inset 1em 1em var(--form-control-color);
-    background-color: var(--ts-color-primary);
+    background-color: #b8b8b8;
     transform-origin: bottom left;
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
 }
@@ -146,16 +124,16 @@ div#debug {
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: var(--ts-accent-background);
-    border: 2px solid var(--ts-accent-primary);
+    background-color: #202020;
+    border: 2px solid #007f7f;
     font-family: Arial, Helvetica, sans-serif;
-    color: var(--ts-accent-primary);
+    color: #c0c0c0;
 }
 
 div.debug-header {
     position: relative;
     padding: 5px;
-    border-bottom: solid 2px var(--ts-accent-primary);
+    border-bottom: solid 2px #007f7f;
     font-weight: bold;
     cursor: pointer;
 }
@@ -168,10 +146,10 @@ div.debug-open, div.debug-close {
     position: absolute;
     top: 3px;
     right: 2px;
-    border: solid 2px var(--ts-accent-primary);
+    border: solid 2px #007f7f;
     width: 20px;
     height: 20px;
-    color:var(--ts-accent-primary);
+    color: #c0c0c0;
     font-size: 1.2em;
     text-align: center;
 }
@@ -196,11 +174,11 @@ div#error {
     margin-top: 5px;
     margin-bottom: 5px;
     padding: 5px 10px;
-    background-color: var(--ts-color-danger);
-    border-top: 2px solid var(--ts-color-primary);
-    border-bottom: 2px solid var(--ts-color-primary);
+    background-color: #ff0000;
+    border-top: 2px solid #c0c0c0;
+    border-bottom: 2px solid #c0c0c0;
     font-family: Arial, Helvetica, sans-serif;
-    color: var(--ts-color-primary);
+    color: #c0c0c0;
 }
 
 div#error .error-label {
@@ -257,23 +235,24 @@ div#info .info-close {
  * # CSS section: Loading panel
  * ################################
  */
- div#loading {
+div#loading {
     position: absolute;
     top: 0px;
     left: 0px;
     z-index: 100;
     width: 100%;
     height: 100%;
-    background-color: #262626;
-    opacity: 0.8;
+    background-color: #000000;
+    opacity: 0.85;
     text-align: center;
- }
+}
 
- div#loading > div#loading-animation {
+div#loading > div#loading-animation {
     top:50%;
- }
+    color: #00ffcc;
+}
 
- div#loading-animation {
+div#loading-animation {
     animation-name: rotate;
     animation-duration:2s;
     animation-iteration-count:infinite;
@@ -283,7 +262,7 @@ div#info .info-close {
     -webkit-animation-iteration-count:infinite;
     -webkit-animation-timing-function:linear;
 }
-  
+
 @keyframes rotate {
     from {-webkit-transform:rotate(0deg);}
     to { -webkit-transform:rotate(360deg);}
@@ -331,7 +310,7 @@ div.app-info {
     margin: 5px;
     width: 100%;
     font-size: 0.7rem;
-    color: var(--ts-color-secondary);
+    color: #c0c0c0;
     text-align: center;
 }
 
@@ -342,28 +321,29 @@ div.app-info {
  */
 
 div.section {
-    border: solid 1px #4d4d4d;
-    background-color: #262626;
+    border: solid 1px #007f7f; /* Neon green/teal */
+    background-color: #202020; /* Dark background */
     margin-bottom: 3px;
-    font-size: 1rem;
-    color: var(--ts-color-secondary);
+    font-size: 0.9rem;
+    color: #c0c0c0;
 }
 
 div.section-header {
-    position: relative;
-    padding-top: 3px;
+    background-color: #151515; /* Even darker header */
+    padding: 10px;
     cursor: pointer;
+    border-bottom: 1px solid #007f7f;
 }
 
 span.section-title {
-    padding: 10px;
-    font-size: 1.1rem;
+    color: #00ffcc; /* Neon teal text */
+    font-size: 1rem;
 }
 
 div.section-body {
-    padding: 10px;
-    border-top: solid 1px #4d4d4d;
-    font-size: 0.9rem;
+    padding: 15px;
+    background-color: #282828;
+    border-top: solid 1px #007f7f;
 }
 
 div.section-body button, div.section-body input {

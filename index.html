@@ -1,87 +1,475 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Shadowrun v3 - Roll the dice</title>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="css/sheet.css">
-        <script src="js/boot.js" defer></script>
-    </head>
-    <body>
-        <div id="loading">
-            <div id="loading-animation" class="ts-icon-hourglass"></div>
+<html lang="de">
+<head>
+    <title>Shadowrun v3.01D - Roll the dice</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/sheet.css">
+    <style>
+    </style>
+    <script src="js/boot.js" defer></script>
+</head>
+<body>
+
+<!--
+<button id="activate-glitch-button" onclick="diceService.toggleGlitchSectionVisibility(false)">Activate Glitch</button>
+<button id="deactivate-glitch-button" onclick="diceService.toggleGlitchSectionVisibility(true)">Deactivate Glitch</button>
+-->
+
+<div id="loading">
+    <div id="loading-animation" class="ts-icon-hourglass"></div>
+</div>
+<div id="error" style="display:none">
+    <span class="error-label">Fehler:</span>
+    <pre id="error-message" class="error-message">None</pre>
+</div>
+
+<div id="content">
+    <div class="ts-icon-refresh symbiote-reload" onclick="location.reload();"></div>
+        <div id="info" class="sticky-header" style="display: none">
+            <span class="info-label">Hinweis:</span>
+            <span id="info-message" class="info-message">None</span>
+            <button id="info-button" style="display:none">Use Karma</button>
+            <div class="info-close" onclick="info.hide()">X</div>
+            <div id="info-timer" class="info-timer" ></div>
         </div>
-        <div id="error" style="display:none">
-            <span class="error-label">Fehler:</span>
-            <pre id="error-message"class="error-message">None</pre>
+
+    <br/>
+
+    <div id="gm-box" class="section" style="display: none">
+        <div class="section-header" onclick="iniAndGmManager.toggleGMBoxBody()">
+            <span class="section-title">GM-Box</span>
         </div>
-
-        <div id="content">
-            <div class="ts-icon-refresh symbiote-reload" onclick="location.reload();"></div>
-            
-            <div id="info" style="display:none">
-                <span class="info-label">Hinweis:</span>
-                <span id="info-message"class="info-message">None</span>
-                <div class="info-close" onclick="info.hide()">X</div>
-            </div>
-
-            <div id="gm-mode" class="section-grid-container" style="grid-template-columns: 20px auto;">
-                <div class="grid-item-data" style="grid-column-end: span 1;">
-                    <input type="checkbox" value="true" onchange="diceService.toggleGMMode(this.checked);"></input>
-                </div>
-                <div class="grid-item-label" style="grid-column-end: span 1;">
-                    <label>GM-Modus</label>
+        <div id="gm-box-content">
+            <div class="section-body">
+                <button style="float:right" class="small-orange-button" id="refresh-connected" onclick="helm.displayConnected();">reload</button>
+                <div class="section-body-throw" id="gm-box-body">
+                    <!-- Breadcrumbs will be appended here -->
                 </div>
             </div>
-            <br/>
-
-            <div id="section-dice-sets" class="section">
-                <div class="section-header">
-                    <span class="section-title">Würfel Sets</span>
-                </div>
-                <div class="section-body">
-                    <div class="section-grid-container" style="grid-template-columns: 40px repeat(3,auto) 20px;">
-
-                        <div class="grid-item" style="grid-column-end: span 1;">
-                            &nbsp;
+            <div id="gm-box-throw" class="section-body" style="display: none">
+                <div id="send-throw" class="section-grid-container" style="grid-template-columns: 40px repeat(6,auto) 20px;">
+                    <div class="grid-item" style="grid-column-end: span 1;">
+                        &nbsp;
+                    </div>
+                    <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
+                        <label>Type</label>
+                    </div>
+                    <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                        <label>Name</label>
+                    </div>
+                    <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                        <label>MW</label>
+                    </div>
+                    <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                        <label># D6</label>
+                    </div>
+                    <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                        <label>DMG</label>
+                    </div>
+                    <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                        <label>Bullets</label>
+                    </div>
+                    <div class="grid-item" style="grid-column-end: span 1;">
+                        &nbsp;
+                    </div>
+                    <div>
+                        <div id="send-throw-button" class="grid-item" style="grid-column-end: span 1;">
+                            <i class="icon-dice ts-icon-broadcast ts-icon-small"></i>
                         </div>
-                        <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
-                            <label>Name</label>
+                    </div>
+                    <div id="select-throw-type">
+                        <div class="radio-group compact-radio-group">
+                            <input type="radio" id="throw-type-off" name="throw-type" value="off" checked>
+                            <label for="throw-type-off">Off</label>
+                            <input type="radio" id="throw-type-dev" name="throw-type" value="dev">
+                            <label for="throw-type-dev">Dev</label>
+                            <input type="radio" id="throw-type-open" name="throw-type" value="open">
+                            <label for="throw-type-open">Open</label>
                         </div>
-                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
-                            <label>Mindestwurf</label>
-                        </div>
-                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
-                            <label>Anzahl W6</label>
-                        </div>
-                        <div class="grid-item" style="grid-column-end: span 1;">
-                            &nbsp;
-                        </div>
-
-                        <div id="dice-sets-add-row" class="grid-item" style="grid-column-end: span 4;">
-                            &nbsp;
-                        </div>
-                        <div class="grid-item" style="grid-column-end: span 1;">
-                            <div class="addRemoveIcon" onclick="diceService.sectionDiceSets.addDiceSet(); diceService.persistDiceSets();">+</div>
-                        </div>
+                    </div>
+                    <div id="throw-name" class="grid-item-data align-left" style="grid-column-end: span 1;">
+                        <label>
+                            <input id="throw-name-input" class="field-data-medium" type="text" value="">
+                        </label>
+                    </div>
+                    <div id="throw-mw" class="grid-item-data align-left" style="grid-column-end: span 1;">
+                        <label>
+                            <input id="throw-mw-input" class="field-data-short" type="number" value="4">
+                        </label>
+                    </div>
+                    <div id="throw-amount" class="grid-item-data align-left" style="grid-column-end: span 1;">
+                        <label>
+                            <input id="throw-amount-input" class="field-data-short" type="number" value="0">
+                        </label>
+                    </div>
+                    <div id="throw-dmg" class="grid-item-data align-left" style="grid-column-end: span 1;">
+                        <label>
+                            <input id="throw-dmg-input" class="field-data-short" type="text" value="-">
+                        </label>
+                    </div>
+                    <div id="throw-bullets" class="grid-item-data align-left" style="grid-column-end: span 1;">
+                        <label>
+                            <input id="throw-bullets-input" class="field-data-short" type="number" value="1">
+                        </label>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="app-info">
-            <span id="app-name">-</span> Symbiote&nbsp;
-            Version: <span id="app-version-number">-</span><br/>
-            Created by: <span id="app-author-names">-</span>
-        </div>
-
-        <div id="debug" style="display: none;">
-            <div class="debug-header" onclick="debug.toggleSection(this);">
-                <span class="debug-title">Debug log</span>
-                <div class="debug-open" style="display: block;">▲</div>
-                <div class="debug-close" style="display: none;">▼</div>
+            <div id="gm-box-glitch" class="section-body" style="display: none">
+                <div>
+                    <button id="send-glitch" onclick="iniAndGmManager.sendGlitch('glitch')">send Glitch</button>
+                    <button id="fix-glitch" onclick="iniAndGmManager.sendGlitch('fix')">fix Glitch</button>
+                    <button id="send-error" onclick="iniAndGmManager.sendGlitch('error')">send error</button>
+                    <button id="send-patch" onclick="iniAndGmManager.sendGlitch('patch-error')">patch error</button>
+                </div>
             </div>
-            <pre id="debug-log" class="debug-log" style="display: none;"></pre>
+            <div id="gm-box-hacking" class="section-body" style="display: none">
+                    <div id="hacking-names" class="section-grid-container" style="grid-template-columns: 85px repeat(5,auto) 10px;">
+                        <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
+                            &nbsp;
+                        </div>
+                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                            <label>difficulty</label>
+                        </div>
+                        <div class="grid-item-header-label" style="text-align:left;grid-column-end: span 1;">
+                            <label >attempts</label>
+                        </div>
+                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                            &nbsp;
+                        </div>
+                    </div>
+
+                    <div id="hacking" class="section-grid-container" style="margin-top: 10px;" >
+                        <div id="hacking-send" class="grid-item-data align-left" style="grid-column-end: span 1;">
+                                <button id="send-hack-button" onclick="iniAndGmManager.sendHack()">start hack</button>
+                        </div>
+                        <div id="difficulty" class="grid-item-data align-left" style="">
+                            <label>
+                                <input id="difficulty-input" class="field-data-short" type="number" value="7">
+                            </label>
+                        </div>
+                        <div id="att" class="grid-item-data align-left" style="">
+                            <label>
+                                <input id="att-input" class="field-data-short" type="number" value="3">
+                            </label>
+                        </div>
+                        <div id="hacking-end-good"  class="grid-item-data align-left" style="grid-column-end: span 1;">
+                            <button id="end-hack-good-button" onclick="iniAndGmManager.sendEndHack(true)">hack solved</button>
+                        </div>
+                        <div id="hacking-end-bad"  class="grid-item-data align-left" style="grid-column-end: span 1;">
+                            <button id="end-hack-bad-button" onclick="iniAndGmManager.sendEndHack(false)">hack fail</button>
+                        </div>
+                    </div>
+                </div>
         </div>
-    </body>
+    </div>
+
+    <div id="minigame-section" class="section" style="display:none">
+        <div class="section-header">
+            <span class="section-title" onclick="iniAndGmManager.toggleBodyDiv('minigame-body')">Hacking</span>
+        </div>
+        <div id="minigame-body" class="section-body" style="">
+
+            <style type="text/css">
+                @import "js/robco-industries/css/terminal.css";
+            </style>
+            <div id="minigame">
+                <div id="terminal">
+                </div>
+
+            </div>
+           <!--
+            <div id="powerbutton" onclick="iniAndGmManager.startHacking()">O</div>
+            -->
+            <div id="otheraudiostuff">
+                <audio id="poweron" src="js/robco-industries/sound/poweron.ogg"></audio>
+                <audio id="poweroff" src="js/robco-industries/sound/poweroff.ogg"></audio>
+                <audio id="passbad" src="js/robco-industries/sound/passbad.ogg"></audio>
+                <audio id="passgood" src="js/robco-industries/sound/passgood.ogg"></audio>
+            </div>
+            <div id="audiostuff">
+                <audio id="enter" src="js/robco-industries/sound/kenter.ogg"></audio>
+                <audio id="k1" src="js/robco-industries/sound/k1.ogg"></audio>
+                <audio id="k2" src="js/robco-industries/sound/k2.ogg"></audio>
+                <audio id="k3" src="js/robco-industries/sound/k3.ogg"></audio>
+                <audio id="k4" src="js/robco-industries/sound/k4.ogg"></audio>
+                <audio id="k5" src="js/robco-industries/sound/k5.ogg"></audio>
+                <audio id="k6" src="js/robco-industries/sound/k6.ogg"></audio>
+                <audio id="k7" src="js/robco-industries/sound/k7.ogg"></audio>
+                <audio id="k8" src="js/robco-industries/sound/k8.ogg"></audio>
+                <audio id="k9" src="js/robco-industries/sound/k9.ogg"></audio>
+                <audio id="k10" src="js/robco-industries/sound/k10.ogg"></audio>
+            </div>
+            <script src="js/robco-industries/js/three.min.js"></script>
+            <script src="js/robco-industries/js/jquery.min.js"></script>
+            <script type="module" src="js/robco-industries/js/terminal.js" ></script>
+        </div>
+
+    </div>
+
+    <div id="glitch-section" class="section" style="display: none">
+        <div class="section-header" >
+            <span class="section-title" onclick="iniAndGmManager.toggleBodyDiv('glitch-body')">G̸̛̔̾̏̓̔̓L̶̛̄̀̇̾̓̾̔Ǐ̵̄͛̔T̷̔͛͌̆̚C̵̽͌̚H̴̓̓̏̽̎̋̈́̕̚I̴̅̔N̸̏̐̃͗̅͌̕͝͝G̶̔̐͑̌̓̾͝'</span>
+        </div>
+        <div id="glitch-body" class="section-body">
+            <div class="icon-container">
+                <div class="ts-icon-d6 ts-icon-xlarge" style="height: 100px;width: 100px;" onclick="diceService.rollGlitchDice()"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="dice-log" class="section">
+        <div class="section-header" >
+            <span class="section-title" onclick="iniAndGmManager.toggleBodyDiv('dice-log-body')">Log</span>
+            <span class="align-right section-title">
+            <input type="text" id="player-filter-input" onchange="diceService.togglePlayerFilter()" placeholder="search log" class="field-data-medium player-filter-input">
+            </span>
+        </div>
+        <div id="dice-log-body" class="section-body" >
+            <div style="min-height: 25px;font-size: 75%" id="throw-log">
+            </div>
+            <div class="section-body" style="padding-bottom: 25px">
+                <div id=throw-log-resize-button class="small-orange-button grid-item-header-label align-left" style="float: left" onclick="iniAndGmManager.toggleResize('throw-log')">resize log</div>
+                <div class="small-orange-button grid-item-header-label align-left" style="float: right;background-color: red;" onclick="diceService.clearThrowLog()">clear log</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-ini-roller" class="section">
+        <div class="section-header" onclick="iniAndGmManager.toggleBodyDiv('section-control-ini')">
+            <span class="section-title">Initiative</span>
+        </div>
+        <div id="section-control-ini" class="section-body">
+            <div class="section-grid-container" style="grid-template-columns: 40px repeat(4,auto) 20px;">
+                <div class="grid-item-header-label align-center" style="grid-column-end: span 1;">
+                    <label>Roll</label>
+                </div>
+                <div class="grid-item-header-label align-left" style="padding-left:30px;grid-column-end: span 1;">
+                    <label>Name</label>
+                </div>
+                <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
+                    <label>Picker</label>
+                </div>
+                <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
+                    <label>Ini</label>
+                </div>
+                <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
+                    <label style="font-size: small">My turn?</label>
+                </div>
+                <div class="grid-item" style="grid-column-end: span 1;">
+                    &nbsp;
+                </div>
+                <div>
+                    <div id="send-ini-button" class="grid-item align-center" style="grid-column-end: span 1;" onclick="diceService.rollInitiativeDices()">
+                        <i class="icon-dice ts-icon-d6 ts-icon-small"></i>
+                    </div>
+                </div>
+                <div id="ini-name" class="grid-item-data align-left" style="padding-left:30px;grid-column-end: span 1;">
+                    <label>
+                        <input id="ini-name-input" class="field-data-text" type="text" placeholder="<your name>" value="">
+                    </label>
+                </div>
+                <div>
+                    <div id="ini-pick-button" class="grid-item align-center" style="grid-column-end: span 1;" onclick="iniAndGmManager.getOwnInitiativeFromCreature()">
+                        <i class="icon-dice ts-icon-eyedropper ts-icon-small"></i>
+                    </div>
+                </div>
+                <div id="ini-value" class="grid-item-data align-left" style="grid-column-end: span 1;">
+                    <label>
+                        <input id="ini-value-input" class="field-data-medium" type="text" placeholder="XD6+Y" value="">
+                    </label>
+                </div>
+                <div id="ini-current-value" class="grid-item-data align-left" style="grid-column-end: span 1;white-space: normal;">
+                </div>
+            </div>
+        </div>
+        <div id="section-ini-list" class="section-body">
+            <div id="ini-list" class="grid-item-data align-left" style="grid-column-end: span 1;">
+                <span>No current Ini-table</span>
+            </div>
+         </div>
+    </div>
+
+    <div id="checkbox-container" class="section-grid-container">
+        <!--<div id="gm-mode" class="checkbox-item">
+            <input type="checkbox" value="true" onchange="diceService.toggleGMMode(this.checked);"></input>
+            <label>GM-Modus</label>
+        </div> -->
+        <div id="no-uneeded-explode" class="checkbox-item">
+            <input type="checkbox" checked value="true" onchange="diceService.toggleNoUnneededExplode(this.checked);">
+            <label>No 6 rerolls if succeeded.</label>
+        </div>
+        <!--   <div id="ini-manager" class="checkbox-item">
+               <input type="checkbox" id="manage-ini-check" value="true" onchange="initiativeManager.toggleIniManager(this.checked);"></input>
+               <label for="manage-ini-check">Manage-Ini</label>
+           </div> -->
+    </div>
+
+    <div id="section-dice-sets" class="section">
+        <div class="section-header" onclick="iniAndGmManager.toggleBodyDiv('dice-sets-body')">
+            <span class="section-title">Offensive & open throws</span>
+        </div>
+        <div id="dice-sets-body" class="section-body">
+            <div class="section-grid-container" style="grid-template-columns: 40px repeat(5,auto) 20px;">
+                <div class="grid-item" style="grid-column-end: span 1;">
+                    &nbsp;
+                </div>
+                <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
+                    <label>Name</label>
+                </div>
+                <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                    <label>MW</label>
+                </div>
+                <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                    <label># D6</label>
+                </div>
+                <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                    <label>DMG</label>
+                </div>
+                <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                    <label>Bullets</label>
+                </div>
+                <div class="grid-item" style="grid-column-end: span 1;">
+                    &nbsp;
+                </div>
+                <div id="dice-sets-add-row" class="grid-item" style="grid-column-end: span 6;">
+                    &nbsp;
+                </div>
+                <div class="grid-item" style="grid-column-end: span 1;">
+                    <div class="addRemoveIcon" onclick="diceService.sectionDiceSets.addDiceSet(); diceService.persistDiceSets();">+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-defence-dice-sets" class="section">
+        <div class="section-header" onclick="iniAndGmManager.toggleBodyDiv('defence-dice-sets-body')">
+            <span class="section-title">Defensive throws</span>
+        </div>
+        <div id="defence-dice-sets-body" class="section-body">
+            <div class="section-grid-container" style="grid-template-columns: 40px repeat(4,auto) 20px;">
+
+                <div class="grid-item" style="grid-column-end: span 1;">
+                    &nbsp;
+                </div>
+                <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
+                    <label>Name</label>
+                </div>
+                <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                    <label>MW</label>
+                </div>
+                <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                    <label># D6</label>
+                </div>
+                <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                    <label>DMG</label>
+                </div>
+                <div class="grid-item" style="grid-column-end: span 1;">
+                    &nbsp;
+                </div>
+                <div id="defence-dice-sets-add-row" class="grid-item" style="grid-column-end: span 5;">
+                    &nbsp;
+                </div>
+                <div class="grid-item" style="grid-column-end: span 1;">
+                    <div class="addRemoveIcon" onclick="diceService.sectionDefenceDiceSets.addDefenceDiceSet(); diceService.persistDiceSets();">+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-player-npc-rolls" class="section" style="display: none;">
+        <div class="section-header"  onclick="iniAndGmManager.toggleBodyDiv('section-player-npc-rolls-body')">
+            <span class="section-title">Initiative</span>
+        </div>
+        <div id="section-player-npc-rolls-body" class="section-body">
+            <div class="control-buttons">
+                <button id="roll-initiative-button">Roll Initiative</button>
+                <button id="send-initiative-button">Send Initiative</button>
+                <button id="next-button">cross one out</button>
+                <button id="prev-button">clear cross</button>
+                <button id="reset-initiative-button" class="small-orange-button">Reset Initiative</button>
+            </div>
+            <div id="breadcrumbs" class="breadcrumbs"></div>
+            <div class="player-npc-rolls-container">
+                <div id="player-npc-rolls-text" contenteditable="true" ></div>
+                <div class="player-npc-rolls-inline">
+                    <label for="player-npc-rolls-name">Name:</label>
+                    <input type="text" id="player-npc-rolls-name" style="width: 100px"/>
+                    <label for="player-npc-rolls-init">Ini:</label>
+                    <input type="text" id="player-npc-rolls-init" style="width: 45px"/>
+                    <div class="player-npc-rolls-buttons">
+                        <button id="player-npc-rolls-add">+</button>
+                        <button id="player-npc-rolls-subtract">-</button>
+                        <button id="player-npc-rolls-info">i</button>
+                    </div>
+                </div>
+            </div>
+            <div id="initiative-boxes-container" class="initiative-boxes-container"></div>
+        </div>
+    </div>
+
+    <div id="condition-monitor-section" class="section" style="display:none;">
+        <div class="section-header">
+            <span class="section-title" id="condition-monitor-title">Condition-Monitor</span>
+        </div>
+        <div class="section-body">
+            <div id="condition-monitor-name" class="monitor-name"></div>
+            <div class="condition-monitor-grid">
+                <div class="row row1">
+                    <div class="box" id="row1-box1">L</div>
+                    <div class="box" id="row1-box2"></div>
+                    <div class="box" id="row1-box3">M</div>
+                    <div class="box" id="row1-box4"></div>
+                    <div class="box" id="row1-box5"></div>
+                    <div class="box" id="row1-box6">S</div>
+                    <div class="box" id="row1-box7"></div>
+                    <div class="box" id="row1-box8"></div>
+                    <div class="box" id="row1-box9"></div>
+                    <div class="box" id="row1-box10">T</div>
+                </div>
+                <div class="row row2">
+                    <div class="box" id="row2-box1">L</div>
+                    <div class="box" id="row2-box2"></div>
+                    <div class="box" id="row2-box3">M</div>
+                    <div class="box" id="row2-box4"></div>
+                    <div class="box" id="row2-box5"></div>
+                    <div class="box" id="row2-box6">S</div>
+                    <div class="box" id="row2-box7"></div>
+                    <div class="box" id="row2-box8"></div>
+                    <div class="box" id="row2-box9"></div>
+                    <div class="box" id="row2-box10">T</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="local-storage-controls" style="margin-bottom: 15px;">
+
+        <button id="load-local-storage" style="padding: 5px; font-size: 10px;" onclick="diceService.loadCustomGlob()">Load storage</button>
+        <button id="copy-to-clipboard" style="padding: 5px; font-size: 10px; display: none" onclick="diceService.copyToClipboard()">Copy to clipboard</button>
+        <button id="save-local-storage" style="padding: 5px; font-size: 10px; display: none;" onclick="diceService.saveCustomGlob()">Save & Reload</button>
+        <button id="reset-local-storage-view" style="padding: 5px; font-size: 10px;float: right; display: none; background-color: red" onclick="diceService.resetStorageSaveArea()">X</button>
+        <button id="clear-local-storage" style="padding: 5px; font-size: 10px;float: right; display: none" onclick="diceService.clearGlobTextarea()">Clear textarea</button>
+
+        <textarea  id="local-storage-content" style="width:98%;margin-top: 10px;font-size: x-small; display: none; padding: 5px; border: 1px solid #932828; background-color: #9d9b9b ">
+        <!-- Content will be loaded and displayed here -->
+    </textarea>
+    </div>
+
+    <div class="app-info">
+        <span id="app-name">-</span> Symbiote&nbsp;
+        Version: <span id="app-version-number">-</span><br/>
+        Created by: <span id="app-author-names">-</span>
+    </div>
+
+    <div id="debug" style="display: none;">
+        <div class="debug-header" onclick="debug.toggleSection(this);">
+            <span class="debug-title">Debug log</span>
+            <div class="debug-open" style="display: block;">▲</div>
+            <div class="debug-close" style="display: none;">▼</div>
+        </div>
+        <pre id="debug-log" class="debug-log" style="display: none;"></pre>
+    </div>
+</div>
+</body>
 </html>
