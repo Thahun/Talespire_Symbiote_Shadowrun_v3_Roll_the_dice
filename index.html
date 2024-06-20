@@ -13,15 +13,15 @@
         </div>
         <div id="error" style="display:none">
             <span class="error-label">Fehler:</span>
-            <pre id="error-message"class="error-message">None</pre>
+            <pre id="error-message" class="error-message">None</pre>
         </div>
 
         <div id="content">
             <div class="ts-icon-refresh symbiote-reload" onclick="location.reload();"></div>
-            
+
             <div id="info" style="display:none">
                 <span class="info-label">Hinweis:</span>
-                <span id="info-message"class="info-message">None</span>
+                <span id="info-message" class="info-message">None</span>
                 <div class="info-close" onclick="info.hide()">X</div>
             </div>
 
@@ -40,7 +40,7 @@
                     <span class="section-title">Würfel Sets</span>
                 </div>
                 <div class="section-body">
-                    <div class="section-grid-container" style="grid-template-columns: 40px repeat(3,auto) 20px;">
+                    <div class="section-grid-container" style="grid-template-columns: 40px repeat(5,auto) 20px;">
 
                         <div class="grid-item" style="grid-column-end: span 1;">
                             &nbsp;
@@ -49,16 +49,22 @@
                             <label>Name</label>
                         </div>
                         <div class="grid-item-header-label" style="grid-column-end: span 1;">
-                            <label>Mindestwurf</label>
+                            <label>MW</label>
                         </div>
                         <div class="grid-item-header-label" style="grid-column-end: span 1;">
                             <label>Anzahl W6</label>
+                        </div>
+                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                            <label>DMG</label>
+                        </div>
+                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                            <label>Anzahl Kugeln</label>
                         </div>
                         <div class="grid-item" style="grid-column-end: span 1;">
                             &nbsp;
                         </div>
 
-                        <div id="dice-sets-add-row" class="grid-item" style="grid-column-end: span 4;">
+                        <div id="dice-sets-add-row" class="grid-item" style="grid-column-end: span 6;">
                             &nbsp;
                         </div>
                         <div class="grid-item" style="grid-column-end: span 1;">

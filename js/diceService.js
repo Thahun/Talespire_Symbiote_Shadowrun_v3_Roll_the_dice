@@ -88,6 +88,10 @@ class DiceService extends AbstractSheetHelper {
         debug.log("DiceService.loadDiceSets");
 
         let diceSets = this.storage.getStorageAsObject();
+
+        console.log("load");
+        console.log(diceSets);
+
         if(diceSets instanceof DiceSetsDTO) {
             this.sectionDiceSets.setData(diceSets);
         }
@@ -95,8 +99,11 @@ class DiceService extends AbstractSheetHelper {
 
     persistDiceSets() {
         debug.log("DiceService.persistDiceSets");
-
         let diceSets = this.sectionDiceSets.getData();
+
+        console.log("persist");
+        console.log(diceSets);
+
         this.storage.setStorageAsObject(diceSets);
         symbioteStorage.persist();
     }
@@ -155,7 +162,6 @@ class DiceService extends AbstractSheetHelper {
         if(!this.diceTracker.hasDiceTrack(rollId)) {
             return;
         }
-
         let diceTrack = this.diceTracker.getDiceTrack(rollId);
         let diceType = resultsGroups[0].result.kind;
         let diceMax = diceType.substring(1);
@@ -197,7 +203,6 @@ class DiceService extends AbstractSheetHelper {
             }
         }
         diceTrack.dices = dices;
-
 
         if(rerollAmount == 0) {
             this.showRollResult(diceTrack);
@@ -259,8 +264,24 @@ class DiceService extends AbstractSheetHelper {
             rollResultsGroups.push(rollResultsGroup);
         });
 
+             //   console.log(diceTrack);
+
+        console.log(diceSet);
+
+        let damageCode = null;
+        if (diceSet.dmg !== '-') {
+            // Parse the initial damage code string to get powerLevel and damageLevel
+            let parsedCode = diceService.parseDamageCode(diceSet.dmg);
+
+            // Verwenden der geparsten Werte in der calculateDamageCode-Funktion
+            damageCode = diceService.calculateDamageCode(parsedCode.powerLevel, parsedCode.damageLevel, diceSet.bullets, aboveThreshold);
+        }
+
         //let message = aboveThreshold + ' of ' + diceSet.amount + ' dices of "' + diceSet.name + '" ' + (aboveThreshold == 1 ? 'was' : 'were')  + ' successful.';
         let message = aboveThreshold + ' von ' + diceSet.amount + ' Würfeln des "' + diceSet.name + '" Wurfes ' + (aboveThreshold == 1 ? 'war' : 'waren')  + ' erfolgreich.';
+        if (damageCode !== null) {
+            message += ' Effektiver Schaden: ' + damageCode;
+        }
 
         if(this.gmMode) {
             TS.chat.send(message, 'gms');
@@ -282,6 +303,81 @@ class DiceService extends AbstractSheetHelper {
             this.diceTracker.removeDiceTrack(rollId);
         }
     }
+
+    calculateDamageCode(powerLevel, damageLevel, shotCount, diceResult) {
+        // Define the damage levels
+        const damageLevels = ['L', 'M', 'S', 'T'];
+
+        // Increase power level by (shotCount - 1)
+        powerLevel += (shotCount - 1);
+
+        // Calculate the number of steps to increase the damage level based on the dice result
+        const increaseSteps = Math.floor(diceResult / 2);
+
+        // Find the current index of the damage level
+        let damageIndex = damageLevels.indexOf(damageLevel);
+
+        if (damageIndex === -1) {
+            throw new Error("Invalid damage level");
+        }
+
+        // Increase damage level by the calculated steps
+        damageIndex += increaseSteps;
+
+        // Increase the damage level by the number of extra shots
+        const shotSteps = Math.floor(shotCount / 3);
+        damageIndex += shotSteps;
+
+        // Calculate the additional levels beyond 'T'
+        let additionalLevels = 0;
+        while (damageIndex >= damageLevels.length) {
+            additionalLevels++;
+            damageIndex -= damageLevels.length;
+        }
+
+        // Calculate additional levels for remaining successes if at 'T'
+        if (damageIndex === damageLevels.length - 1 && additionalLevels > 0) {
+            additionalLevels += Math.floor((damageIndex - (damageLevels.length - 1)) / 2);
+        }
+
+        // Handle overflow to beyond 'T'
+        while (damageIndex >= damageLevels.length) {
+            additionalLevels++;
+            damageIndex -= damageLevels.length;
+        }
+
+        // Get the final damage level
+        let finalDamageLevel = damageLevels[damageIndex];
+
+        // Append the additional power level if beyond 'T'
+        if (additionalLevels > 0) {
+            finalDamageLevel = 'T+' + additionalLevels;
+        }
+
+        // Return the damage code as a string
+        return powerLevel + finalDamageLevel;
+    }
+
+    /**
+     * Parses a damage code string into its power level and damage level components.
+     *
+     * @param {string} damageCode - The damage code string (e.g., "8M", "14S").
+     * @returns {{ powerLevel: number, damageLevel: string }} - An object with powerLevel and damageLevel.
+     */
+    parseDamageCode(damageCode) {
+        const regex = /^(\d+)([LMST](?:\+\d+)?)$/;
+        const match = damageCode.match(regex);
+
+        if (!match) {
+            throw new Error("Invalid damage code format");
+        }
+
+        const powerLevel = parseInt(match[1], 10);
+        const damageLevel = match[2];
+
+        return { powerLevel, damageLevel };
+    }
+
 }
 
 
