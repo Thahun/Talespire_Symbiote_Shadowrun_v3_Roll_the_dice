@@ -93,23 +93,43 @@ class ErrorBox {
 class InfoBox {
     divInfo;
     spanInfoMessage;
+    buttonInfo;
+    currentSuccesses; // To store the current successes
 
     constructor() {
         this.divInfo = document.getElementById("info");
         this.spanInfoMessage = document.getElementById("info-message");
+        this.buttonInfo = document.getElementById("info-button");
+        this.currentSuccesses = 0; // Initialize with 0
+
         debug.log("Info class loaded");
+
+        // Event listener for button
+        this.buttonInfo.addEventListener("click", () => {
+            debug.log("Info button clicked");
+            diceService.repeatLastRoll(this.currentSuccesses); // Pass the current successes
+        });
     }
 
-    show(msg) {
+    show(msg, showButton = false, successes = 0) {
         this.divInfo.style.display = "block";
         this.spanInfoMessage.textContent = msg;
+        this.currentSuccesses = successes; // Update the current successes
+        if (showButton) {
+            this.buttonInfo.style.display = "inline-block"; // Show the button
+        } else {
+            this.buttonInfo.style.display = "none"; // Hide the button
+        }
     }
 
     hide() {
         this.divInfo.style.display = "none";
         this.spanInfoMessage.textContent = "";
+        this.buttonInfo.style.display = "none"; // Hide the button
+        this.currentSuccesses = 0; // Reset the current successes
     }
 }
+
 
 class VersionSegments {
     mayor;

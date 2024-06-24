@@ -1,14 +1,21 @@
+/**
+ * DiceService class handles the dice rolling and result evaluation logic.
+ * It manages dice sets, dice tracking, and various rolling modes including GM mode.
+ */
 class DiceService extends AbstractSheetHelper {
-    initState = false;
-    gmMode = false;
+    initState = false;  // Indicates if the service is initialized
+    gmMode = false;  // GM mode flag
+    noUnneededExplode = false;  // Prevent rerolling after the threshold is already solved
+    highestRoll = 0;  // Keeps track of the current highest roll to be able to stop rerolling if MW is reached
 
     /**
      * @type {String}
      */
     version;
 
-    sectionDiceSets;
-    diceTracker;
+    sectionDiceSets;  // Reference to the section for dice sets
+    sectionDefenceDiceSets;  // Reference to the section for defence dice sets
+    diceTracker;  // Instance of DiceTracker to track dice rolls
 
     ELEMENTID_GM_MODE = 'gm-mode';
     ELEMENTID_APP_NAME = 'app-name';
@@ -16,29 +23,32 @@ class DiceService extends AbstractSheetHelper {
     ELEMENTID_APP_AUTHORS = 'app-author-names';
 
     /**
-     * @param {StorageService} storage 
+     * Constructor initializes the DiceService with a storage instance.
+     * @param {StorageService} storage
      */
-    constructor(
-        storage
-    ) {
+    constructor(storage) {
         debug.log("DiceService class loaded");
         super();
 
         this.storage = storage;
         this.manifestHelper = new ManifestHelper(this);
         this.sectionDiceSets = new SheetSectionDiceSets(this);
+        this.sectionDefenceDiceSets = new SheetSectionDiceSets(this, true);
         this.diceTracker = new DiceTracker();
 
         this.init();
     }
 
+    /**
+     * Initializes the DiceService, waits for symbioteStorage to be ready.
+     */
     async init() {
         debug.log("DiceService.init");
 
         let retriesDelaySeconds = 1;
         let retriesMax = 10;
         let retries = retriesMax;
-        while(retries > 0 && !symbioteStorage.isInit()) {
+        while (retries > 0 && !symbioteStorage.isInit()) {
             debug.log("Character.init waiting for SymbioteStorage.init");
             retries--;
             await sleep(retriesDelaySeconds * 100);
@@ -59,6 +69,7 @@ class DiceService extends AbstractSheetHelper {
     }
 
     /**
+     * Checks if the service is initialized.
      * @returns {Boolean}
      */
     isInit() {
@@ -66,15 +77,27 @@ class DiceService extends AbstractSheetHelper {
     }
 
     /**
-     * @param {Boolean} value 
+     * Toggles GM mode.
+     * @param {Boolean} value
      */
     toggleGMMode(value) {
         this.gmMode = value;
     }
 
+    /**
+     * Toggles the no unneeded explode mode.
+     * @param {Boolean} value
+     */
+    toggleNoUnneededExplode(value) {
+        this.noUnneededExplode = value;
+    }
+
+    /**
+     * Displays application information.
+     */
     showAppInfo() {
         debug.log("DiceService.showAppInfo");
-        
+
         let elementName = this.getElementById(this.ELEMENTID_APP_NAME);
         elementName.innerText = this.manifestHelper.fetchKey(ManifestHelper.KEY_NAME);
         let elementVersion = this.getElementById(this.ELEMENTID_APP_VERSION);
@@ -84,111 +107,192 @@ class DiceService extends AbstractSheetHelper {
         elementAuthors.innerText = authors.join(', ');
     }
 
+    /**
+     * Loads dice sets from storage.
+     */
     loadDiceSets() {
         debug.log("DiceService.loadDiceSets");
 
         let diceSets = this.storage.getStorageAsObject();
 
-        console.log("load");
-        console.log(diceSets);
-
-        if(diceSets instanceof DiceSetsDTO) {
+        if (diceSets instanceof DiceSetsDTO) {
             this.sectionDiceSets.setData(diceSets);
+            this.sectionDefenceDiceSets.setData(diceSets);
         }
     }
 
+    /**
+     * Persists dice sets to storage.
+     */
     persistDiceSets() {
         debug.log("DiceService.persistDiceSets");
         let diceSets = this.sectionDiceSets.getData();
+        let defenceDiceSets = this.sectionDefenceDiceSets.getData();
 
-        console.log("persist");
-        console.log(diceSets);
+        diceSets.defenceDiceSetList = defenceDiceSets.defenceDiceSetList;
 
         this.storage.setStorageAsObject(diceSets);
         symbioteStorage.persist();
     }
 
     /**
-     * Prevents setting a numeric input to a value lower than 0
-     * Must be placed first in "onchange" event
+     * Prevents setting a numeric input to a value lower than 0.
+     * Must be placed first in "onchange" event.
      *
-     * @param {HTMLElement} element 
+     * @param {HTMLElement} element
      */
     static preventNegativeValue(element) {
         debug.log("DiceService.preventNegativeValue");
 
-        if(element.value == '' || Number(element.value) < 0) {
+        if (element.value === '' || Number(element.value) < 0) {
             element.value = 0;
         }
     }
 
     /**
-     * @param {Number} diceSetIndex 
+     * Rolls dices for the specified dice set index.
+     * @param {Number} diceSetIndex
      */
     async rollDices(diceSetIndex) {
         debug.log("DiceService.rollDices");
 
         let diceSet = this.sectionDiceSets.sectionDiceSetsDiceSet.getData(diceSetIndex);
 
-        if(diceSet.amount <= 0) {
+        if (diceSet.amount <= 0) {
             info.show("Can't roll 0 dices!");
             return;
         }
-        if(diceSet.threshold <= 0) {
+        if (diceSet.threshold <= 0) {
             info.show("Any dice roll would be above 0!");
             return;
         }
 
         let diceString = diceSet.amount + 'd6';
-        let rollId = await TS.dice.putDiceInTray([{name: '"' + diceSet.name + '"', roll: "!" + diceString}], true);
+        let rollId = await TS.dice.putDiceInTray([{ name: '"' + diceSet.name + '"', roll: "!" + diceString }], true);
 
-        if(rollId) {
-            this.diceTracker.addDiceTrack(rollId, diceSetIndex);
+        if (rollId) {
+            this.diceTracker.addDiceTrack(rollId, diceSetIndex, false);  // Set isDefence to false
         }
     }
 
     /**
-     * Evaluate a roll result, if the rollId is tracked by us
-     * 
-     * @param {String} rollId 
-     * @param {String} clientId 
-     * @param {Boolean} gmOnly 
-     * @param {Boolean} quiet 
-     * @param {Array.<TS.rollResultsGroup>} resultsGroups 
+     * Rolls defence dices for the specified dice set index.
+     * @param {Number} diceSetIndex
+     */
+    async rollDefenceDices(diceSetIndex) {
+        debug.log("DiceService.rollDefenceDices");
+
+        let diceSet = this.sectionDefenceDiceSets.sectionDefenceDiceSetsDiceSet.getData(diceSetIndex);
+
+        if (diceSet.amount <= 0) {
+            info.show("Can't roll 0 dices!");
+            return;
+        }
+        if (diceSet.threshold <= 0) {
+            info.show("Any dice roll would be above 0!");
+            return;
+        }
+
+        let diceString = diceSet.amount + 'd6';
+        let rollId = await TS.dice.putDiceInTray([{ name: '"' + diceSet.name + '"', roll: "!" + diceString }], true);
+
+        if (rollId) {
+            this.diceTracker.addDiceTrack(rollId, diceSetIndex, true);  // Set isDefence to true
+        }
+    }
+
+    /**
+     * Repeats the last roll, optionally adding previous successes.
+     * @param {Number} previousSuccesses
+     */
+    async repeatLastRoll(previousSuccesses = 0) {
+        const lastDiceTrack = this.diceTracker.getLastDiceTrack();
+
+        if (!lastDiceTrack) {
+            info.show("Kein vorheriger Wurf zum Wiederholen gefunden.");
+            return;
+        }
+
+        let diceSet = lastDiceTrack.isDefence
+            ? this.sectionDefenceDiceSets.sectionDefenceDiceSetsDiceSet.getData(lastDiceTrack.diceSetIndex)
+            : this.sectionDiceSets.sectionDiceSetsDiceSet.getData(lastDiceTrack.diceSetIndex);
+
+        if (diceSet.amount <= lastDiceTrack.successes) {
+            info.show("Keine Würfel übrig, um erneut zu würfeln.");
+            return;
+        }
+
+        let newDiceCount = diceSet.amount - lastDiceTrack.successes;
+        let diceString = newDiceCount + 'd6';
+
+        let rollId = await TS.dice.putDiceInTray([{ name: '"' + diceSet.name + '"', roll: "!" + diceString }], true);
+
+        if (rollId) {
+            this.diceTracker.addDiceTrack(rollId, lastDiceTrack.diceSetIndex, lastDiceTrack.isDefence);
+            this.diceTracker.addKarmaReroll(rollId);
+        }
+    }
+
+    /**
+     * Evaluates the roll results, if the rollId is tracked by this service.
+     * @param {String} rollId
+     * @param {String} clientId
+     * @param {Boolean} gmOnly
+     * @param {Boolean} quiet
+     * @param {Array.<TS.rollResultsGroup>} resultsGroups
      */
     async evaluateRollResults(rollId, clientId, gmOnly, quiet, resultsGroups) {
         debug.log("DiceService.evaluateRollResults");
 
-        if(!this.diceTracker.hasDiceTrack(rollId)) {
+        if (!this.diceTracker.hasDiceTrack(rollId)) {
             return;
         }
         let diceTrack = this.diceTracker.getDiceTrack(rollId);
+        let diceSet;
+
+        if (diceTrack.isDefence) {
+            diceSet = this.sectionDefenceDiceSets.sectionDefenceDiceSetsDiceSet.getData(diceTrack.diceSetIndex);
+        } else {
+            diceSet = this.sectionDiceSets.sectionDiceSetsDiceSet.getData(diceTrack.diceSetIndex);
+        }
+
         let diceType = resultsGroups[0].result.kind;
         let diceMax = diceType.substring(1);
         let rollResults = resultsGroups[0].result.results;
         let dices = diceTrack.dices;
 
         let rerollAmount = 0;
-        /** @type {Array.<DiceTrackResultDTO>} */
+        let successes = 0;
         let newDiceResults = [];
+
+        // Calculate the highest roll from the current roll results
+        this.highestRoll = Math.max(...rollResults);
+
         rollResults.forEach(diceValue => {
             let isMax = (diceValue == diceMax);
-            if(isMax) {
+
+            // Condition for rerolling if noUnneededExplode is true and threshold is not reached
+            if (isMax && (!this.noUnneededExplode || (this.noUnneededExplode && diceSet.threshold > this.highestRoll))) {
                 rerollAmount++;
+            }
+            if (diceValue >= diceSet.threshold) {
+                successes++;
             }
             let diceResult = new DiceTrackResultDTO(diceValue, isMax);
             newDiceResults.push(diceResult);
         });
 
-        if(dices) {
+        diceTrack.successes = successes; // Update successes in dice track
+
+        if (dices) {
             let diceIndex = 0;
             for (let i = 0; i < newDiceResults.length; i++) {
                 let newDiceResult = newDiceResults[i];
-                
+
                 for (let j = diceIndex; j < dices.length; j++) {
                     let dice = dices[j];
                     let lastResult = dice.results.slice(-1)[0];
-                    if(lastResult.isMax == false) {
+                    if (lastResult.isMax === false) {
                         continue;
                     }
                     dice.results.push(newDiceResult);
@@ -204,29 +308,40 @@ class DiceService extends AbstractSheetHelper {
         }
         diceTrack.dices = dices;
 
-        if(rerollAmount == 0) {
+        if (rerollAmount === 0) {
             this.showRollResult(diceTrack);
             return;
         }
+
+        let isKarmaUsed = false;
+        if (diceTrack.isKarmaReroll === true) {
+            isKarmaUsed = true;
+        }
+
         this.showRerollNote(diceTrack, rerollAmount);
 
-        let diceSet = this.sectionDiceSets.sectionDiceSetsDiceSet.getData(diceTrack.diceSetIndex);
-        let diceString = rerollAmount + 'd6';
-        let newRollId = await TS.dice.putDiceInTray([{name: '"' + diceSet.name + '"', roll: "!" + diceString}], true);
+        let newDiceString = rerollAmount + 'd6';
+        let newRollId = await TS.dice.putDiceInTray([{ name: '"' + diceSet.name + '"', roll: "!" + newDiceString }], true);
         this.diceTracker.replaceDiceTrack(rollId, newRollId);
+        if (isKarmaUsed) {
+            this.diceTracker.addKarmaReroll(newRollId);
+        }
     }
 
     /**
-     * @param {DiceTrackDTO} diceTrack 
-     * @param {Number} rerollAmount 
+     * Displays a message indicating the number of dice that can be rerolled.
+     * @param {DiceTrackDTO} diceTrack
+     * @param {Number} rerollAmount
      */
     showRerollNote(diceTrack, rerollAmount) {
         debug.log("DiceService.showRerollNote");
 
-        let diceSet = this.sectionDiceSets.sectionDiceSetsDiceSet.getData(diceTrack.diceSetIndex);
-        //let message = rerollAmount + ' ' + (rerollAmount == 1 ? 'dice' : 'dices')  + ' of "' + diceSet.name + '" maxed and can be rerolled.';
-        let message = rerollAmount + ' Würfel des "' + diceSet.name + '" Wurfes ' + (rerollAmount == 1 ? 'kann' : 'können')  + ' erneut gewürfelt werden.';
-        if(this.gmMode) {
+        let diceSet = diceTrack.isDefence
+            ? this.sectionDefenceDiceSets.sectionDefenceDiceSetsDiceSet.getData(diceTrack.diceSetIndex)
+            : this.sectionDiceSets.sectionDiceSetsDiceSet.getData(diceTrack.diceSetIndex);
+
+        let message = rerollAmount + ' Würfel des "' + diceSet.name + '" Wurfes ' + (rerollAmount == 1 ? 'kann' : 'können') + ' erneut gewürfelt werden.';
+        if (this.gmMode) {
             TS.chat.send(message, 'gms');
         } else {
             TS.chat.send(message, 'board');
@@ -234,13 +349,19 @@ class DiceService extends AbstractSheetHelper {
     }
 
     /**
-     * @param {DiceTrackDTO} diceTrack 
+     * Displays the roll result and calculates the damage code if applicable.
+     * @param {DiceTrackDTO} diceTrack
      */
     showRollResult(diceTrack) {
         debug.log("DiceService.showRollResult");
 
-        let diceSet = this.sectionDiceSets.sectionDiceSetsDiceSet.getData(diceTrack.diceSetIndex);
-        let aboveThreshold = 0;
+        let isDefence = diceTrack.isDefence || false;
+
+        let diceSet = isDefence
+            ? this.sectionDefenceDiceSets.sectionDefenceDiceSetsDiceSet.getData(diceTrack.diceSetIndex)
+            : this.sectionDiceSets.sectionDiceSetsDiceSet.getData(diceTrack.diceSetIndex);
+
+        let totalSuccesses = 0;
 
         let rollResultsGroups = [];
         diceTrack.dices.forEach(dice => {
@@ -251,7 +372,7 @@ class DiceService extends AbstractSheetHelper {
                 sum += diceResult.result;
             });
             if (sum >= diceSet.threshold) {
-                aboveThreshold++;
+                totalSuccesses++;
             }
 
             let rollResultsGroup = {
@@ -264,120 +385,173 @@ class DiceService extends AbstractSheetHelper {
             rollResultsGroups.push(rollResultsGroup);
         });
 
-             //   console.log(diceTrack);
+        this.diceTracker.setSuccesses(diceTrack['rollId'], totalSuccesses);
 
-        console.log(diceSet);
+        let totalThresholdSuccesses = 0;
 
-        let damageCode = null;
-        if (diceSet.dmg !== '-') {
-            // Parse the initial damage code string to get powerLevel and damageLevel
-            let parsedCode = diceService.parseDamageCode(diceSet.dmg);
-
-            // Verwenden der geparsten Werte in der calculateDamageCode-Funktion
-            damageCode = diceService.calculateDamageCode(parsedCode.powerLevel, parsedCode.damageLevel, diceSet.bullets, aboveThreshold);
+        if (diceTrack.isKarmaReroll === true) {
+            totalThresholdSuccesses = this.calculateTotalSuccesses(this.diceTracker);
+        } else {
+            totalThresholdSuccesses = totalSuccesses;
         }
 
-        //let message = aboveThreshold + ' of ' + diceSet.amount + ' dices of "' + diceSet.name + '" ' + (aboveThreshold == 1 ? 'was' : 'were')  + ' successful.';
-        let message = aboveThreshold + ' von ' + diceSet.amount + ' Würfeln des "' + diceSet.name + '" Wurfes ' + (aboveThreshold == 1 ? 'war' : 'waren')  + ' erfolgreich.';
-        if (damageCode !== null) {
-            if(aboveThreshold > 0){
-                info.show( diceSet.name + ' => ' + aboveThreshold + ' Erfolg(e)  =>  Effektiver Schaden: ' + damageCode);
-                message += ' Effektiver Schaden: ' + damageCode;
+        let damageCode = null;
+
+        if (diceSet.dmg !== '-') {
+            let parsedCode = diceService.parseDamageCode(diceSet.dmg);
+            if (isDefence) {
+                damageCode = diceService.calculateReducedDamageCode(parsedCode.damageLevel, totalThresholdSuccesses);
             } else {
-                info.show('Kein Treffer => kein Schaden');
-                message += ' Kein effektiver Schaden.' ;
+                damageCode = diceService.calculateDamageCode(parsedCode.powerLevel, parsedCode.damageLevel, diceSet.bullets, totalThresholdSuccesses);
             }
         }
 
-        if(this.gmMode) {
+        let message = totalThresholdSuccesses + ' von ' + diceSet.amount + ' Würfeln des "' + diceSet.name + '" Wurfes ' + (totalThresholdSuccesses === 1 ? 'war' : 'waren') + ' erfolgreich.';
+
+        if (damageCode !== null) {
+            if (isDefence) {
+                if (totalThresholdSuccesses > 0) {
+                    info.show(diceSet.name + ' => ' + totalThresholdSuccesses + ' Erfolg(e)  =>  Effektiver Schaden: ' + damageCode, true);
+                    message += ' Effektiver Schaden: ' + damageCode;
+                } else {
+                    info.show('Keine Erfolge => voller Schaden: ' + damageCode);
+                    message += ' Voller Schaden: ' + damageCode;
+                }
+            } else {
+                if (totalThresholdSuccesses > 0) {
+                    info.show(diceSet.name + ' => ' + totalThresholdSuccesses + ' Erfolg(e)  =>  Effektiver Schaden: ' + damageCode, true);
+                    message += ' Effektiver Schaden: ' + damageCode;
+                } else {
+                    info.show('Kein Treffer => kein Schaden', true);
+                    message += ' Kein effektiver Schaden.';
+                }
+            }
+        } else {
+            if (totalThresholdSuccesses > 0) {
+                info.show(diceSet.name + ' => ' + totalThresholdSuccesses + ' Erfolg(e)', true);
+            } else {
+                info.show('Keine Erfolge' + damageCode, true);
+            }
+        }
+
+        if (this.gmMode) {
             TS.chat.send(message, 'gms');
         } else {
             TS.dice.sendDiceResult(rollResultsGroups);
             TS.chat.send(message, 'board');
         }
+
+        // Reset highest roll
+        this.highestRoll = 0;
     }
 
     /**
-     * Remove a rollId from tracking, if it's a tracked one
-     *
+     * Removes a rollId from tracking, if it's tracked by this service.
      * @param {String} rollId
      */
     removeRollId(rollId) {
         debug.log("DiceService.removeRollId");
 
-        if(this.diceTracker.hasDiceTrack(rollId)) {
+        if (this.diceTracker.hasDiceTrack(rollId)) {
             this.diceTracker.removeDiceTrack(rollId);
         }
     }
 
-    calculateDamageCode(powerLevel, damageLevel, shotCount, diceResult) {
-        // Define the damage levels
+    /**
+     * Calculates the reduced damage code based on the dice result.
+     * @param {String} damageLevel
+     * @param {Number} diceResult
+     * @returns {String} Reduced damage code
+     */
+    calculateReducedDamageCode(damageLevel, diceResult) {
         const damageLevels = ['L', 'M', 'S', 'T'];
-
-        // Increase power level by (shotCount - 1)
-        powerLevel += (shotCount - 1);
-
-        // Calculate the number of steps to increase the damage level based on the dice result
-        const increaseSteps = Math.floor(diceResult / 2);
-
-        // Find the current index of the damage level
+        let decreaseSteps = Math.floor(diceResult / 2);
         let damageIndex = damageLevels.indexOf(damageLevel);
 
         if (damageIndex === -1) {
-            info.show("Invalid damage level: " + damageIndex);
+            if (damageLevel.startsWith('T+')) {
+                let additionalLevels = parseInt(damageLevel.split('+')[1], 10);
+                additionalLevels -= decreaseSteps;
+                if (additionalLevels < 0) {
+                    damageIndex = 3; // 'T'
+                    decreaseSteps = Math.abs(additionalLevels);
+                } else {
+                    return 'T+' + additionalLevels;
+                }
+            } else {
+                info.show("Invalid damage level: " + damageLevel);
+                throw new Error("Invalid damage level");
+            }
+        }
+
+        damageIndex -= decreaseSteps;
+
+        if (damageIndex < 0) {
+            return "Kein schaden :-)";
+        }
+
+        return damageLevels[damageIndex];
+    }
+
+    /**
+     * Calculates the damage code based on power level, damage level, shot count, and dice result.
+     * @param {Number} powerLevel
+     * @param {String} damageLevel
+     * @param {Number} shotCount
+     * @param {Number} diceResult
+     * @returns {String} Calculated damage code
+     */
+    calculateDamageCode(powerLevel, damageLevel, shotCount, diceResult) {
+        const damageLevels = ['L', 'M', 'S', 'T'];
+        powerLevel += (shotCount - 1);
+        const increaseSteps = Math.floor(diceResult / 2);
+        let damageIndex = damageLevels.indexOf(damageLevel);
+
+        if (damageIndex === -1) {
+            info.show("Invalid damage level: " + damageLevel);
             throw new Error("Invalid damage level");
         }
 
-        // Increase damage level by the calculated steps
         damageIndex += increaseSteps;
 
-        // Increase the damage level by the number of extra shots
         const shotSteps = Math.floor(shotCount / 3);
         damageIndex += shotSteps;
 
-        // Calculate the additional levels beyond 'T'
         let additionalLevels = 0;
         while (damageIndex >= damageLevels.length) {
             additionalLevels++;
             damageIndex -= damageLevels.length;
         }
 
-        // Calculate additional levels for remaining successes if at 'T'
         if (damageIndex === damageLevels.length - 1 && additionalLevels > 0) {
             additionalLevels += Math.floor((damageIndex - (damageLevels.length - 1)) / 2);
         }
 
-        // Handle overflow to beyond 'T'
         while (damageIndex >= damageLevels.length) {
             additionalLevels++;
             damageIndex -= damageLevels.length;
         }
 
-        // Get the final damage level
         let finalDamageLevel = damageLevels[damageIndex];
 
-        // Append the additional power level if beyond 'T'
         if (additionalLevels > 0) {
             finalDamageLevel = 'T+' + additionalLevels;
         }
 
-        // Return the damage code as a string
         return powerLevel + finalDamageLevel;
     }
 
     /**
      * Parses a damage code string into its power level and damage level components.
-     *
-     * @param {string} damageCode - The damage code string (e.g., "8M", "14S").
-     * @returns {{ powerLevel: number, damageLevel: string }} - An object with powerLevel and damageLevel.
+     * @param {string} damageCode
+     * @returns {{ powerLevel: number, damageLevel: string }}
      */
     parseDamageCode(damageCode) {
-        console.log(damageCode);
         const regex = /^(\d+)([LMSTlmst](?:\+\d+)?)$/;
         const match = damageCode.match(regex);
 
         if (!match) {
-            info.show( damageCode + " Invalid damage code format us something like 9M or 14S.");
+            info.show(damageCode + " Invalid damage code format us something like 9M or 14S.");
             throw new Error("Invalid damage code format");
         }
 
@@ -387,19 +561,34 @@ class DiceService extends AbstractSheetHelper {
         return { powerLevel, damageLevel };
     }
 
+    /**
+     * Calculates the total successes from the last two roll IDs.
+     * @param {Object} diceTracksObj
+     * @returns {Number} Total successes
+     */
+    calculateTotalSuccesses(diceTracksObj) {
+        let totalSuccesses = 0;
+
+        let rollIds = Object.keys(diceTracksObj.diceTracks).sort();
+        let lastTwoRollIds = rollIds.slice(-2);
+
+        lastTwoRollIds.forEach(rollId => {
+            totalSuccesses += diceTracksObj.diceTracks[rollId].successes;
+        });
+
+        return totalSuccesses;
+    }
 }
 
-
 /**
- * Callback function for TS.onRollResults event
- * 
- * @param {TS.rollResults} event 
+ * Callback function for TS.onRollResults event.
+ * @param {TS.rollResults} event
  */
 function onRollResults(event) {
     let kind = event.kind;
     let payload = event.payload;
 
-    switch(kind) {
+    switch (kind) {
         case 'rollResults':
             diceService.evaluateRollResults(payload.rollId, payload.clientId, payload.gmOnly, payload.quiet, payload.resultsGroups);
             break;

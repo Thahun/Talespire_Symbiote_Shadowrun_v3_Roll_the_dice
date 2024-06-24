@@ -1,24 +1,36 @@
 class DiceTrackDTO {
     rollId;
     diceSetIndex;
+    isDefence;
+    isKarmaReroll; // Indicate if the roll is a Karma reroll
     /** @type {Array.<DiceTrackResultsDTO>} */
     dices;
+    successes;
 
     /**
-     * @param {String} rollId 
-     * @param {Number} diceSetIndex 
-     * @param {Array.<DiceTrackResultsDTO>|null} dices 
+     * @param {String} rollId
+     * @param {Number} diceSetIndex
+     * @param {Boolean} isDefence
+     *
+     * @param {Array.<DiceTrackResultsDTO>|null} dices
+     * @param {Number} successes
      */
     constructor(
         rollId,
         diceSetIndex,
-        dices = null
+        isDefence = false,
+        dices = null,
+        successes = 0
     ) {
         this.rollId = rollId;
         this.diceSetIndex = diceSetIndex;
+        this.isDefence = isDefence;
+        this.isKarmaReroll = false; // Initialize as not a Karma reroll
         this.dices = dices;
+        this.successes = successes;
     }
 }
+
 
 /**
  * All results of a dice
@@ -29,8 +41,8 @@ class DiceTrackResultsDTO {
     results = [];
 
     /**
-     * @param {String} diceType 
-     * @param {Array.<DiceTrackResultDTO>} results 
+     * @param {String} diceType
+     * @param {Array.<DiceTrackResultDTO>} results
      */
     constructor(
         diceType,
@@ -49,8 +61,8 @@ class DiceTrackResultDTO {
     isMax;
 
     /**
-     * @param {Number} result 
-     * @param {Boolean} isMax 
+     * @param {Number} result
+     * @param {Boolean} isMax
      */
     constructor(
         result,
@@ -65,7 +77,7 @@ class DiceTracker {
     diceTracks = {};
 
     /**
-     * @param {String} rollId 
+     * @param {String} rollId
      * @returns {Boolean}
      */
     hasDiceTrack(rollId) {
@@ -73,7 +85,7 @@ class DiceTracker {
     }
 
     /**
-     * @param {String} rollId 
+     * @param {String} rollId
      * @returns {DiceTrackDTO}
      */
     getDiceTrack(rollId) {
@@ -81,29 +93,53 @@ class DiceTracker {
     }
 
     /**
-     * @param {String} rollId 
-     * @param {Number} diceSetIndex 
+     * @param {String} rollId
+     * @param {Number} diceSetIndex
+     * @param {Boolean} isDefence
      */
-    addDiceTrack(rollId, diceSetIndex) {
-        let diceTrack = new DiceTrackDTO(rollId, diceSetIndex);
+    addDiceTrack(rollId, diceSetIndex, isDefence = false) {
+        let diceTrack = new DiceTrackDTO(rollId, diceSetIndex, isDefence);
         this.diceTracks[rollId] = diceTrack;
     }
 
+    addKarmaReroll(rollId) {
+        this.diceTracks[rollId].isKarmaReroll = true;
+    }
+
+    setSuccesses(rollId,successes) {
+        this.diceTracks[rollId].successes = successes;
+    }
+
     /**
-     * @param {String} previousRollId 
-     * @param {String} newRollId 
+     * @param {String} previousRollId
+     * @param {String} newRollId
      */
     replaceDiceTrack(previousRollId, newRollId) {
         let previousDiceTrack = this.getDiceTrack(previousRollId);
-        let newDiceTrack = new DiceTrackDTO(newRollId, previousDiceTrack.diceSetIndex, previousDiceTrack.dices);
+        let newDiceTrack = new DiceTrackDTO(newRollId, previousDiceTrack.diceSetIndex, previousDiceTrack.isDefence, previousDiceTrack.dices, previousDiceTrack.successes);
         this.diceTracks[newRollId] = newDiceTrack;
         this.removeDiceTrack(previousRollId);
     }
 
     /**
-     * @param {String} rollId 
+     * @param {String} rollId
      */
     removeDiceTrack(rollId) {
         delete this.diceTracks[rollId];
+    }
+
+    /**
+     * @returns {DiceTrackDTO|null}
+     */
+    getLastDiceTrack() {
+        const rollIds = Object.keys(this.diceTracks);
+        if (rollIds.length === 0) {
+            return null;
+        }
+        return this.diceTracks[rollIds[rollIds.length - 1]];
+    }
+
+    clearDiceTracks() {
+        this.diceTracks = {};
     }
 }

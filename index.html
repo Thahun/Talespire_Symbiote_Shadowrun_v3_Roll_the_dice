@@ -22,6 +22,7 @@
             <div id="info" style="display:none">
                 <span class="info-label">Hinweis:</span>
                 <span id="info-message" class="info-message">None</span>
+                <button id="info-button" style="display:none">Use Karma</button>
                 <div class="info-close" onclick="info.hide()">X</div>
             </div>
 
@@ -31,6 +32,15 @@
                 </div>
                 <div class="grid-item-label" style="grid-column-end: span 1;">
                     <label>GM-Modus</label>
+                </div>
+            </div>
+
+            <div id="no-uneeded-explode" class="section-grid-container" style="grid-template-columns: 20px auto;">
+                <div class="grid-item-data" style="grid-column-end: span 1;">
+                    <input type="checkbox" value="false" onchange="diceService.toggleNoUnneededExplode(this.checked);"></input>
+                </div>
+                <div class="grid-item-label" style="grid-column-end: span 1;">
+                    <label>Limit reroll</label>
                 </div>
             </div>
             <br/>
@@ -58,7 +68,7 @@
                             <label>DMG</label>
                         </div>
                         <div class="grid-item-header-label" style="grid-column-end: span 1;">
-                            <label>Anzahl Kugeln</label>
+                            <label>Anzahl Geschosse</label>
                         </div>
                         <div class="grid-item" style="grid-column-end: span 1;">
                             &nbsp;
@@ -69,6 +79,42 @@
                         </div>
                         <div class="grid-item" style="grid-column-end: span 1;">
                             <div class="addRemoveIcon" onclick="diceService.sectionDiceSets.addDiceSet(); diceService.persistDiceSets();">+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-defence-dice-sets" class="section">
+                <div class="section-header">
+                    <span class="section-title">Defence Würfel Sets</span>
+                </div>
+                <div class="section-body">
+                    <div class="section-grid-container" style="grid-template-columns: 40px repeat(4,auto) 20px;">
+
+                        <div class="grid-item" style="grid-column-end: span 1;">
+                            &nbsp;
+                        </div>
+                        <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
+                            <label>Name</label>
+                        </div>
+                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                            <label>MW</label>
+                        </div>
+                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                            <label>Anzahl W6</label>
+                        </div>
+                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                            <label>DMG</label>
+                        </div>
+                        <div class="grid-item" style="grid-column-end: span 1;">
+                            &nbsp;
+                        </div>
+
+                        <div id="defence-dice-sets-add-row" class="grid-item" style="grid-column-end: span 5;">
+                            &nbsp;
+                        </div>
+                        <div class="grid-item" style="grid-column-end: span 1;">
+                            <div class="addRemoveIcon" onclick="diceService.sectionDefenceDiceSets.addDefenceDiceSet(); diceService.persistDiceSets();">+</div>
                         </div>
                     </div>
                 </div>
