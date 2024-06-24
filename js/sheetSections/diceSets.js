@@ -1,20 +1,44 @@
 class DiceSetsDTO {
     diceSetList;
     defenceDiceSetList;
+    initiativeData;
 
     /**
      * @param {Array.<DiceSetsDiceSetDTO>} diceSetList
      * @param {Array.<DiceSetsDiceSetDTO>} defenceDiceSetList
+     * @param {Array.<InitiativeDTO>} initiativeData
      */
-    constructor(diceSetList = [], defenceDiceSetList = []) {
+    constructor(diceSetList = [], defenceDiceSetList = [], initiativeData = []) {
         this.diceSetList = diceSetList;
         this.defenceDiceSetList = defenceDiceSetList;
+        this.initiativeData = initiativeData;
     }
 
     init(obj) {
         obj && Object.assign(this, obj);
     }
+
+    /**
+     * @returns {Object}
+     */
+    getData() {
+        return {
+            diceSetList: this.diceSetList,
+            defenceDiceSetList: this.defenceDiceSetList,
+            initiativeData: this.initiativeData
+        };
+    }
+
+    /**
+     * @param {Object} data
+     */
+    setData(data) {
+        this.diceSetList = data.diceSetList || [];
+        this.defenceDiceSetList = data.defenceDiceSetList || [];
+        this.initiativeData = data.initiativeData || [];
+    }
 }
+
 
 class DiceSetsDiceSetDTO {
     name;
@@ -36,6 +60,42 @@ class DiceSetsDiceSetDTO {
         this.amount = amount;
         this.dmg = dmg;
         this.bullets = bullets;
+    }
+}
+
+class InitiativeDTO {
+    name;
+    initiative;
+
+    /**
+     * @param {String} name
+     * @param {String} initiative
+     */
+    constructor(name, initiative) {
+        this.name = name;
+        this.initiative = initiative;
+    }
+
+    /**
+     * Returns all data of section "diceSets"
+     *
+     * @returns {DiceSetsDTO}
+     */
+    getData() {
+        return new DiceSetsDTO(
+            this.getDiceSets(),
+            this.getDefenceDiceSets()
+        );
+    }
+
+    /**
+     * Sets all data of section "diceSets"
+     *
+     * @param {DiceSetsDTO} data
+     */
+    setData(data) {
+        this.setDiceSets(data.diceSetList);
+        this.setDefenceDiceSets(data.defenceDiceSetList);
     }
 }
 

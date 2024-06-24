@@ -6,39 +6,7 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/sheet.css">
     <style>
-        /* Added styles for the new section */
-        #section-player-npc-rolls .section-body {
-            display: flex;
-            flex-direction: column;
-        }
 
-        .player-npc-rolls-container {
-            display: flex;
-            align-items: flex-start;
-            margin-top: 10px;
-        }
-
-        #player-npc-rolls-text {
-            width: 100%;
-            height: 150px; /* Adjust height as needed */
-            resize: none;
-            box-sizing: border-box;
-        }
-
-        #player-npc-rolls-compact {
-            width: 60px;
-            margin-left: 10px;
-        }
-
-        .player-npc-rolls-buttons {
-            display: flex;
-            flex-direction: column;
-            margin-left: 10px;
-        }
-
-        .player-npc-rolls-buttons button {
-            margin-bottom: 5px;
-        }
     </style>
     <script src="js/boot.js" defer></script>
 </head>
@@ -160,9 +128,15 @@
             <span class="section-title">Player or NPC Rolls</span>
         </div>
         <div class="section-body">
-            <button id="roll-initiative-button">Roll Initiative</button>
+            <div class="control-buttons">
+                <button id="roll-initiative-button">Roll Initiative</button>
+                <button id="send-initiative-button">Send Initiative</button>
+                <button id="next-button">strike</button>
+                <button id="prev-button">clear</button>
+            </div>
+            <div id="breadcrumbs" class="breadcrumbs"></div>
             <div class="player-npc-rolls-container">
-                <textarea id="player-npc-rolls-text" rows="10"></textarea>
+                <div id="player-npc-rolls-text" contenteditable="true" rows="10"></div>
                 <div class="player-npc-rolls-inline">
                     <label for="player-npc-rolls-name">Name:</label>
                     <input type="text" id="player-npc-rolls-name"/>
@@ -178,20 +152,19 @@
     </div>
 
 
-
-<div class="app-info">
-    <span id="app-name">-</span> Symbiote&nbsp;
-    Version: <span id="app-version-number">-</span><br/>
-    Created by: <span id="app-author-names">-</span>
-</div>
-
-<div id="debug" style="display: none;">
-    <div class="debug-header" onclick="debug.toggleSection(this);">
-        <span class="debug-title">Debug log</span>
-        <div class="debug-open" style="display: block;">▲</div>
-        <div class="debug-close" style="display: none;">▼</div>
+    <div class="app-info">
+        <span id="app-name">-</span> Symbiote&nbsp;
+        Version: <span id="app-version-number">-</span><br/>
+        Created by: <span id="app-author-names">-</span>
     </div>
-    <pre id="debug-log" class="debug-log" style="display: none;"></pre>
-</div>
+
+    <div id="debug" style="display: none;">
+        <div class="debug-header" onclick="debug.toggleSection(this);">
+            <span class="debug-title">Debug log</span>
+            <div class="debug-open" style="display: block;">▲</div>
+            <div class="debug-close" style="display: none;">▼</div>
+        </div>
+        <pre id="debug-log" class="debug-log" style="display: none;"></pre>
+    </div>
 </body>
 </html>

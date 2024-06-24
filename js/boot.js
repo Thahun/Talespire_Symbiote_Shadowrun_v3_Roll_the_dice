@@ -23,7 +23,7 @@ var symbioteStorage;
  */
 var diceService;
 /**
- * @type {DiceService} diceService
+ * @type {InitiativeManager} diceService
  */
 var initiativeManager;
 
