@@ -22,6 +22,10 @@ var symbioteStorage;
  * @type {DiceService} diceService
  */
 var diceService;
+/**
+ * @type {DiceService} diceService
+ */
+var initiativeManager;
 
 class BootLoader {
     initTimeout = 2000; //ms
@@ -40,6 +44,7 @@ class BootLoader {
 
         {src: 'js/diceTracker.js', loaded: false},
         {src: 'js/diceService.js', loaded: false},
+        {src: 'js/initiativeManager.js', loaded: false},
     ]
 
     allScriptsLoaded() {
@@ -103,6 +108,7 @@ class BootLoader {
         storageService = new StorageService();
         symbioteStorage = new SymbioteStorage(storageService);
         diceService = new DiceService(storageService);
+        initiativeManager = new InitiativeManager(storageService);
     }
 
     async waitingForInit() {

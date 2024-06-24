@@ -172,3 +172,17 @@ i.icon-dice {
 div.icon-center {
     text-align: center;
 }
+
+.player-npc-rolls-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-npc-rolls-inline label {
+    margin-right: 5px;
+}
+
+.player-npc-rolls-inline input {
+    width: 100px;
+}
