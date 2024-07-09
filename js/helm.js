@@ -293,5 +293,7 @@ function onSyncMessage(event) {
 function onChatMessage(event) {
      console.log("onChatMessage", event);
      helm.parseChatMessage(event);
+    //console.log(TS.urls.createUrlPrefixForThisSymbiote());
+    // talespire://symbiote/AQC_oe3Z+QN+TrOPbPKtZFl7/
     //TS.sync.send("message toll", 'board');
 }

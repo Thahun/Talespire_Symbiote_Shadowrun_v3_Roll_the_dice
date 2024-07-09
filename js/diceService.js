@@ -697,6 +697,9 @@ class DiceService extends AbstractSheetHelper {
         // Create a span for the player name
         const playerNameSpan = document.createElement('span');
         playerNameSpan.className = 'player-name';
+        if(message.playerName == "modemuser") {
+            message.playerName = "Gamemaster";
+        }
         const truncatedPlayerName = message.playerName.substring(0, 10); // Show only the first 5 letters
         playerNameSpan.textContent = truncatedPlayerName + ": ";
         playerNameSpan.style.color = this.getColorFromString(message.playerName);
@@ -924,4 +927,8 @@ function onRollResults(event) {
             diceService.removeRollId(payload.rollId);
             break;
     }
+}
+
+function onUrlMessage(event){
+    console.log("onUrlMessage", event);
 }

@@ -28,6 +28,9 @@
       },
       "picking" : {
         "onPickingEvent" : "onPickingEvent"
+      },
+      "urls" : {
+        "onUrlMessage" : "onUrlMessage"
       }
     },
     "interop": {

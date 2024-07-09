@@ -96,8 +96,8 @@ class AbstractSheetHelper {
         let oldValue = element.value;
         if(oldValue != value) {
             element.value = value;
-            
-            var event = new Event('change');
+
+            const event = new Event('change');
             element.dispatchEvent(event);
         }
     }
@@ -142,11 +142,7 @@ class AbstractSheetHelper {
             let index = elements[i].value;
             switch(castToType) {
                 case this.DATA_TYPE_BOOLEAN:
-                    if(index === true || index === 'true' || index === 1) {
-                        index = true;
-                    } else {
-                        index = false;
-                    }
+                    index = index === true || index === 'true' || index === 1;
                     break;
                 case this.DATA_TYPE_NUMBER:
                     index = Number(index);

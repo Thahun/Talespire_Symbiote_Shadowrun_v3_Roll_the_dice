@@ -6,7 +6,7 @@ class IniAndGmManager {
         this.currentIndex = -1; // Track the current index for "Next" and "Prev"
         this.canGM = false;
         this.selectedEntry = null; // Track the selected initiative entry
-        this.conditionPenalties = { row1: 0, row2: 0 }; // Track the penalties from each row
+        this.conditionPenalties = {row1: 0, row2: 0}; // Track the penalties from each row
         this.init();
     }
 
@@ -26,7 +26,7 @@ class IniAndGmManager {
         this.sendButton = document.getElementById('send-initiative-button');
         this.iniSection = document.getElementById('section-player-npc-rolls');
         this.conditionMonitorSection = document.getElementById('condition-monitor-section');
-       // this.conditionMonitorTitle = document.getElementById('condition-monitor-title');
+        // this.conditionMonitorTitle = document.getElementById('condition-monitor-title');
         this.conditionMonitorName = document.getElementById('condition-monitor-name');
 
         //Iniative Roll Box
@@ -49,7 +49,7 @@ class IniAndGmManager {
         // Add event listeners
         this.addButton.addEventListener('click', () => this.addInitiative());
         this.subtractButton.addEventListener('click', () => this.subtractInitiative());
-        this.infoButton.addEventListener('click', () => this.getCreatureInfo()); // Add info button event
+        this.infoButton.addEventListener('click', () => this.getCreatureInfoForIniList()); // Add info button event
         this.rollButton.addEventListener('click', () => this.showInitiatives());
         this.resetButton.addEventListener('click', () => this.resetInitiativeData()); // Add reset button event
         this.nextButton.addEventListener('click', () => this.nextInitiative());
@@ -122,9 +122,9 @@ class IniAndGmManager {
     }
 
 
-    toggleBodyDiv(targetId){
+    toggleBodyDiv(targetId) {
         const gmBoxContent = document.getElementById(targetId);
-        if(gmBoxContent == null) {
+        if (gmBoxContent == null) {
             console.error("no valid html target: ", targetId);
         }
         if (gmBoxContent.style.display === "none" || gmBoxContent.style.display === "") {
@@ -142,7 +142,6 @@ class IniAndGmManager {
             gmBoxContent.style.display = "none";
         }
     }
-
 
     toggleGMBox() {
         if (this.canGM || isGM) {
@@ -168,7 +167,7 @@ class IniAndGmManager {
         }
     }
 
-     collectRecipients(useOriginal = true) {
+    collectRecipients(useOriginal = true) {
         const recipients = [];
         const breadcrumbContainers = document.querySelectorAll('#gm-box-body .breadcrumb-container');
 
@@ -217,8 +216,7 @@ class IniAndGmManager {
             box.classList.remove('selected');
             this.conditionPenalties[row] = 0; // Remove penalty
         } else {
-            const penalty = this.getPenaltyValue(value);
-            this.conditionPenalties[row] = penalty; // Update penalty for the row
+            this.conditionPenalties[row] = this.getPenaltyValue(value); // Update penalty for the row
 
             // Deselect other boxes in the same row
             const rowBoxes = document.querySelectorAll(`#${row} .box`);
@@ -234,11 +232,16 @@ class IniAndGmManager {
 
     getPenaltyValue(value) {
         switch (value) {
-            case 'L': return -1;
-            case 'M': return -2;
-            case 'S': return -3;
-            case 'T': return -4;
-            default: return 0;
+            case 'L':
+                return -1;
+            case 'M':
+                return -2;
+            case 'S':
+                return -3;
+            case 'T':
+                return -4;
+            default:
+                return 0;
         }
     }
 
@@ -280,8 +283,7 @@ class IniAndGmManager {
             for (let name in initiativeArrays) {
                 if (initiativeArrays[name].length > 0) {
                     roundInitiatives.push({
-                        name: name,
-                        value: initiativeArrays[name].shift()
+                        name: name, value: initiativeArrays[name].shift()
                     });
                     added = true;
                 }
@@ -306,7 +308,7 @@ class IniAndGmManager {
     }
 
     addInitiative(name = '', initiativeString = '', isPlayer = false) {
-        if(name === '' && initiativeString === '') {
+        if (name === '' && initiativeString === '') {
             name = this.nameInput.value.trim();
             initiativeString = this.initiativeInput.value.trim();
         }
@@ -367,20 +369,40 @@ class IniAndGmManager {
             // Use the id to get more information
             let creatureInfo = await TS.creatures.getMoreInfo([creatureId]);
 
-            // Extract and report the name
-            if (creatureInfo.length > 0) {
-                console.log("stableCreatureInfo", creatureInfo);
-                let creatureName = creatureInfo[0].name;
-
-                // Put the name into the input box for a new initiative entry
-                this.nameInput.value = creatureName;
-                this.initiativeInput.value = "1d6+3"; // Add default value
-            } else {
-                console.log("No additional information found for the creature");
-            }
-        } else {
-            console.log("No creature selected");
+            return creatureInfo;
         }
+        return null;
+    }
+
+    async getCreatureInfoForIniList() {
+        // Use the id to get more information
+        let creatureInfo = await this.getCreatureInfo()
+
+        // Extract and report the name
+        if (creatureInfo.length > 0) {
+            const iniAndReaction = this.parseIniDiceAndReaction(creatureInfo[0].stats)
+            console.log("stableCreatureInfo", iniAndReaction);
+            // Put the name into the input box for a new initiative entry
+            this.nameInput.value = creatureInfo[0].name;
+            this.initiativeInput.value = iniAndReaction['iniDice'] + "d6+" + iniAndReaction['reaction']; // Add default value
+        } else {
+            console.log("No additional information found for the creature");
+        }
+    }
+
+    parseIniDiceAndReaction(statsArray) {
+        let iniDice = null;
+        let reaction = null;
+
+        statsArray.forEach(stat => {
+            if (stat.name === "iniDice") {
+                iniDice = stat.value;
+            } else if (stat.name === "Reaction") {
+                reaction = stat.value;
+            }
+        });
+
+        return { iniDice, reaction };
     }
 
     updateOrInsertEntryInList(name, initiativeString, newInitiativeValue) {
@@ -517,7 +539,10 @@ class IniAndGmManager {
     }
 
     updateConditionMonitor() {
-        this.conditionPenalties = { row1: this.selectedEntry.row1Penalty || 0, row2: this.selectedEntry.row2Penalty || 0 };
+        this.conditionPenalties = {
+            row1: this.selectedEntry.row1Penalty || 0,
+            row2: this.selectedEntry.row2Penalty || 0
+        };
 
         this.updateConditionMonitorBoxes('row1', this.conditionPenalties.row1);
         this.updateConditionMonitorBoxes('row2', this.conditionPenalties.row2);
@@ -562,7 +587,7 @@ class IniAndGmManager {
             this.updateInitiativeListDisplay(); // Render loaded initiative data
 
             this.personalInitiativeData = diceSets.personalInitiativeData || [];
-            console.log("PersonalINIDATA:",this.personalInitiativeData);
+            console.log("PersonalINIDATA:", this.personalInitiativeData);
             this.updatePersonalInitiativeInputs();
 
         }
@@ -595,18 +620,18 @@ class IniAndGmManager {
             }
             message += line + '\n';
         });
-       // message += '========================\n';
+        // message += '========================\n';
 
-        if(to.length === 0){
+        if (to.length === 0) {
             to = this.collectRecipients(false);
             console.log("to initiative:", to);
         }
 
-        if(to.length > 0){
-           // helm.sendChatMessage(message, to);
+        if (to.length > 0) {
+            // helm.sendChatMessage(message, to);
             this.sendInitiativeFetchSyncMessage(content, to);
-        } else if (!fromChatCommand){
-           // helm.sendChatMessage(message, ['board']);
+        } else if (!fromChatCommand) {
+            // helm.sendChatMessage(message, ['board']);
             this.sendInitiativeFetchSyncMessage(content, ['board']);
         }
     }
@@ -614,20 +639,18 @@ class IniAndGmManager {
     //Send Inilist as a GM to the players
     sendInitiativeFetchSyncMessage(message, to) {
         const data = {
-            type: 'fetchini',
-            message: message
+            type: 'fetchini', message: message
         };
-        helm.SendSyncMessage( JSON.stringify(data), to);
+        helm.SendSyncMessage(JSON.stringify(data), to);
     }
 
 
     //Send OwnIni as player to GM
     sendOwnInitiativeSyncMessage(message, to) {
         const data = {
-            type: 'setini',
-            message: message
+            type: 'setini', message: message
         };
-        helm.SendSyncMessage( JSON.stringify(data), to);
+        helm.SendSyncMessage(JSON.stringify(data), to);
     }
 
     getNextTurn(name, initiativeData) {
@@ -652,9 +675,9 @@ class IniAndGmManager {
         return "Not in list / no List"; // Return a message if the name is not found
     }
 
-     updateInitiativeListFromSyncMessage(initiativeData) {
+    updateInitiativeListFromSyncMessage(initiativeData) {
         // Ensure the initiativeData is an object and has the expected structure
-         console.log(initiativeData);
+        console.log(initiativeData);
         if (initiativeData && initiativeData.type === "fetchini") {
             //This is the NON-GM ini list
             const initiativeListDiv = document.getElementById('ini-list');
@@ -663,7 +686,7 @@ class IniAndGmManager {
             initiativeListDiv.innerHTML = '';
 
             // Append the new message to the ini-list div
-            if(initiativeData.message){
+            if (initiativeData.message) {
                 initiativeListDiv.innerHTML = initiativeData.message;
             } else {
                 // Create a pre element to display the message with proper formatting
@@ -700,11 +723,23 @@ class IniAndGmManager {
         this.updateConditionMonitor(); // Update condition monitor display
     }
 
-    async pickStats(){
-        let result = await TS.picking.startPicking();
-        //onPickingEvent() gets the payload
+    async getOwnInitiativeFromCreature() {
+        // Use the id to get more information
+        let creatureInfo = await this.getCreatureInfo()
+
+        // Extract and report the name
+        if (creatureInfo.length > 0) {
+            const iniAndReaction = this.parseIniDiceAndReaction(creatureInfo[0].stats)
+            console.log("getOwnInitiativeFromCreature", iniAndReaction);
+            // Put the name into the input box for a new initiative entry
+            this.ownInitiativeName.value = creatureInfo[0].name;
+            this.ownInitiativeValue.value = iniAndReaction['iniDice'] + "d6+" + iniAndReaction['reaction']; // Add default value
+        } else {
+            console.log("No additional information found for the creature");
+        }
     }
 
+    //broken
     async getStatsfromPickedCreature(event) {
         try {
             console.log("getStatsfromPickedCreature", event);
@@ -730,6 +765,6 @@ class IniAndGmManager {
 }
 
 async function onPickingEvent(event) {
-    console.log("onPickingEvent",  event);
+    console.log("onPickingEvent", event);
     //await iniAndGmManager.getStatsfromPickedCreature(event) //broken id from TS :(
 }

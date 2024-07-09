@@ -29,20 +29,6 @@
         <div id="info-timer" class="info-timer" ></div>
     </div>
 
-    <div id="checkbox-container" class="section-grid-container">
-        <!--<div id="gm-mode" class="checkbox-item">
-            <input type="checkbox" value="true" onchange="diceService.toggleGMMode(this.checked);"></input>
-            <label>GM-Modus</label>
-        </div> -->
-        <div id="no-uneeded-explode" class="checkbox-item">
-            <input type="checkbox" value="false" onchange="diceService.toggleNoUnneededExplode(this.checked);">
-            <label>Limit reroll</label>
-        </div>
-        <!--   <div id="ini-manager" class="checkbox-item">
-               <input type="checkbox" id="manage-ini-check" value="true" onchange="initiativeManager.toggleIniManager(this.checked);"></input>
-               <label for="manage-ini-check">Manage-Ini</label>
-           </div> -->
-    </div>
 
     <br/>
 
@@ -149,16 +135,16 @@
             <span class="section-title">Initiative</span>
         </div>
         <div id="section-control-ini" class="section-body">
-            <div class="section-grid-container" style="grid-template-columns: 40px repeat(3,auto) 20px;">
+            <div class="section-grid-container" style="grid-template-columns: 40px repeat(4,auto) 20px;">
                 <div class="grid-item-header-label align-center" style="grid-column-end: span 1;">
                     <label>Roll&Send</label>
                 </div>
                 <div class="grid-item-header-label align-left" style="padding-left:30px;grid-column-end: span 1;">
                     <label>Name</label>
                 </div>
-            <!--    <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
+                <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
                     <label>Picker</label>
-                </div> -->
+                </div>
                 <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
                     <label>Initiative</label>
                 </div>
@@ -178,11 +164,11 @@
                         <input id="ini-name-input" class="field-data-text" type="text" placeholder="<your name>" value="">
                     </label>
                 </div>
-               <!-- <div>
-                    <div id="ini-pick-button" class="grid-item align-center" style="grid-column-end: span 1;" onclick="iniAndGmManager.pickStats()">
+                <div>
+                    <div id="ini-pick-button" class="grid-item align-center" style="grid-column-end: span 1;" onclick="iniAndGmManager.getOwnInitiativeFromCreature()">
                         <i class="icon-dice ts-icon-eyedropper ts-icon-small"></i>
                     </div>
-                </div> -->
+                </div>
                 <div id="ini-value" class="grid-item-data align-left" style="grid-column-end: span 1;">
                     <label>
                         <input id="ini-value-input" class="field-data-medium" type="text" placeholder="XD6+Y" value="">
@@ -193,10 +179,28 @@
             </div>
         </div>
         <div id="section-ini-list" class="section-body">
-            <div id="ini-list">
-                <span>Aktuell kein aktiver Initiative Durchgang.</span>
-            </div>
+
+                <div id="ini-list" class="grid-item-data align-left" style="grid-column-end: span 1;">
+                    <span>Aktuell kein aktiver Initiative Durchgang.</span>
+                </div>
+
          </div>
+    </div>
+
+
+    <div id="checkbox-container" class="section-grid-container">
+        <!--<div id="gm-mode" class="checkbox-item">
+            <input type="checkbox" value="true" onchange="diceService.toggleGMMode(this.checked);"></input>
+            <label>GM-Modus</label>
+        </div> -->
+        <div id="no-uneeded-explode" class="checkbox-item">
+            <input type="checkbox" value="false" onchange="diceService.toggleNoUnneededExplode(this.checked);">
+            <label>Keine unnötigen 6er rerolls.</label>
+        </div>
+        <!--   <div id="ini-manager" class="checkbox-item">
+               <input type="checkbox" id="manage-ini-check" value="true" onchange="initiativeManager.toggleIniManager(this.checked);"></input>
+               <label for="manage-ini-check">Manage-Ini</label>
+           </div> -->
     </div>
 
     <div id="section-dice-sets" class="section">
