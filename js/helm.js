@@ -49,20 +49,19 @@ class Helm {
 
             // Handle different commands using a switch statement
             switch (command) {
-                case "setini!":
-                    console.log("Set initiative command received.", command , body);
-                    let newini = this.parseSetIni(body);
-                    iniAndGmManager.addInitiative(newini.name,newini.initiativeValue);
-                    this.sendChatMessage("Success!! Set Ini: " + newini.name + ' ' + newini.initiativeValue , [message.payload.senderPlayerId]);
-                    break;
-                case "ini!":
-                    console.log("Show initiative command received.", command , body);
-                    iniAndGmManager.sendInitiativeMessage([message.payload.senderPlayerId])
+                // case "setini!":
+                //     console.log("Set initiative command received.", command , body);
+                //     let newini = this.parseSetIni(body);
+                //     iniAndGmManager.addInitiative(newini.name,newini.initiativeValue);
+                //     this.sendChatMessage("Success!! Set Ini: " + newini.name + ' ' + newini.initiativeValue , [message.payload.senderPlayerId]);
+                //     break;
+                case "ri!":
+                    console.log("Roll initiative command received.", command , body);
+                    diceService.rollInitiativeDices();
                     break;
                 case "help!":
                     console.log("help!", command , body);
-                    this.sendChatMessage("Set Ini:     setini! name value  (like 14 or 2D6+5)\n " +
-                        "Show ini:     ini!", [message.payload.senderPlayerId]);
+                    this.sendChatMessage("Roll ini:  ri!", [message.payload.senderPlayerId]);
                     break;
                 default:
                     console.log("Chat message received but no action triggered:", body);

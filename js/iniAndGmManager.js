@@ -369,6 +369,7 @@ class IniAndGmManager {
 
             // Extract and report the name
             if (creatureInfo.length > 0) {
+                console.log("stableCreatureInfo", creatureInfo);
                 let creatureName = creatureInfo[0].name;
 
                 // Put the name into the input box for a new initiative entry
@@ -583,7 +584,6 @@ class IniAndGmManager {
         }
     }
 
-
     sendInitiativeMessage(to = [], fromChatCommand = false) {
         const content = this.textarea.innerHTML;
 
@@ -699,5 +699,37 @@ class IniAndGmManager {
 
         this.updateConditionMonitor(); // Update condition monitor display
     }
+
+    async pickStats(){
+        let result = await TS.picking.startPicking();
+        //onPickingEvent() gets the payload
+    }
+
+    async getStatsfromPickedCreature(event) {
+        try {
+            console.log("getStatsfromPickedCreature", event);
+
+            // Ensure event.payload and event.payload.idOfPicked are defined
+            if (!event.payload || !event.payload.idOfPicked) {
+                console.error("Invalid event payload or idOfPicked missing", event.payload);
+                return;
+            }
+
+            let creatureInfo = await TS.creatures.getMoreInfo([event.payload.idOfPicked]); //this id is not the right creature id :( picking does not work
+
+            // Check if creatureInfo is not empty
+            if (creatureInfo.length > 0) {
+                console.log("pickINFO", creatureInfo);
+            } else {
+                console.log("No additional information found for the creature with ID:", event.payload.idOfPicked);
+            }
+        } catch (error) {
+            console.error("Error getting stats from picked creature:", error);
+        }
+    }
 }
 
+async function onPickingEvent(event) {
+    console.log("onPickingEvent",  event);
+    //await iniAndGmManager.getStatsfromPickedCreature(event) //broken id from TS :(
+}

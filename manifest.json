@@ -25,6 +25,9 @@
       },
       "chat" : {
         "onChatMessage" : "onChatMessage"
+      },
+      "picking" : {
+        "onPickingEvent" : "onPickingEvent"
       }
     },
     "interop": {
