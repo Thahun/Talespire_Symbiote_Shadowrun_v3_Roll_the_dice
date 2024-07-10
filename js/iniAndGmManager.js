@@ -1,4 +1,11 @@
+/**
+ * Class representing an initiative and GM manager.
+ */
 class IniAndGmManager {
+    /**
+     * Create an instance of IniAndGmManager.
+     * @param {Object} storage - The storage object to persist data.
+     */
     constructor(storage) {
         this.initiativeData = [];
         this.personalInitiativeData = [];
@@ -6,10 +13,13 @@ class IniAndGmManager {
         this.currentIndex = -1; // Track the current index for "Next" and "Prev"
         this.canGM = false;
         this.selectedEntry = null; // Track the selected initiative entry
-        this.conditionPenalties = {row1: 0, row2: 0}; // Track the penalties from each row
+        this.conditionPenalties = { row1: 0, row2: 0 }; // Track the penalties from each row
         this.init();
     }
 
+    /**
+     * Initialize the manager by setting up elements, event listeners, and loading data.
+     */
     async init() {
         // Get elements
         this.nameInput = document.getElementById('player-npc-rolls-name');
@@ -29,14 +39,13 @@ class IniAndGmManager {
         // this.conditionMonitorTitle = document.getElementById('condition-monitor-title');
         this.conditionMonitorName = document.getElementById('condition-monitor-name');
 
-        //Iniative Roll Box
+        // Initiative Roll Box
         this.ownInitiativeName = document.getElementById('ini-name-input');
         this.ownInitiativeValue = document.getElementById('ini-value-input');
         this.ownInitiativeTurnMeter = document.getElementById('ini-current-value');
 
-        //GM Box
+        // GM Box
         this.GmBox = document.getElementById('gm-box');
-//        this.throwType = document.getElementById('throw-type');
         this.throwType = document.querySelector('input[name="throw-type"]:checked');
         this.throwName = document.getElementById('throw-name-input');
         this.throwMW = document.getElementById('throw-mw-input');
@@ -44,7 +53,6 @@ class IniAndGmManager {
         this.throwDmg = document.getElementById('throw-dmg-input');
         this.throwBullets = document.getElementById('throw-bullets-input');
         this.GMsendButton = document.getElementById('send-throw-button');
-
 
         // Add event listeners
         this.addButton.addEventListener('click', () => this.addInitiative());
@@ -55,12 +63,10 @@ class IniAndGmManager {
         this.nextButton.addEventListener('click', () => this.nextInitiative());
         this.prevButton.addEventListener('click', () => this.prevInitiative());
         this.sendButton.addEventListener('click', () => this.sendInitiativeMessage());
-
         this.addConditionMonitorEventListeners();
 
-        //GM
+        // GM
         this.GMsendButton.addEventListener('click', () => this.sendThrow());
-
 
         let retriesDelaySeconds = 1;
         let retriesMax = 10;
@@ -81,14 +87,19 @@ class IniAndGmManager {
         let userDetails = await TS.players.getMoreInfo([user.id]);
         this.canGM = userDetails[0].rights.canGm; // to test set this true if you are no GM
 
-        //Ini Box
+        // Ini Box
         this.toggleIniManager();
 
-        //GM Box
+        // GM Box
         this.toggleGMBox();
         await helm.displayConnected();
     }
 
+    /**
+     * Toggles the red border on input elements if they are empty.
+     * @param {boolean} toggle - Whether to toggle the red border on or off.
+     * @param {...string} elementIds - The IDs of the elements to toggle.
+     */
     toggleRedBorderIfEmpty(toggle, ...elementIds) {
         elementIds.forEach(id => {
             const element = document.getElementById(id);
@@ -104,6 +115,10 @@ class IniAndGmManager {
         });
     }
 
+    /**
+     * Toggles the resize of an element by cycling through predefined heights.
+     * @param {string} targetId - The ID of the target element.
+     */
     toggleResize(targetId) {
         const htmlElement = document.getElementById(targetId);
         if (htmlElement) {
@@ -121,7 +136,10 @@ class IniAndGmManager {
         }
     }
 
-
+    /**
+     * Toggles the visibility of a specified div.
+     * @param {string} targetId - The ID of the target div.
+     */
     toggleBodyDiv(targetId) {
         const gmBoxContent = document.getElementById(targetId);
         if (gmBoxContent == null) {
@@ -134,6 +152,9 @@ class IniAndGmManager {
         }
     }
 
+    /**
+     * Toggles the visibility of the GM box content.
+     */
     toggleGMBoxBody() {
         const gmBoxContent = document.getElementById('gm-box-content');
         if (gmBoxContent.style.display === "none" || gmBoxContent.style.display === "") {
@@ -143,12 +164,18 @@ class IniAndGmManager {
         }
     }
 
+    /**
+     * Toggles the visibility of the GM box if the user can GM.
+     */
     toggleGMBox() {
         if (this.canGM || isGM) {
             this.GmBox.style.display = 'block';
         }
     }
 
+    /**
+     * Sends a throw message.
+     */
     sendThrow() {
         const to = this.collectRecipients();
         const throwData = this.collectThrowData();
@@ -167,6 +194,11 @@ class IniAndGmManager {
         }
     }
 
+    /**
+     * Collects the recipients from the selected breadcrumbs.
+     * @param {boolean} [useOriginal=true] - Whether to use the original breadcrumb or the chatID breadcrumb.
+     * @returns {Array} An array of recipient IDs.
+     */
     collectRecipients(useOriginal = true) {
         const recipients = [];
         const breadcrumbContainers = document.querySelectorAll('#gm-box-body .breadcrumb-container');
@@ -181,7 +213,10 @@ class IniAndGmManager {
         return recipients; // Return the recipients as an array
     }
 
-
+    /**
+     * Collects throw data from the input fields.
+     * @returns {Object} The collected throw data.
+     */
     collectThrowData() {
         // Refresh state
         this.throwType = document.querySelector('input[name="throw-type"]:checked');
@@ -196,11 +231,18 @@ class IniAndGmManager {
         };
     }
 
-
+    /**
+     * Sleeps for a specified number of milliseconds.
+     * @param {number} ms - The number of milliseconds to sleep.
+     * @returns {Promise} A promise that resolves after the specified time.
+     */
     async sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    /**
+     * Adds event listeners for the condition monitor boxes.
+     */
     addConditionMonitorEventListeners() {
         const boxes = document.querySelectorAll('.condition-monitor-grid .box');
         boxes.forEach(box => {
@@ -208,6 +250,10 @@ class IniAndGmManager {
         });
     }
 
+    /**
+     * Toggles the selected state of a condition monitor box and updates penalties.
+     * @param {HTMLElement} box - The clicked box element.
+     */
     toggleConditionBox(box) {
         const row = box.id.split('-')[0]; // Determine row (row1 or row2)
         const value = box.innerText; // Get box value (L, M, S, T or empty)
@@ -230,6 +276,11 @@ class IniAndGmManager {
         this.updateInitiativeWithCondition();
     }
 
+    /**
+     * Gets the penalty value for a given condition box value.
+     * @param {string} value - The value of the condition box.
+     * @returns {number} The penalty value.
+     */
     getPenaltyValue(value) {
         switch (value) {
             case 'L':
@@ -245,6 +296,9 @@ class IniAndGmManager {
         }
     }
 
+    /**
+     * Updates the initiative with the condition penalties.
+     */
     updateInitiativeWithCondition() {
         if (this.selectedEntry) {
             const totalPenalty = this.conditionPenalties.row1 + this.conditionPenalties.row2;
@@ -256,6 +310,10 @@ class IniAndGmManager {
         }
     }
 
+    /**
+     * Updates the initiative list display and optionally syncs the data.
+     * @param {boolean} [AutoSync=true] - Whether to automatically sync the data.
+     */
     updateInitiativeListDisplay(AutoSync = true) {
         let tempInitiativeData = JSON.parse(JSON.stringify(this.initiativeData)); // Deep copy to avoid mutating original data
         let initiativeArrays = {};
@@ -307,6 +365,12 @@ class IniAndGmManager {
         }
     }
 
+    /**
+     * Adds an initiative entry to the list.
+     * @param {string} [name=''] - The name of the entry.
+     * @param {string} [initiativeString=''] - The initiative string.
+     * @param {boolean} [isPlayer=false] - Whether the entry is for a player.
+     */
     addInitiative(name = '', initiativeString = '', isPlayer = false) {
         if (name === '' && initiativeString === '') {
             name = this.nameInput.value.trim();
@@ -335,14 +399,22 @@ class IniAndGmManager {
                 this.updateOrInsertEntryInList(name, initiativeString, existingEntry ? existingEntry.originalInitiative : newEntry.originalInitiative);
             }
         } else {
-            alert('Please enter valid name and initiative.'); //Todo: Ändern
+            alert('Please enter valid name and initiative.');
         }
     }
 
+    /**
+     * Gets the total penalty for a given entry.
+     * @param {Object} entry - The initiative entry.
+     * @returns {number} The total penalty for the entry.
+     */
     getTotalPenaltyForEntry(entry) {
         return (entry.row1Penalty || 0) + (entry.row2Penalty || 0);
     }
 
+    /**
+     * Subtracts an initiative entry from the list.
+     */
     subtractInitiative() {
         const name = this.nameInput.value.trim();
 
@@ -361,19 +433,24 @@ class IniAndGmManager {
         }
     }
 
+    /**
+     * Retrieves information about a selected creature.
+     * @returns {Promise<Object|null>} The creature information or null if not found.
+     */
     async getCreatureInfo() {
         let info = await TS.creatures.getSelectedCreatures();
         if (info.length > 0) {
             let creatureId = info[0].id;
 
             // Use the id to get more information
-            let creatureInfo = await TS.creatures.getMoreInfo([creatureId]);
-
-            return creatureInfo;
+            return await TS.creatures.getMoreInfo([creatureId]);
         }
         return null;
     }
 
+    /**
+     * Retrieves creature information for the initiative list and updates the input fields.
+     */
     async getCreatureInfoForIniList() {
         // Use the id to get more information
         let creatureInfo = await this.getCreatureInfo()
@@ -390,6 +467,11 @@ class IniAndGmManager {
         }
     }
 
+    /**
+     * Parses initiative dice and reaction values from a stats array.
+     * @param {Array} statsArray - The stats array to parse.
+     * @returns {Object} An object containing iniDice and reaction values.
+     */
     parseIniDiceAndReaction(statsArray) {
         let iniDice = null;
         let reaction = null;
@@ -405,6 +487,12 @@ class IniAndGmManager {
         return { iniDice, reaction };
     }
 
+    /**
+     * Updates or inserts an entry in the initiative list.
+     * @param {string} name - The name of the entry.
+     * @param {string} initiativeString - The initiative string.
+     * @param {number} newInitiativeValue - The new initiative value.
+     */
     updateOrInsertEntryInList(name, initiativeString, newInitiativeValue) {
         // Update the initiative data and re-sort it
         const entry = this.initiativeData.find(data => data.name === name);
@@ -420,6 +508,12 @@ class IniAndGmManager {
         this.updateInitiativeListDisplay(false);
     }
 
+    /**
+     * Rolls dice based on a dice string (e.g., "2d6+4").
+     * @param {string} diceString - The dice string to roll.
+     * @returns {number} The total rolled value.
+     * @throws {TypeError} If the dice string is not a string.
+     */
     rollDice(diceString) {
         if (typeof diceString !== 'string') {
             console.error('Invalid dice string:', diceString);
@@ -444,6 +538,9 @@ class IniAndGmManager {
         return total;
     }
 
+    /**
+     * Shows the calculated initiatives for all entries.
+     */
     showInitiatives() {
         // Calculate initiatives for all entries
         this.initiativeData.forEach(data => {
@@ -455,6 +552,9 @@ class IniAndGmManager {
         this.currentIndex = -1; // Reset the current index
     }
 
+    /**
+     * Resets the initiative data and updates the display.
+     */
     resetInitiativeData() {
         // Save the state of checked breadcrumbs
         const checkedBreadcrumbs = this.initiativeData
@@ -481,7 +581,9 @@ class IniAndGmManager {
         this.persistInitiativeData();
     }
 
-
+    /**
+     * Moves to the next initiative in the list.
+     */
     nextInitiative() {
         const lines = this.textarea.innerHTML.split('<br>');
         if (this.currentIndex < lines.length - 1) {
@@ -490,11 +592,18 @@ class IniAndGmManager {
         }
     }
 
+    /**
+     * Moves to the previous initiative in the list.
+     */
     prevInitiative() {
         this.currentIndex = -1;
         this.updateTextarea(this.textarea.innerHTML.split('<br>'));
     }
 
+    /**
+     * Updates the textarea display with the current initiative data.
+     * @param {Array} lines - The lines of initiative data.
+     */
     updateTextarea(lines) {
         const updatedLines = lines.map((line, index) => {
             if (this.currentIndex === -1) {
@@ -509,6 +618,10 @@ class IniAndGmManager {
         this.sendInitiativeMessage(['board']);
     }
 
+    /**
+     * Adds a breadcrumb for the initiative entry.
+     * @param {string} name - The name of the entry.
+     */
     addIniBreadcrumb(name) {
         const breadcrumb = document.createElement('div');
         breadcrumb.className = 'breadcrumb';
@@ -520,6 +633,9 @@ class IniAndGmManager {
         this.breadcrumbsContainer.appendChild(breadcrumb);
     }
 
+    /**
+     * Updates the initiative breadcrumbs display.
+     */
     updateIniBreadcrumbs() {
         this.breadcrumbsContainer.innerHTML = '';
         this.initiativeData.forEach(data => {
@@ -527,6 +643,10 @@ class IniAndGmManager {
         });
     }
 
+    /**
+     * Loads the initiative entry into the input fields.
+     * @param {string} name - The name of the entry to load.
+     */
     loadInitiative(name) {
         const entry = this.initiativeData.find(data => data.name === name);
         if (entry) {
@@ -538,6 +658,9 @@ class IniAndGmManager {
         this.showConditionMonitor(name); // Show the condition monitor when a breadcrumb is clicked
     }
 
+    /**
+     * Updates the condition monitor with the penalties for the selected entry.
+     */
     updateConditionMonitor() {
         this.conditionPenalties = {
             row1: this.selectedEntry.row1Penalty || 0,
@@ -548,6 +671,11 @@ class IniAndGmManager {
         this.updateConditionMonitorBoxes('row2', this.conditionPenalties.row2);
     }
 
+    /**
+     * Updates the condition monitor boxes for a specific row.
+     * @param {string} row - The row to update (e.g., "row1").
+     * @param {number} penalty - The penalty value to apply.
+     */
     updateConditionMonitorBoxes(row, penalty) {
         const rowBoxes = document.querySelectorAll(`.${row} .box`);
         rowBoxes.forEach(box => {
@@ -562,11 +690,17 @@ class IniAndGmManager {
         });
     }
 
+    /**
+     * Clears the input fields.
+     */
     clearInputs() {
         this.nameInput.value = '';
         this.initiativeInput.value = '';
     }
 
+    /**
+     * Persists the initiative data to storage.
+     */
     persistInitiativeData() {
         let diceSets = this.storage.getStorageAsObject();
         diceSets.initiativeData = this.initiativeData;
@@ -575,7 +709,9 @@ class IniAndGmManager {
         symbioteStorage.persist();
     }
 
-
+    /**
+     * Loads the initiative data from storage and updates the display.
+     */
     loadInitiativeData() {
         let diceSets = this.storage.getStorageAsObject();
         if (diceSets instanceof DiceSetsDTO) {
@@ -589,11 +725,13 @@ class IniAndGmManager {
             this.personalInitiativeData = diceSets.personalInitiativeData || [];
             console.log("PersonalINIDATA:", this.personalInitiativeData);
             this.updatePersonalInitiativeInputs();
-
         }
         this.updateIniBreadcrumbs();
     }
 
+    /**
+     * Updates the personal initiative inputs with the loaded data.
+     */
     updatePersonalInitiativeInputs() {
         if (this.personalInitiativeData && Array.isArray(this.personalInitiativeData) && this.personalInitiativeData.length === 2) {
             const [name, initiativeValue] = this.personalInitiativeData;
@@ -609,10 +747,15 @@ class IniAndGmManager {
         }
     }
 
+    /**
+     * Sends the initiative message to specified recipients.
+     * @param {Array} [to=[]] - The recipients of the message.
+     * @param {boolean} [fromChatCommand=false] - Whether the message is from a chat command.
+     */
     sendInitiativeMessage(to = [], fromChatCommand = false) {
         const content = this.textarea.innerHTML;
 
-        const lines = this.textarea.innerHTML.split('<br>'); //todo: lines directly
+        const lines = this.textarea.innerHTML.split('<br>');
         let message = 'Initiative:\n========================\n';
         lines.forEach(line => {
             if (line.startsWith('<s>') && line.endsWith('</s>')) {
@@ -636,7 +779,11 @@ class IniAndGmManager {
         }
     }
 
-    //Send Inilist as a GM to the players
+    /**
+     * Sends the initiative fetch sync message.
+     * @param {string} message - The message content.
+     * @param {Array} to - The recipients of the message.
+     */
     sendInitiativeFetchSyncMessage(message, to) {
         const data = {
             type: 'fetchini', message: message
@@ -644,8 +791,11 @@ class IniAndGmManager {
         helm.SendSyncMessage(JSON.stringify(data), to);
     }
 
-
-    //Send OwnIni as player to GM
+    /**
+     * Sends the own initiative sync message.
+     * @param {string} message - The message content.
+     * @param {Array} to - The recipients of the message.
+     */
     sendOwnInitiativeSyncMessage(message, to) {
         const data = {
             type: 'setini', message: message
@@ -653,6 +803,12 @@ class IniAndGmManager {
         helm.SendSyncMessage(JSON.stringify(data), to);
     }
 
+    /**
+     * Gets the next turn for a specified name from the initiative data.
+     * @param {string} name - The name to search for.
+     * @param {Object} initiativeData - The initiative data object.
+     * @returns {string} A message indicating the next turn status.
+     */
     getNextTurn(name, initiativeData) {
         console.log("getNextTurn:", name, initiativeData);
         if (initiativeData.type !== "fetchini") {
@@ -675,11 +831,15 @@ class IniAndGmManager {
         return "Not in list / no List"; // Return a message if the name is not found
     }
 
+    /**
+     * Updates the initiative list from a sync message.
+     * @param {Object} initiativeData - The initiative data object.
+     */
     updateInitiativeListFromSyncMessage(initiativeData) {
         // Ensure the initiativeData is an object and has the expected structure
         console.log(initiativeData);
         if (initiativeData && initiativeData.type === "fetchini") {
-            //This is the NON-GM ini list
+            // This is the NON-GM ini list
             const initiativeListDiv = document.getElementById('ini-list');
 
             // Clear the previous content
@@ -694,7 +854,7 @@ class IniAndGmManager {
                 messageSpan.textContent = 'Aktuell kein aktiver Initiative Durchgang.';
                 initiativeListDiv.appendChild(messageSpan);
             }
-            //Update TurnMeter
+            // Update TurnMeter
             const name = this.ownInitiativeName.value;
             this.ownInitiativeTurnMeter.innerHTML = this.getNextTurn(name, initiativeData);
         } else {
@@ -702,13 +862,19 @@ class IniAndGmManager {
         }
     }
 
-
+    /**
+     * Toggles the initiative manager visibility if the user can GM.
+     */
     toggleIniManager() {
         if (this.canGM || isGM) {
             this.iniSection.style.display = 'block';
         }
     }
 
+    /**
+     * Shows the condition monitor for a specified name.
+     * @param {string} name - The name to show in the condition monitor.
+     */
     showConditionMonitor(name) {
         this.conditionMonitorName.innerText = name;
         this.conditionMonitorSection.style.display = 'block';
@@ -723,6 +889,9 @@ class IniAndGmManager {
         this.updateConditionMonitor(); // Update condition monitor display
     }
 
+    /**
+     * Retrieves the own initiative from a creature and updates the input fields.
+     */
     async getOwnInitiativeFromCreature() {
         // Use the id to get more information
         let creatureInfo = await this.getCreatureInfo()
@@ -733,13 +902,16 @@ class IniAndGmManager {
             console.log("getOwnInitiativeFromCreature", iniAndReaction);
             // Put the name into the input box for a new initiative entry
             this.ownInitiativeName.value = creatureInfo[0].name;
-            this.ownInitiativeValue.value = iniAndReaction['iniDice'] + "d6+" + iniAndReaction['reaction']; // Add default value
+            this.ownInitiativeValue.value = iniAndReaction['iniDice'] + "d6+" + iniAndReaction['reaction'];
         } else {
             console.log("No additional information found for the creature");
         }
     }
 
-    //broken
+    /**
+     * Retrieves stats from a picked creature based on the event.
+     * @param {Object} event - The event object containing the picked creature information.
+     */
     async getStatsfromPickedCreature(event) {
         try {
             console.log("getStatsfromPickedCreature", event);
@@ -750,7 +922,7 @@ class IniAndGmManager {
                 return;
             }
 
-            let creatureInfo = await TS.creatures.getMoreInfo([event.payload.idOfPicked]); //this id is not the right creature id :( picking does not work
+            let creatureInfo = await TS.creatures.getMoreInfo([event.payload.idOfPicked]); // this id is not the right creature id :( picking does not work
 
             // Check if creatureInfo is not empty
             if (creatureInfo.length > 0) {
@@ -764,7 +936,11 @@ class IniAndGmManager {
     }
 }
 
+/**
+ * Handles the picking event and retrieves stats from the picked creature.
+ * @param {Object} event - The event object containing the picked creature information.
+ */
 async function onPickingEvent(event) {
     console.log("onPickingEvent", event);
-    //await iniAndGmManager.getStatsfromPickedCreature(event) //broken id from TS :(
+    // await iniAndGmManager.getStatsfromPickedCreature(event) // broken id from TS :(
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-    <title>Shadowrun v3 - Roll the dice</title>
+    <title>Shadowrun v3.01D - Roll the dice</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/sheet.css">
@@ -20,15 +20,13 @@
 
 <div id="content">
     <div class="ts-icon-refresh symbiote-reload" onclick="location.reload();"></div>
-
-    <div id="info" class="sticky-header" style="display: none">
-        <span class="info-label">Hinweis:</span>
-        <span id="info-message" class="info-message">None</span>
-        <button id="info-button" style="display:none">Use Karma</button>
-        <div class="info-close" onclick="info.hide()">X</div>
-        <div id="info-timer" class="info-timer" ></div>
-    </div>
-
+        <div id="info" class="sticky-header" style="display: none">
+            <span class="info-label">Hinweis:</span>
+            <span id="info-message" class="info-message">None</span>
+            <button id="info-button" style="display:none">Use Karma</button>
+            <div class="info-close" onclick="info.hide()">X</div>
+            <div id="info-timer" class="info-timer" ></div>
+        </div>
 
     <br/>
 
@@ -36,7 +34,6 @@
         <div class="section-header" onclick="iniAndGmManager.toggleGMBoxBody()">
             <span class="section-title">GM-Box</span>
         </div>
-
         <div id="gm-box-content">
             <div class="section-body">
                 <div class="section-body-throw" id="gm-box-body">
@@ -66,7 +63,6 @@
                     <div class="grid-item-header-label" style="grid-column-end: span 1;">
                         <label>Geschosse</label>
                     </div>
-
                     <div class="grid-item" style="grid-column-end: span 1;">
                         &nbsp;
                     </div>
@@ -85,7 +81,6 @@
                             <label for="throw-type-open">Open</label>
                         </div>
                     </div>
-
                     <div id="throw-name" class="grid-item-data align-left" style="grid-column-end: span 1;">
                         <label>
                             <input id="throw-name-input" class="field-data-medium" type="text" value="">
@@ -128,7 +123,6 @@
             </div>
         </div>
     </div>
-
 
     <div id="section-ini-roller" class="section">
         <div class="section-header" onclick="iniAndGmManager.toggleBodyDiv('section-control-ini')">
@@ -179,14 +173,11 @@
             </div>
         </div>
         <div id="section-ini-list" class="section-body">
-
-                <div id="ini-list" class="grid-item-data align-left" style="grid-column-end: span 1;">
-                    <span>Aktuell kein aktiver Initiative Durchgang.</span>
-                </div>
-
+            <div id="ini-list" class="grid-item-data align-left" style="grid-column-end: span 1;">
+                <span>Aktuell kein aktiver Initiative Durchgang.</span>
+            </div>
          </div>
     </div>
-
 
     <div id="checkbox-container" class="section-grid-container">
         <!--<div id="gm-mode" class="checkbox-item">
@@ -209,7 +200,6 @@
         </div>
         <div id="dice-sets-body" class="section-body">
             <div class="section-grid-container" style="grid-template-columns: 40px repeat(5,auto) 20px;">
-
                 <div class="grid-item" style="grid-column-end: span 1;">
                     &nbsp;
                 </div>
@@ -231,7 +221,6 @@
                 <div class="grid-item" style="grid-column-end: span 1;">
                     &nbsp;
                 </div>
-
                 <div id="dice-sets-add-row" class="grid-item" style="grid-column-end: span 6;">
                     &nbsp;
                 </div>
@@ -267,7 +256,6 @@
                 <div class="grid-item" style="grid-column-end: span 1;">
                     &nbsp;
                 </div>
-
                 <div id="defence-dice-sets-add-row" class="grid-item" style="grid-column-end: span 5;">
                     &nbsp;
                 </div>
