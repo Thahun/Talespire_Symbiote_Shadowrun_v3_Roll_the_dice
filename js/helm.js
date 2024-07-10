@@ -1,12 +1,21 @@
+/**
+ * The Helm class provides various functionalities for handling chat and sync messages,
+ * managing GM box, and communicating with TaleSpire sync and chat services.
+ */
 class Helm {
     constructor() {
         console.log("Hello Helm!");
 
+        // Initialize GM box and connect breadcrumbs
         this.GmBox = document.getElementById('gm-box-body');
         this.ConnectBreadcrumb = document.querySelectorAll('.breadcrumb');
-
     }
 
+    /**
+     * Parses a 'setini!' command from the message body.
+     * @param {string} body - The message body containing the command.
+     * @returns {Object|null} Parsed object containing name and initiativeValue or null if invalid.
+     */
     parseSetIni(body) {
         const parts = body.trim().split(' ');
 
@@ -39,6 +48,10 @@ class Helm {
         return { name, initiativeValue };
     }
 
+    /**
+     * Parses incoming chat messages and triggers appropriate actions based on the command.
+     * @param {Object} message - The chat message object.
+     */
     parseChatMessage(message) {
         // Ensure the message is an object and has the expected structure
         if (message && message.kind === "chatMessageReceived" && message.payload) {
@@ -49,18 +62,12 @@ class Helm {
 
             // Handle different commands using a switch statement
             switch (command) {
-                // case "setini!":
-                //     console.log("Set initiative command received.", command , body);
-                //     let newini = this.parseSetIni(body);
-                //     iniAndGmManager.addInitiative(newini.name,newini.initiativeValue);
-                //     this.sendChatMessage("Success!! Set Ini: " + newini.name + ' ' + newini.initiativeValue , [message.payload.senderPlayerId]);
-                //     break;
                 case "ri!":
-                    console.log("Roll initiative command received.", command , body);
+                    console.log("Roll initiative command received.", command, body);
                     diceService.rollInitiativeDices();
                     break;
                 case "help!":
-                    console.log("help!", command , body);
+                    console.log("Help command received.", command, body);
                     this.sendChatMessage("Roll ini:  ri!", [message.payload.senderPlayerId]);
                     break;
                 default:
@@ -72,9 +79,12 @@ class Helm {
         }
     }
 
-
+    /**
+     * Parses incoming sync messages and triggers appropriate actions based on the message type.
+     * @param {Object} message - The sync message object.
+     */
     parseSyncMessage(message) {
-        console.log("parseSync message", message);
+        console.log("parseSyncMessage", message);
         // Ensure the message is an object and has the expected structure
         if (message && message.kind === "syncMessageReceived" && message.payload) {
             const { str, fromClient } = message.payload;
@@ -93,7 +103,6 @@ class Helm {
 
                 // Check the type and trigger the corresponding function
                 if (payloadData.type) {
-
                     switch (payloadData.type) {
                         case "off":
                             info.show("The GM Sent you a throw!: " + payloadData.name);
@@ -113,7 +122,7 @@ class Helm {
                             this.handleDiceLog(payloadData);
                             break;
                         case "setini":
-                            if(iniAndGmManager.canGM) {
+                            if (iniAndGmManager.canGM) {
                                 console.log("setini:", payloadData);
                                 this.handleSetiniType(payloadData);
                             }
@@ -135,6 +144,11 @@ class Helm {
             console.error("Invalid message structure:", message);
         }
     }
+
+    /**
+     * Handles the 'setini' type messages.
+     * @param {Object} payload - The message payload containing the type and message.
+     */
     handleSetiniType(payload) {
         if (payload && payload.type === "setini" && Array.isArray(payload.message)) {
             const [namePart, initiativeValue] = payload.message;
@@ -149,7 +163,6 @@ class Helm {
             if (name && !isNaN(initiative)) {
                 console.log("Name:", name);
                 console.log("Initiative:", initiative);
-                // Add further handling logic here if needed
                 iniAndGmManager.addInitiative(name, initiative.toString());
             } else {
                 console.error("Invalid payload message format:", payload.message);
@@ -159,28 +172,47 @@ class Helm {
         }
     }
 
-
+    /**
+     * Handles the 'off' type messages.
+     * @param {Object} payload - The message payload containing the dice set information.
+     */
     handleOffType(payload) {
         console.log("Handling OFF type:", payload);
-        diceService.sectionDiceSets.addDiceSet(payload.name,payload.mw, payload.amount, payload.dmg, payload.bullets, true);
+        diceService.sectionDiceSets.addDiceSet(payload.name, payload.mw, payload.amount, payload.dmg, payload.bullets, true);
     }
 
+    /**
+     * Handles the 'open' type messages.
+     * @param {Object} payload - The message payload containing the dice set information.
+     */
     handleOpenType(payload) {
         console.log("Handling OPEN type:", payload);
-        diceService.sectionDiceSets.addDiceSet(payload.name,0, payload.amount, "-", 1, true);
+        diceService.sectionDiceSets.addDiceSet(payload.name, 0, payload.amount, "-", 1, true);
     }
 
+    /**
+     * Handles the 'dev' type messages.
+     * @param {Object} payload - The message payload containing the dice set information.
+     */
     handleDevType(payload) {
         console.log("Handling DEV type:", payload);
-        diceService.sectionDiceSets.addDefenceDiceSet(payload.name,payload.mw, payload.amount, payload.dmg,true);
+        diceService.sectionDiceSets.addDefenceDiceSet(payload.name, payload.mw, payload.amount, payload.dmg, true);
     }
 
+    /**
+     * Handles the 'dicelog' type messages.
+     * @param {Object} payload - The message payload containing the log information.
+     */
     handleDiceLog(payload) {
         console.log("Handling LOG type:", payload);
         diceService.addMessageToLog(payload);
-
     }
 
+    /**
+     * Sends a sync message to specified recipients.
+     * @param {string} message - The message to be sent.
+     * @param {Array} to - The recipients of the message.
+     */
     SendSyncMessage(message, to) {
         console.log("sync message", message);
         try {
@@ -188,7 +220,7 @@ class Helm {
                 TS.sync.send(message, "board");
             } else {
                 to.forEach(recipient => {
-                    console.log("sync rec",recipient);
+                    console.log("sync rec", recipient);
                     TS.sync.send(message, recipient);
                 });
             }
@@ -197,6 +229,11 @@ class Helm {
         }
     }
 
+    /**
+     * Sends a chat message to specified recipients.
+     * @param {string} message - The chat message to be sent.
+     * @param {Array} to - The recipients of the message.
+     */
     sendChatMessage(message, to) {
         console.log("chat message", message, "TOs", to);
         try {
@@ -213,10 +250,13 @@ class Helm {
         }
     }
 
+    /**
+     * Displays connected clients in the GM box.
+     */
     async displayConnected() {
         try {
             const clients = await this.fetchConnectedClients();
-            clients.unshift({ id: "board", name: "board",playerId: "board" }); // Add "board" as the first item
+            clients.unshift({ id: "board", name: "board", playerId: "board" }); // Add "board" as the first item
             console.log("Client names:", clients);
             this.displayClientNames(clients);
         } catch (error) {
@@ -224,10 +264,15 @@ class Helm {
         }
     }
 
+    /**
+     * Fetches the list of connected clients from TaleSpire.
+     * @returns {Array} The list of connected clients.
+     * @throws Will throw an error if fetching clients fails.
+     */
     async fetchConnectedClients() {
         try {
             const clients = await TS.sync.getClientsConnected();
-            console.log("rawclients", clients);
+            console.log("raw clients", clients);
 
             const clientNames = clients.map(client => ({
                 id: client.id,
@@ -242,8 +287,11 @@ class Helm {
         }
     }
 
-
-     displayClientNames(clients) {
+    /**
+     * Displays the list of client names in the GM box.
+     * @param {Array} clients - The list of clients to be displayed.
+     */
+    displayClientNames(clients) {
         this.GmBox.innerHTML = ''; // Clear previous content
 
         clients.forEach(client => {
@@ -260,13 +308,11 @@ class Helm {
             hiddenInput.type = 'hidden';
             hiddenInput.value = client.id;
             hiddenInput.name = `breadcrumb-${client.name}`;
-           // hiddenInput.id = `breadcrumb-${client.name}`;
 
             const hiddenInputPlayerChatId = document.createElement('input');
             hiddenInputPlayerChatId.type = 'hidden';
             hiddenInputPlayerChatId.value = client.playerId;
             hiddenInputPlayerChatId.name = `breadcrumb-chatID-${client.name}`;
-          //  hiddenInputPlayerChatId.id = `breadcrumb-chatID-${client.name}`;
 
             breadcrumb.onclick = () => this.toggleBreadcrumbSelection(breadcrumb);
 
@@ -278,22 +324,29 @@ class Helm {
         });
     }
 
+    /**
+     * Toggles the selection state of a breadcrumb.
+     * @param {HTMLElement} breadcrumb - The breadcrumb element to toggle.
+     */
     toggleBreadcrumbSelection(breadcrumb) {
         breadcrumb.classList.toggle('selected');
     }
-
 }
 
+/**
+ * Handles the sync message event.
+ * @param {Object} event - The sync message event object.
+ */
 function onSyncMessage(event) {
     console.log("onSyncMessage", event);
-    // Assuming event.data is already an object
     helm.parseSyncMessage(event);
 }
 
+/**
+ * Handles the chat message event.
+ * @param {Object} event - The chat message event object.
+ */
 function onChatMessage(event) {
-     console.log("onChatMessage", event);
-     helm.parseChatMessage(event);
-    //console.log(TS.urls.createUrlPrefixForThisSymbiote());
-    // talespire://symbiote/AQC_oe3Z+QN+TrOPbPKtZFl7/
-    //TS.sync.send("message toll", 'board');
+    console.log("onChatMessage", event);
+    helm.parseChatMessage(event);
 }
