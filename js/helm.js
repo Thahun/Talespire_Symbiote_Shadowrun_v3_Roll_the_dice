@@ -4,7 +4,7 @@
  */
 class Helm {
     constructor() {
-        console.log("Hello Helm!");
+        //console.log("Hello Helm!");
 
         // Initialize GM box and connect breadcrumbs
         this.GmBox = document.getElementById('gm-box-body');
@@ -63,15 +63,15 @@ class Helm {
             // Handle different commands using a switch statement
             switch (command) {
                 case "ri!":
-                    console.log("Roll initiative command received.", command, body);
+                    //console.log("Roll initiative command received.", command, body);
                     diceService.rollInitiativeDices();
                     break;
                 case "help!":
-                    console.log("Help command received.", command, body);
+                    //console.log("Help command received.", command, body);
                     this.sendChatMessage("Roll ini:  ri!", [message.payload.senderPlayerId]);
                     break;
                 default:
-                    console.log("Chat message received but no action triggered:", body);
+                    //console.log("Chat message received but no action triggered:", body);
                     break;
             }
         } else {
@@ -84,13 +84,13 @@ class Helm {
      * @param {Object} message - The sync message object.
      */
     parseSyncMessage(message) {
-        console.log("parseSyncMessage", message);
+        //console.log("parseSyncMessage", message);
         // Ensure the message is an object and has the expected structure
         if (message && message.kind === "syncMessageReceived" && message.payload) {
             const { str, fromClient } = message.payload;
             if (str && fromClient && fromClient.player) {
                 const { id: playerId, name: playerName } = fromClient.player;
-                console.log(`Message received from ${playerName} (${playerId}): ${str}`);
+                //console.log(`Message received from ${playerName} (${playerId}): ${str}`);
 
                 // Parse the string payload to JSON
                 let payloadData;
@@ -123,12 +123,12 @@ class Helm {
                             break;
                         case "setini":
                             if (iniAndGmManager.canGM) {
-                                console.log("setini:", payloadData);
-                                this.handleSetiniType(payloadData);
+                                //console.log("setini:", payloadData);
+                                this.handleSetIniType(payloadData);
                             }
                             break;
                         case "fetchini":
-                            console.log("fetchini:", payloadData);
+                            //console.log("fetchini:", payloadData);
                             iniAndGmManager.updateInitiativeListFromSyncMessage(payloadData);
                             break;
                         default:
@@ -149,7 +149,7 @@ class Helm {
      * Handles the 'setini' type messages.
      * @param {Object} payload - The message payload containing the type and message.
      */
-    handleSetiniType(payload) {
+    handleSetIniType(payload) {
         if (payload && payload.type === "setini" && Array.isArray(payload.message)) {
             const [namePart, initiativeValue] = payload.message;
 
@@ -161,8 +161,8 @@ class Helm {
             const initiative = initiativeValue;
 
             if (name && !isNaN(initiative)) {
-                console.log("Name:", name);
-                console.log("Initiative:", initiative);
+                //console.log("Name:", name);
+                //console.log("Initiative:", initiative);
                 iniAndGmManager.addInitiative(name, initiative.toString());
             } else {
                 console.error("Invalid payload message format:", payload.message);
@@ -177,7 +177,7 @@ class Helm {
      * @param {Object} payload - The message payload containing the dice set information.
      */
     handleOffType(payload) {
-        console.log("Handling OFF type:", payload);
+        //console.log("Handling OFF type:", payload);
         diceService.sectionDiceSets.addDiceSet(payload.name, payload.mw, payload.amount, payload.dmg, payload.bullets, true);
     }
 
@@ -186,7 +186,7 @@ class Helm {
      * @param {Object} payload - The message payload containing the dice set information.
      */
     handleOpenType(payload) {
-        console.log("Handling OPEN type:", payload);
+        //console.log("Handling OPEN type:", payload);
         diceService.sectionDiceSets.addDiceSet(payload.name, 0, payload.amount, "-", 1, true);
     }
 
@@ -195,7 +195,7 @@ class Helm {
      * @param {Object} payload - The message payload containing the dice set information.
      */
     handleDevType(payload) {
-        console.log("Handling DEV type:", payload);
+        //console.log("Handling DEV type:", payload);
         diceService.sectionDiceSets.addDefenceDiceSet(payload.name, payload.mw, payload.amount, payload.dmg, true);
     }
 
@@ -204,7 +204,7 @@ class Helm {
      * @param {Object} payload - The message payload containing the log information.
      */
     handleDiceLog(payload) {
-        console.log("Handling LOG type:", payload);
+        //console.log("Handling LOG type:", payload);
         diceService.addMessageToLog(payload);
     }
 
@@ -214,18 +214,18 @@ class Helm {
      * @param {Array} to - The recipients of the message.
      */
     SendSyncMessage(message, to) {
-        console.log("sync message", message);
+        //console.log("sync message", message);
         try {
             if (to.includes("board")) {
                 TS.sync.send(message, "board");
             } else {
                 to.forEach(recipient => {
-                    console.log("sync rec", recipient);
+                    //console.log("sync rec", recipient);
                     TS.sync.send(message, recipient);
                 });
             }
         } catch (error) {
-            console.log("Failed to send: ", error);
+            //console.log("Failed to send: ", error);
         }
     }
 
@@ -235,18 +235,18 @@ class Helm {
      * @param {Array} to - The recipients of the message.
      */
     sendChatMessage(message, to) {
-        console.log("chat message", message, "TOs", to);
+        //console.log("chat message", message, "TOs", to);
         try {
             if (to.includes("board")) {
                 TS.chat.send(message, "board");
             } else {
                 to.forEach(recipient => {
-                    console.log("recip", recipient);
+                    //console.log("recip", recipient);
                     TS.chat.send(message, recipient);
                 });
             }
         } catch (error) {
-            console.log("Failed to send chat message: ", error);
+            //console.log("Failed to send chat message: ", error);
         }
     }
 
@@ -257,7 +257,7 @@ class Helm {
         try {
             const clients = await this.fetchConnectedClients();
             clients.unshift({ id: "board", name: "board", playerId: "board" }); // Add "board" as the first item
-            console.log("Client names:", clients);
+            //console.log("Client names:", clients);
             this.displayClientNames(clients);
         } catch (error) {
             console.error("Failed to get client names:", error);
@@ -272,15 +272,14 @@ class Helm {
     async fetchConnectedClients() {
         try {
             const clients = await TS.sync.getClientsConnected();
-            console.log("raw clients", clients);
+            //console.log("raw clients", clients);
 
-            const clientNames = clients.map(client => ({
+            //console.log("Connected clients:", clientNames);
+            return clients.map(client => ({
                 id: client.id,
                 name: client.player.name,
                 playerId: client.player.id
             }));
-            console.log("Connected clients:", clientNames);
-            return clientNames;
         } catch (error) {
             console.error("Error fetching clients:", error);
             throw error;
@@ -338,7 +337,7 @@ class Helm {
  * @param {Object} event - The sync message event object.
  */
 function onSyncMessage(event) {
-    console.log("onSyncMessage", event);
+    //console.log("onSyncMessage", event);
     helm.parseSyncMessage(event);
 }
 
@@ -347,6 +346,6 @@ function onSyncMessage(event) {
  * @param {Object} event - The chat message event object.
  */
 function onChatMessage(event) {
-    console.log("onChatMessage", event);
+    //console.log("onChatMessage", event);
     helm.parseChatMessage(event);
 }

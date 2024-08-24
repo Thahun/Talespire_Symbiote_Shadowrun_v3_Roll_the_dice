@@ -1,35 +1,35 @@
 /**
  * @type {DebugBox} debug
  */
-var debug;
+let debug;
 /**
  * @type {InfoBox} info
  */
-var info;
+let info;
 /**
  * @type {ErrorBox} error
  */
-var error;
+let error;
 /**
  * @type {StorageService} storageService
  */
-var storageService;
+let storageService;
 /**
  * @type {SymbioteStorage} symbioteStorage
  */
-var symbioteStorage;
+let symbioteStorage;
 /**
  * @type {DiceService} diceService
  */
-var diceService;
+let diceService;
 /**
  * @type {IniAndGmManager} diceService
  */
-var iniAndGmManager;
+let iniAndGmManager;
 /**
  * @type {Helm} helm
  */
-var helm;
+let helm;
 
 let isGM = false;
 

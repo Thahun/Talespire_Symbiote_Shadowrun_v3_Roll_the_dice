@@ -72,7 +72,7 @@ class IniAndGmManager {
         let retriesMax = 10;
         let retries = retriesMax;
         while (retries > 0 && !symbioteStorage.isInit()) {
-            console.log("Character.init waiting for SymbioteStorage.init");
+            //console.log("Character.init waiting for SymbioteStorage.init");
             retries--;
             await this.sleep(retriesDelaySeconds * 100);
         }
@@ -145,7 +145,7 @@ class IniAndGmManager {
         if (gmBoxContent == null) {
             console.error("no valid html target: ", targetId);
         }
-        if (gmBoxContent.style.display === "none" || gmBoxContent.style.display === "") {
+        if (gmBoxContent.style.display === "none") {
             gmBoxContent.style.display = "block";
         } else {
             gmBoxContent.style.display = "none";
@@ -180,14 +180,14 @@ class IniAndGmManager {
         const to = this.collectRecipients();
         const throwData = this.collectThrowData();
 
-        console.log("TO:", to);
+        //console.log("TO:", to);
 
         if (throwData.name.trim() === "") {
             // Make the input field border red if name is empty
             this.throwName.style.border = "2px solid red";
-            console.log("Name is empty. Cannot send throw data.");
+            //console.log("Name is empty. Cannot send throw data.");
         } else {
-            console.log("Sending Throw Data:", JSON.stringify(throwData), "To:", to);
+            //console.log("Sending Throw Data:", JSON.stringify(throwData), "To:", to);
             helm.SendSyncMessage(JSON.stringify(throwData), to);
             // Reset the input field border
             this.throwName.style.border = "";
@@ -357,7 +357,7 @@ class IniAndGmManager {
             });
         }
 
-        console.log("finalList", finalList);
+        //console.log("finalList", finalList);
 
         this.textarea.innerHTML = finalList.join('<br>');
         if (AutoSync) {
@@ -376,7 +376,7 @@ class IniAndGmManager {
             name = this.nameInput.value.trim();
             initiativeString = this.initiativeInput.value.trim();
         }
-        console.log("initiative", initiativeString);
+        //console.log("initiative", initiativeString);
         if (name && initiativeString) {
             const existingEntry = this.initiativeData.find(data => data.name === name);
             if (existingEntry) {
@@ -458,12 +458,12 @@ class IniAndGmManager {
         // Extract and report the name
         if (creatureInfo.length > 0) {
             const iniAndReaction = this.parseIniDiceAndReaction(creatureInfo[0].stats)
-            console.log("stableCreatureInfo", iniAndReaction);
+            //console.log("stableCreatureInfo", iniAndReaction);
             // Put the name into the input box for a new initiative entry
             this.nameInput.value = creatureInfo[0].name;
             this.initiativeInput.value = iniAndReaction['iniDice'] + "d6+" + iniAndReaction['reaction']; // Add default value
         } else {
-            console.log("No additional information found for the creature");
+            //console.log("No additional information found for the creature");
         }
     }
 
@@ -723,7 +723,7 @@ class IniAndGmManager {
             this.updateInitiativeListDisplay(); // Render loaded initiative data
 
             this.personalInitiativeData = diceSets.personalInitiativeData || [];
-            console.log("PersonalINIDATA:", this.personalInitiativeData);
+            //console.log("PersonalINIDATA:", this.personalInitiativeData);
             this.updatePersonalInitiativeInputs();
         }
         this.updateIniBreadcrumbs();
@@ -767,7 +767,7 @@ class IniAndGmManager {
 
         if (to.length === 0) {
             to = this.collectRecipients(false);
-            console.log("to initiative:", to);
+            //console.log("to initiative:", to);
         }
 
         if (to.length > 0) {
@@ -810,7 +810,7 @@ class IniAndGmManager {
      * @returns {string} A message indicating the next turn status.
      */
     getNextTurn(name, initiativeData) {
-        console.log("getNextTurn:", name, initiativeData);
+        //console.log("getNextTurn:", name, initiativeData);
         if (initiativeData.type !== "fetchini") {
             console.error("Invalid initiative data type.");
             return "Fehler: Ungültiger Initiativdaten-Typ"; // Return an error message
@@ -837,7 +837,7 @@ class IniAndGmManager {
      */
     updateInitiativeListFromSyncMessage(initiativeData) {
         // Ensure the initiativeData is an object and has the expected structure
-        console.log(initiativeData);
+        //console.log(initiativeData);
         if (initiativeData && initiativeData.type === "fetchini") {
             // This is the NON-GM ini list
             const initiativeListDiv = document.getElementById('ini-list');
@@ -858,7 +858,7 @@ class IniAndGmManager {
             const name = this.ownInitiativeName.value;
             this.ownInitiativeTurnMeter.innerHTML = this.getNextTurn(name, initiativeData);
         } else {
-            console.log("Invalid initiative data:", initiativeData);
+            //console.log("Invalid initiative data:", initiativeData);
         }
     }
 
@@ -899,12 +899,12 @@ class IniAndGmManager {
         // Extract and report the name
         if (creatureInfo.length > 0) {
             const iniAndReaction = this.parseIniDiceAndReaction(creatureInfo[0].stats)
-            console.log("getOwnInitiativeFromCreature", iniAndReaction);
+            //console.log("getOwnInitiativeFromCreature", iniAndReaction);
             // Put the name into the input box for a new initiative entry
             this.ownInitiativeName.value = creatureInfo[0].name;
             this.ownInitiativeValue.value = iniAndReaction['iniDice'] + "d6+" + iniAndReaction['reaction'];
         } else {
-            console.log("No additional information found for the creature");
+            //console.log("No additional information found for the creature");
         }
     }
 
@@ -914,7 +914,7 @@ class IniAndGmManager {
      */
     async getStatsfromPickedCreature(event) {
         try {
-            console.log("getStatsfromPickedCreature", event);
+            //console.log("getStatsfromPickedCreature", event);
 
             // Ensure event.payload and event.payload.idOfPicked are defined
             if (!event.payload || !event.payload.idOfPicked) {
@@ -926,9 +926,9 @@ class IniAndGmManager {
 
             // Check if creatureInfo is not empty
             if (creatureInfo.length > 0) {
-                console.log("pickINFO", creatureInfo);
+                //console.log("pickINFO", creatureInfo);
             } else {
-                console.log("No additional information found for the creature with ID:", event.payload.idOfPicked);
+                //console.log("No additional information found for the creature with ID:", event.payload.idOfPicked);
             }
         } catch (error) {
             console.error("Error getting stats from picked creature:", error);
@@ -941,6 +941,6 @@ class IniAndGmManager {
  * @param {Object} event - The event object containing the picked creature information.
  */
 async function onPickingEvent(event) {
-    console.log("onPickingEvent", event);
+    //console.log("onPickingEvent", event);
     // await iniAndGmManager.getStatsfromPickedCreature(event) // broken id from TS :(
 }

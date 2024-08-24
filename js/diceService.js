@@ -159,7 +159,7 @@ class DiceService extends AbstractSheetHelper {
             const Y = splitParts[1];
 
             if (Xd6.endsWith('d6') && !isNaN(Xd6.slice(0, -2)) && !isNaN(Y)) {
-                console.log("good format: ", diceString);
+                //console.log("good format: ", diceString);
                 return true;
 
             } else {
@@ -342,22 +342,22 @@ class DiceService extends AbstractSheetHelper {
      * @param event
      */
     async evaluateInitiativeRoll(event) {
-        console.log(event);
+        //console.log(event);
         const rollResults = this.calculateTotalInitiativeResult(event);
         const name = this.getInitiativeName(event);
-        console.log("result: ", rollResults, name);
+        //console.log("result: ", rollResults, name);
 
         const [total, numberOfDice, value] = rollResults;
         let message = `${name} Roll: ${numberOfDice}D6+${value} => Total: ${total}`;
 
         let rollResultsGroups = this.createRollResultsArray(event);
-        console.log("groups", rollResultsGroups);
+        //console.log("groups", rollResultsGroups);
 
         TS.dice.sendDiceResult(rollResultsGroups);
         TS.chat.send(message, 'board');
         //send log to all
         this.reportDiceLogMessage(message); //send dicelog to all
-        //console.log("Log message: ", message);
+        ////console.log("Log message: ", message);
 
 
         //send result to GM
@@ -560,7 +560,7 @@ class DiceService extends AbstractSheetHelper {
             }
             rollResultsGroups.push(rollResultsGroup);
         });
-        console.log("rollresults:",rollResultsGroups);
+        //console.log("rollresults:",rollResultsGroups);
 
         this.diceTracker.setSuccesses(diceTrack['rollId'], totalSuccesses);
 
@@ -897,7 +897,7 @@ class DiceService extends AbstractSheetHelper {
             const resultsGroups = event.payload.resultsGroups;
             for (let group of resultsGroups) {
                 if (group.name && group.name.startsWith("Initiative:")) {
-                    console.log("Initiative:", group.name);
+                    //console.log("Initiative:", group.name);
                     return true;
                 }
             }
@@ -916,7 +916,7 @@ function onRollResults(event) {
 
     switch (kind) {
         case 'rollResults':
-            console.log("ROLL", event);
+            //console.log("ROLL", event);
             if(diceService.checkIfRollIsInitiative(event)){
                 diceService.evaluateInitiativeRoll(event);
             } else {
