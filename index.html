@@ -115,7 +115,7 @@
         <div class="section-header" >
             <span class="section-title" onclick="iniAndGmManager.toggleBodyDiv('dice-log-body')">Throw-Log</span>
             <span class="align-right section-title">
-            <input type="text" id="player-filter-input" onchange="diceService.togglePlayerFilter()" placeholder="Filter list" class="field-data-medium player-filter-input">
+            <input type="text" id="player-filter-input" onchange="diceService.togglePlayerFilter()" placeholder="search log" class="field-data-medium player-filter-input">
         </span>
         </div>
         <div id="dice-log-body" class="section-body" onclick="iniAndGmManager.toggleResize('throw-log')">
@@ -185,8 +185,8 @@
             <label>GM-Modus</label>
         </div> -->
         <div id="no-uneeded-explode" class="checkbox-item">
-            <input type="checkbox" value="false" onchange="diceService.toggleNoUnneededExplode(this.checked);">
-            <label>Keine unnötigen 6er rerolls.</label>
+            <input type="checkbox" checked value="true" onchange="diceService.toggleNoUnneededExplode(this.checked);">
+            <label>No 6 rerolls if succeeded.</label>
         </div>
         <!--   <div id="ini-manager" class="checkbox-item">
                <input type="checkbox" id="manage-ini-check" value="true" onchange="initiativeManager.toggleIniManager(this.checked);"></input>

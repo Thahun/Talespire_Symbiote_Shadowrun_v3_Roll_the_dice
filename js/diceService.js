@@ -5,7 +5,7 @@
 class DiceService extends AbstractSheetHelper {
     initState = false;  // Indicates if the service is initialized
     gmMode = false;  // GM mode flag
-    noUnneededExplode = false;  // Prevent rerolling after the threshold is already solved
+    noUnneededExplode = true;  // Prevent rerolling after the threshold is already solved
     highestRoll = 0;  // Keeps track of the current highest roll to be able to stop rerolling if MW is reached
     openThrow = false;
     openThrowResult = 0;
@@ -654,13 +654,18 @@ class DiceService extends AbstractSheetHelper {
 
     togglePlayerFilter() {
         const filterInput = document.getElementById('player-filter-input');
-        const playerName = filterInput.value.trim().toLowerCase();
+        const filterValue = filterInput.value.trim().toLowerCase();
         const logMessages = document.querySelectorAll('#throw-log .log-message');
 
-        if (playerName !== '') {
+        if (filterValue !== '') {
             logMessages.forEach(message => {
                 const playerNameSpan = message.querySelector('.player-name');
-                if (playerNameSpan.textContent.trim().toLowerCase().startsWith(playerName)) {
+                const messageContentSpan = message.querySelector('.log-content');
+
+                const playerName = playerNameSpan ? playerNameSpan.textContent.trim().toLowerCase() : '';
+                const messageContent = messageContentSpan ? messageContentSpan.textContent.trim().toLowerCase() : '';
+
+                if (playerName.includes(filterValue) || messageContent.includes(filterValue)) {
                     message.style.display = 'block';
                 } else {
                     message.style.display = 'none';
@@ -669,11 +674,12 @@ class DiceService extends AbstractSheetHelper {
         } else {
             logMessages.forEach(message => {
                 message.style.display = 'block';
-                const throwLog = document.getElementById('throw-log');
-                throwLog.scrollTop = throwLog.scrollHeight;
             });
+            const throwLog = document.getElementById('throw-log');
+            throwLog.scrollTop = throwLog.scrollHeight;
         }
     }
+
 
     addMessageToLog(message) {
         const throwLog = document.getElementById('throw-log');
@@ -753,9 +759,26 @@ class DiceService extends AbstractSheetHelper {
             color += ('00' + value.toString(16)).substr(-2);
         }
 
-        return color;
-    }
+        // Convert the color to RGB components
+        let r = parseInt(color.substring(1, 3), 16);
+        let g = parseInt(color.substring(3, 5), 16);
+        let b = parseInt(color.substring(5, 7), 16);
 
+        // Adjust luminance to ensure good contrast on dark backgrounds
+        // This will lighten the color if it's too dark
+        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+
+        if (luminance < 128) { // If color is too dark
+            r = Math.min(255, r + 60);
+            g = Math.min(255, g + 60);
+            b = Math.min(255, b + 60);
+        }
+
+        // Convert back to hex format
+        const adjustedColor = `#${('00' + r.toString(16)).substr(-2)}${('00' + g.toString(16)).substr(-2)}${('00' + b.toString(16)).substr(-2)}`;
+
+        return adjustedColor;
+    }
 
 
     /**

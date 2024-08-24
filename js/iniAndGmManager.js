@@ -157,7 +157,7 @@ class IniAndGmManager {
      */
     toggleGMBoxBody() {
         const gmBoxContent = document.getElementById('gm-box-content');
-        if (gmBoxContent.style.display === "none" || gmBoxContent.style.display === "") {
+        if (gmBoxContent.style.display === "none") {
             gmBoxContent.style.display = "block";
         } else {
             gmBoxContent.style.display = "none";
