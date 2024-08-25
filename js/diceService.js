@@ -11,7 +11,7 @@ class DiceService extends AbstractSheetHelper {
     openThrowResult = 0;
 
     /**
-     * @type {String}
+     * @type {Any}
      */
     version;
 
@@ -62,12 +62,20 @@ class DiceService extends AbstractSheetHelper {
         this.version = this.manifestHelper.fetchKey(ManifestHelper.KEY_VERSION);
         this.showAppInfo();
         this.loadDiceSets();
-        this.initState = true;
 
-        //let user = await TS.players.whoAmI();
-        //let userDetails = await TS.players.getMoreInfo([user.id]);
-        //let canGM = userDetails[0].rights.canGm;
-        //this.getElementById(this.ELEMENTID_GM_MODE).style.display = (canGM == true ? 'grid' : 'none');
+        this.loadThrowData();  // Load throw data on initialization
+        this.initState = true;
+    }
+
+    loadThrowData() {
+        debug.log("DiceService.loadThrowData");
+
+        let storageData = this.storage.getStorageAsObject();
+
+        if (storageData instanceof DiceSetsDTO) {
+            this.throwData = storageData.throwData || [];
+            this.renderThrowData();  // Render the loaded throw data in the UI
+        }
     }
 
     /**
@@ -680,9 +688,8 @@ class DiceService extends AbstractSheetHelper {
         }
     }
 
-
     addMessageToLog(message) {
-        const throwLog = document.getElementById('throw-log');
+        const throwLogElement = document.getElementById('throw-log');
 
         // Get the current time and format it
         const now = new Date();
@@ -691,51 +698,73 @@ class DiceService extends AbstractSheetHelper {
         const seconds = now.getSeconds().toString().padStart(2, '0');
         const timestamp = `${hours}:${minutes}:${seconds}`;
 
-        // Create a new div for the message
-        const newMessageDiv = document.createElement('div');
-        newMessageDiv.className = 'log-message';
+        // Create a new log entry object
+        const newLogEntry = {
+            time: timestamp,
+            playerName: message.playerName === "modemuser" ? "Gamemaster" : message.playerName,
+            log: message.log
+        };
 
-        // Create a span for the timestamp
-        const timestampSpan = document.createElement('span');
-        timestampSpan.className = 'timestamp';
-        timestampSpan.textContent = `[${timestamp}] `;
-
-        // Create a span for the player name
-        const playerNameSpan = document.createElement('span');
-        playerNameSpan.className = 'player-name';
-        if(message.playerName == "modemuser") {
-            message.playerName = "Gamemaster";
-        }
-        const truncatedPlayerName = message.playerName.substring(0, 10); // Show only the first 5 letters
-        playerNameSpan.textContent = truncatedPlayerName + ": ";
-        playerNameSpan.style.color = this.getColorFromString(message.playerName);
-
-        // Create a span for the log message
-        const logMessageSpan = document.createElement('span');
-        logMessageSpan.className = 'log-content';
-        logMessageSpan.textContent = message.log;
-
-        // Append the timestamp, player name, and log message to the new div
-        newMessageDiv.appendChild(timestampSpan);
-        newMessageDiv.appendChild(playerNameSpan);
-        newMessageDiv.appendChild(logMessageSpan);
-
-        // Add the new message to the end of the log
-        throwLog.appendChild(newMessageDiv);
+        // Add the new entry to the throwData array
+        this.throwData.push(newLogEntry);
 
         // Ensure only the last 50 messages are kept
-        const logMessages = throwLog.querySelectorAll('.log-message');
-        if (logMessages.length > 50) {
-            throwLog.removeChild(logMessages[0]);
+        if (this.throwData.length > 50) {
+            this.throwData.shift(); // Remove the oldest entry
         }
 
-        // Scroll to the bottom of the log to show the latest messages
-        throwLog.scrollTop = throwLog.scrollHeight;
+        // Persist the updated throwData array
+        this.persistThrowData();
 
-        // Apply filter if checkbox is checked
-        //this.togglePlayerFilter();
+        // Render the updated throwData array
+        this.renderThrowData();
     }
 
+    persistThrowData() {
+        debug.log("DiceService.persistThrowData");
+
+        let storageData = this.storage.getStorageAsObject();
+
+        if (storageData instanceof DiceSetsDTO) {
+            storageData.throwData = this.throwData;
+            this.storage.setStorageAsObject(storageData);
+            symbioteStorage.persist();
+        }
+    }
+
+    renderThrowData() {
+        const throwLogElement = document.getElementById('throw-log');
+        throwLogElement.innerHTML = ''; // Clear the log
+
+        this.throwData.forEach(entry => {
+            // Recreate each log entry in the UI
+            const newMessageDiv = document.createElement('div');
+            newMessageDiv.className = 'log-message';
+
+            const timestampSpan = document.createElement('span');
+            timestampSpan.className = 'timestamp';
+            timestampSpan.textContent = `[${entry.time}] `;
+
+            const playerNameSpan = document.createElement('span');
+            playerNameSpan.className = 'player-name';
+            const truncatedPlayerName = entry.playerName.substring(0, 10);
+            playerNameSpan.textContent = truncatedPlayerName + ": ";
+            playerNameSpan.style.color = this.getColorFromString(entry.playerName);
+
+            const logMessageSpan = document.createElement('span');
+            logMessageSpan.className = 'log-content';
+            logMessageSpan.textContent = entry.log;
+
+            newMessageDiv.appendChild(timestampSpan);
+            newMessageDiv.appendChild(playerNameSpan);
+            newMessageDiv.appendChild(logMessageSpan);
+
+            throwLogElement.appendChild(newMessageDiv);
+        });
+
+        // Scroll to the bottom of the log to show the latest messages
+        throwLogElement.scrollTop = throwLogElement.scrollHeight;
+    }
 
     getColorFromString(str) {
         if (str.length < 3) {

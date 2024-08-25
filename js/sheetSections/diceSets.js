@@ -3,18 +3,21 @@ class DiceSetsDTO {
     defenceDiceSetList;
     initiativeData;
     personalInitiativeData;
+    throwData;
 
     /**
      * @param {Array.<DiceSetsDiceSetDTO>} diceSetList
      * @param {Array.<DiceSetsDiceSetDTO>} defenceDiceSetList
      * @param {Array.<InitiativeListDTO>} initiativeData
-     * @param personalInitiativeData
+     * @param {Array.<PersonalInitiative>} personalInitiativeData
+     * @param {Array.<ThrowData>} throwData
      */
-    constructor(diceSetList = [], defenceDiceSetList = [], initiativeData = [], personalInitiativeData = []) {
+    constructor(diceSetList = [], defenceDiceSetList = [], initiativeData = [], personalInitiativeData = [], throwData = []) {
         this.diceSetList = diceSetList;
         this.defenceDiceSetList = defenceDiceSetList;
         this.initiativeData = initiativeData;
         this.personalInitiativeData = personalInitiativeData;
+        this.throwData = throwData;
     }
 
     init(obj) {
@@ -30,6 +33,7 @@ class DiceSetsDTO {
             defenceDiceSetList: this.defenceDiceSetList,
             initiativeData: this.initiativeData,
             personalInitiativeData: this.personalInitiativeData,
+            throwData: this.throwData,
         };
     }
 
@@ -41,6 +45,7 @@ class DiceSetsDTO {
         this.defenceDiceSetList = data.defenceDiceSetList || [];
         this.initiativeData = data.initiativeData || [];
         this.personalInitiativeData = data.personalInitiativeData || [];
+        this.throwData = data.throwData || [];
     }
 }
 
@@ -81,6 +86,18 @@ class PersonalInitiative {
         this.iniString = iniString;
     }
 }
+
+class ThrowData {
+    completeLog;
+
+    /**
+     * @param {String} completeLog
+     */
+    constructor(completeLog, ) {
+        this.completeLog = completeLog;
+    }
+}
+
 
 class InitiativeListDTO {
     name;
