@@ -956,6 +956,20 @@ class DiceService extends AbstractSheetHelper {
         }
         return false;
     }
+
+    clearThrowLog() {
+        debug.log("DiceService.clearThrowLog");
+
+        // Clear the throwData array
+        this.throwData = [];
+
+        // Persist the updated (empty) throwData array
+        this.persistThrowData();
+
+        // Render the updated (empty) throwData array in the UI
+        this.renderThrowData();
+    }
+
 }
 
 /**

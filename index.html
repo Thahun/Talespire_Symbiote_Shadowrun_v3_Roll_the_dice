@@ -116,10 +116,11 @@
             <span class="section-title" onclick="iniAndGmManager.toggleBodyDiv('dice-log-body')">Throw-Log</span>
             <span class="align-right section-title">
             <input type="text" id="player-filter-input" onchange="diceService.togglePlayerFilter()" placeholder="search log" class="field-data-medium player-filter-input">
-        </span>
+            </span>
         </div>
         <div id="dice-log-body" class="section-body" onclick="iniAndGmManager.toggleResize('throw-log')">
-            <div id="throw-log">
+            <span class="small-orange-button" style="margin: 3px;float: right;" onclick="diceService.clearThrowLog()">clear</span>
+            <div style="min-height: 25px;" id="throw-log">
             </div>
         </div>
     </div>
