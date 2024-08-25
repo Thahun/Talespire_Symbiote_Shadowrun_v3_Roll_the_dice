@@ -33,12 +33,13 @@
     /* Activate one of the following two, to highlight grid cells */
     /* background-color: rgba(255, 255, 255, 0.2); */
     /* border: dashed 1px beige; */
-    /* color: var(--ts-color-secondary); */
+    /* color: #c0c0c0; */
 }
 
 .grid-item {
     text-align: center;
     white-space: nowrap;
+    color: #00ffcc; /* Neon teal text */
 }
 
 .grid-item.align-left {
@@ -159,12 +160,11 @@
  * ################################
  */
 div.addRemoveIcon {
-    border: solid 2px #4d4d4d;
+    border: solid 2px #007f7f; /* Neon green/teal */
     border-radius: 4px;
     width: 17px;
     height: 17px;
-    color: #737373;
-    font-family: Arial, Helvetica, sans-serif;
+    color: #ff5500;
     font-size: 1.0em;
     text-align: center;
     cursor: pointer;
@@ -175,6 +175,12 @@ i.icon-dice {
     position: relative;
     margin-top: -0.1em;
     cursor: pointer;
+    color: #00ffcc; /* Neon teal */
+    transition: transform 0.3s;
+}
+
+i.icon-dice:hover {
+    transform: rotate(15deg);
 }
 
 div.icon-center {
@@ -305,7 +311,7 @@ div.icon-center {
 
 .small-orange-button {
     padding: 5px 10px;
-    background-color: orange;
+    background-color: #ff5500;
     border: none;
     color: white;
     cursor: pointer;
@@ -315,7 +321,7 @@ div.icon-center {
 }
 
 .small-orange-button:hover {
-    background-color: darkorange;
+    background-color: #ff7700;
 }
 
 
@@ -334,23 +340,23 @@ div.icon-center {
 }
 
 .gm-dice-set .field-data {
-    color: darkorange; /* Dark orange text color for input fields */
-    background-color: rgba(255, 165, 0, 0.2); /* Light orange background for visibility */
-    border: 2px solid orange; /* Orange border for emphasis */
+    color: #ff5500; /* Dark orange text color for input fields */
+    background-color: rgba(255, 85, 0, 0.2); /* Light orange background for visibility */
+    border: 2px solid #ff5500; /* Orange border for emphasis */
     border-radius: 5px; /* Rounded corners for a polished look */
 }
 
 .gm-dice-set .field-data-short {
-    color: darkorange; !important; /* Dark orange text color for input fields */
-    background-color: rgba(255, 165, 0, 0.2); !important; /* Light orange background for visibility */
-    border: 2px solid orange; !important;/* Orange border for emphasis */
-    border-radius: 5px; !important;/* Rounded corners for a polished look */
+    color: #ff5500 !important; /* Dark orange text color for input fields */
+    background-color: rgba(255, 85, 0, 0.2) !important; /* Light orange background for visibility */
+    border: 2px solid #ff5500 !important;/* Orange border for emphasis */
+    border-radius: 5px !important;/* Rounded corners for a polished look */
 }
 
 
 /* Optional: Hover effect to make it even more distinguishable */
 .gm-dice-set:hover {
-    border-color: orangered; /* Darker border on hover */
+    border-color: #ff7700; /* Darker border on hover */
 }
 
 
@@ -396,7 +402,7 @@ div.icon-center {
 }
 
 .breadcrumb.selected {
-   background-color: #ff6e00; /* Change to your desired highlight color */
+    background-color: #ff6e00; /* Change to your desired highlight color */
 }
 
 .breadcrumb-container {
@@ -428,6 +434,8 @@ div.icon-center {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    background-color: #202020;
+    color: #00ffcc; /* Neon teal text */
 }
 
 .log-message {
@@ -453,12 +461,15 @@ div.icon-center {
     width: 120px;
     margin-left: 50%;
     font-size: 13px; /* Smaller placeholder text */
-    color: #ff6e00;
+    color: #ff5500;
     margin-bottom: 3px;
+    background-color: #101010;
+    border: 1px solid #444444;
 }
 
 #player-filter-input::placeholder {
     font-size: 13px; /* Smaller placeholder text */
+    color: #ff5500;
 }
 
 .initiative-message {
@@ -466,7 +477,7 @@ div.icon-center {
 }
 
 .ini-span {
-    color: #ff6e00;
+    color: #ff5500;
 }
 
 .red-border {
@@ -493,4 +504,3 @@ div.icon-center {
     from { width: 100%; }
     to { width: 0; }
 }
-
