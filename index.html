@@ -56,13 +56,13 @@
                         <label>MW</label>
                     </div>
                     <div class="grid-item-header-label" style="grid-column-end: span 1;">
-                        <label>Anzahl</label>
+                        <label># D6</label>
                     </div>
                     <div class="grid-item-header-label" style="grid-column-end: span 1;">
-                        <label>Dmg</label>
+                        <label>DMG</label>
                     </div>
                     <div class="grid-item-header-label" style="grid-column-end: span 1;">
-                        <label>Geschosse</label>
+                        <label>Bullets</label>
                     </div>
                     <div class="grid-item" style="grid-column-end: span 1;">
                         &nbsp;
@@ -112,6 +112,18 @@
         </div>
     </div>
 
+    <div class="section">
+        <div class="section-header" >
+            <span class="section-title" onclick="iniAndGmManager.toggleBodyDiv('glitch-body')">GliTCH</span>
+        </div>
+        <div id="glitch-body" class="section-body">
+            <div class="icon-container">
+                <div class="ts-icon-d6 ts-icon-xlarge" style="height: 100px;width: 100px;" onclick="diceService.rollGlitchDice()"></div>
+            </div>
+        </div>
+    </div>
+
+
     <div id="dice-log" class="section">
         <div class="section-header" >
             <span class="section-title" onclick="iniAndGmManager.toggleBodyDiv('dice-log-body')">Throw-Log</span>
@@ -120,7 +132,7 @@
             </span>
         </div>
         <div id="dice-log-body" class="section-body" >
-            <div style="min-height: 25px;font-size: smaller" id="throw-log">
+            <div style="min-height: 25px;font-size: 75%" id="throw-log">
             </div>
             <div class="section-body" style="padding-bottom: 25px">
                 <div id=throw-log-resize-button class="small-orange-button grid-item-header-label align-left" style="float: left" onclick="iniAndGmManager.toggleResize('throw-log')">resize log</div>
@@ -145,7 +157,7 @@
                     <label>Picker</label>
                 </div>
                 <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
-                    <label>Initiative</label>
+                    <label>Ini</label>
                 </div>
                 <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
                     <label style="font-size: small">My turn?</label>
@@ -179,7 +191,7 @@
         </div>
         <div id="section-ini-list" class="section-body">
             <div id="ini-list" class="grid-item-data align-left" style="grid-column-end: span 1;">
-                <span>Aktuell kein aktiver Initiative Durchgang.</span>
+                <span>No current Ini-table</span>
             </div>
          </div>
     </div>
@@ -201,7 +213,7 @@
 
     <div id="section-dice-sets" class="section">
         <div class="section-header" onclick="iniAndGmManager.toggleBodyDiv('dice-sets-body')">
-            <span class="section-title">Offene & Offensive Würfe</span>
+            <span class="section-title">Offensive & open throws</span>
         </div>
         <div id="dice-sets-body" class="section-body">
             <div class="section-grid-container" style="grid-template-columns: 40px repeat(5,auto) 20px;">
@@ -215,13 +227,13 @@
                     <label>MW</label>
                 </div>
                 <div class="grid-item-header-label" style="grid-column-end: span 1;">
-                    <label>Anzahl W6</label>
+                    <label># D6</label>
                 </div>
                 <div class="grid-item-header-label" style="grid-column-end: span 1;">
                     <label>DMG</label>
                 </div>
                 <div class="grid-item-header-label" style="grid-column-end: span 1;">
-                    <label>Geschosse</label>
+                    <label>Bullets</label>
                 </div>
                 <div class="grid-item" style="grid-column-end: span 1;">
                     &nbsp;
@@ -238,7 +250,7 @@
 
     <div id="section-defence-dice-sets" class="section">
         <div class="section-header" onclick="iniAndGmManager.toggleBodyDiv('defence-dice-sets-body')">
-            <span class="section-title">Defensive Würfe</span>
+            <span class="section-title">Defensive throws</span>
         </div>
         <div id="defence-dice-sets-body" class="section-body">
             <div class="section-grid-container" style="grid-template-columns: 40px repeat(4,auto) 20px;">
@@ -253,7 +265,7 @@
                     <label>MW</label>
                 </div>
                 <div class="grid-item-header-label" style="grid-column-end: span 1;">
-                    <label>Anzahl W6</label>
+                    <label># D6</label>
                 </div>
                 <div class="grid-item-header-label" style="grid-column-end: span 1;">
                     <label>DMG</label>

@@ -215,6 +215,10 @@ class DiceService extends AbstractSheetHelper {
         });
     }
 
+    async rollGlitchDice(){
+        let diceString = '1d6';
+        let rollId = await TS.dice.putDiceInTray([{ name: '"Glitch"', roll: "!" + diceString }], true);
+    }
 
     /**
      * Rolls dices for the specified dice set index.
@@ -592,7 +596,7 @@ class DiceService extends AbstractSheetHelper {
         }
 
         let message = totalThresholdSuccesses + ' von ' + diceSet.amount + ' Würfeln des "' + diceSet.name + '" Wurfes ' + (totalThresholdSuccesses === 1 ? 'war' : 'waren') + ' erfolgreich.';
-        let dicelog = diceSet.name + ' => ' + diceSet.amount + ' D6 gegen MW ' + diceSet.threshold + ' : ' + totalThresholdSuccesses + ' Erfolg(e).';
+        let dicelog = diceSet.name + ' => ' + diceSet.amount + ' dice vs MW ' + diceSet.threshold + ' : ' + totalThresholdSuccesses + ' success(es).';
 
         if (damageCode !== null) {
             if (isDefence) {
@@ -613,7 +617,7 @@ class DiceService extends AbstractSheetHelper {
                 } else {
                     info.show('Kein Treffer => kein Schaden', true);
                     message += ' Kein effektiver Schaden!';
-                    dicelog += ' Kein Schaden!' ;
+                    dicelog += ' no DMG!' ;
                 }
             }
         } else {
@@ -624,11 +628,11 @@ class DiceService extends AbstractSheetHelper {
                     info.show(message , false);
                 } else {
                     info.show(diceSet.name + ' => ' + diceSet.amount + ' D6: '+ totalThresholdSuccesses + ' Erfolg(e) ', true);
-                    dicelog = diceSet.name + ' => ' + diceSet.amount + ' D6: '+ totalThresholdSuccesses + ' Erfolg(e) ';
+                    dicelog = diceSet.name + ' => ' + diceSet.amount + ' dice: '+ totalThresholdSuccesses + ' Erfolg(e) ';
                   }
             } else {
                 info.show(diceSet.name + ' => ' + diceSet.amount + ' D6: Keine Erfolge  ' + damageCode + ' DMG', true);
-                dicelog = diceSet.name + ' => ' + diceSet.amount + ' D6: Keine Erfolge  ' + damageCode + ' DMG';
+                dicelog = diceSet.name + ' => ' + diceSet.amount + ' dice: no success(es)  ' + damageCode + ' DMG';
             }
         }
 
@@ -720,6 +724,23 @@ class DiceService extends AbstractSheetHelper {
         this.renderThrowData();
     }
 
+    removeThrowLogMessage(uniqueId) {
+        // Find the index of the log entry with the given unique ID (which is the time)
+        const indexToRemove = this.throwData.findIndex(entry => entry.time === uniqueId);
+
+        if (indexToRemove !== -1) {
+            // Remove the entry from the throwData array
+            this.throwData.splice(indexToRemove, 1);
+
+            // Re-render the log data
+            this.renderThrowData();
+
+            // Persist the updated throwData
+            this.persistThrowData();
+        }
+    }
+
+
     persistThrowData() {
         debug.log("DiceService.persistThrowData");
 
@@ -737,34 +758,58 @@ class DiceService extends AbstractSheetHelper {
         throwLogElement.innerHTML = ''; // Clear the log
 
         this.throwData.forEach(entry => {
+            // Generate a unique ID based on the timestamp and a random value
+            const uniqueId = entry.time;
+
             // Recreate each log entry in the UI
             const newMessageDiv = document.createElement('div');
             newMessageDiv.className = 'log-message';
+            newMessageDiv.id = uniqueId; // Set the unique ID
 
+            // Create the remove icon with click and hover effects
+            const removeIcon = document.createElement('span');
+            removeIcon.textContent = " ✖ ";
+            removeIcon.style.cursor = 'pointer';
+            removeIcon.style.color = '#737373'; // Initial color
+            removeIcon.onmouseover = function() {
+                this.style.color = 'red'; // Change color on hover
+            };
+            removeIcon.onmouseout = function() {
+                this.style.color = '#737373'; // Revert color when not hovering
+            };
+            removeIcon.onclick = () => this.removeThrowLogMessage(uniqueId); // Attach the click event
+
+            // Create the timestamp span
             const timestampSpan = document.createElement('span');
             timestampSpan.className = 'timestamp';
             timestampSpan.textContent = `[${entry.time}] `;
 
+            // Create the player name span
             const playerNameSpan = document.createElement('span');
             playerNameSpan.className = 'player-name';
             const truncatedPlayerName = entry.playerName.substring(0, 10);
             playerNameSpan.textContent = truncatedPlayerName + ": ";
             playerNameSpan.style.color = this.getColorFromString(entry.playerName);
 
+            // Create the log message span
             const logMessageSpan = document.createElement('span');
             logMessageSpan.className = 'log-content';
             logMessageSpan.textContent = entry.log;
 
+            // Append all elements to the message div
+            newMessageDiv.appendChild(removeIcon);
             newMessageDiv.appendChild(timestampSpan);
             newMessageDiv.appendChild(playerNameSpan);
             newMessageDiv.appendChild(logMessageSpan);
 
+            // Append the message div to the log element
             throwLogElement.appendChild(newMessageDiv);
         });
 
         // Scroll to the bottom of the log to show the latest messages
         throwLogElement.scrollTop = throwLogElement.scrollHeight;
     }
+
 
     getColorFromString(str) {
         if (str.length < 3) {
@@ -852,7 +897,7 @@ class DiceService extends AbstractSheetHelper {
         damageIndex -= decreaseSteps;
 
         if (damageIndex < 0) {
-            return "Kein schaden :-)";
+            return "no DMG :-)";
         }
 
         return damageLevels[damageIndex];

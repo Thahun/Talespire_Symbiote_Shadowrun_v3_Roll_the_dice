@@ -504,3 +504,174 @@ div.icon-center {
     from { width: 100%; }
     to { width: 0; }
 }
+
+.icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#glitch-body {
+    background: url('assets/glitch-background.gif') no-repeat center center;
+    background-size: cover;
+    position: relative;
+    overflow: hidden;
+}
+
+#glitch-body .icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: relative;
+    z-index: 2; /* Ensures the icon is above the glitch effect */
+}
+
+#glitch-body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    mix-blend-mode: multiply; /* Multiply blend mode for the overlay */
+    z-index: 1;
+    pointer-events: none;
+    animation: glitch-effect 2s infinite;
+}
+
+@keyframes glitch-effect {
+    0% {
+        clip-path: inset(0 0 50% 0);
+        transform: translate(-20px, -10px);
+    }
+    10% {
+        clip-path: inset(10% 0 45% 0);
+        transform: translate(10px, 10px);
+    }
+    20% {
+        clip-path: inset(25% 0 30% 0);
+        transform: translate(-10px, 10px);
+    }
+    30% {
+        clip-path: inset(50% 0 10% 0);
+        transform: translate(0, 5px);
+    }
+    40% {
+        clip-path: inset(0 0 70% 0);
+        transform: translate(10px, 0);
+    }
+    50% {
+        clip-path: inset(15% 0 30% 0);
+        transform: translate(-20px, -20px);
+    }
+    60% {
+        clip-path: inset(30% 0 20% 0);
+        transform: translate(20px, 10px);
+    }
+    70% {
+        clip-path: inset(5% 0 50% 0);
+        transform: translate(-10px, 10px);
+    }
+    80% {
+        clip-path: inset(0 0 20% 0);
+        transform: translate(10px, -10px);
+    }
+    90% {
+        clip-path: inset(10% 0 10% 0);
+        transform: translate(0, -5px);
+    }
+    100% {
+        clip-path: inset(0 0 0 0);
+        transform: translate(0, 0);
+    }
+}
+
+.ts-icon-d6.ts-icon-xlarge {
+    filter: brightness(150%) contrast(200%) hue-rotate(90deg);
+    animation: glitch-animation 3s steps(20) infinite, glitch-fade 5s steps(10) infinite;
+}
+
+@keyframes glitch-animation {
+    0% {
+        transform: translate(0);
+        filter: brightness(150%) contrast(200%) hue-rotate(90deg);
+    }
+    3% {
+        transform: translate(-2px, 2px) skew(0.5deg);
+        filter: brightness(200%) contrast(250%) hue-rotate(180deg);
+    }
+    8% {
+        transform: translate(2px, -2px) skew(-0.5deg);
+        filter: brightness(100%) contrast(100%) hue-rotate(270deg);
+    }
+    13% {
+        transform: translate(-1px, 1px) skew(0.3deg);
+        filter: brightness(250%) contrast(300%) hue-rotate(360deg);
+    }
+    21% {
+        transform: translate(3px, -3px) skew(-0.2deg);
+        filter: brightness(200%) contrast(200%) hue-rotate(45deg);
+    }
+    34% {
+        transform: translate(0) skew(0);
+        filter: brightness(150%) contrast(200%) hue-rotate(0deg);
+    }
+    55% {
+        transform: translate(-1px, 2px) skew(-0.1deg);
+        filter: brightness(100%) contrast(150%) hue-rotate(90deg);
+    }
+    72% {
+        transform: translate(1px, -1px) skew(0.1deg);
+        filter: brightness(250%) contrast(250%) hue-rotate(180deg);
+    }
+    81% {
+        transform: translate(-3px, 3px) skew(0.2deg);
+        filter: brightness(200%) contrast(300%) hue-rotate(270deg);
+    }
+    90% {
+        transform: translate(1px, -3px) skew(-0.3deg);
+        filter: brightness(250%) contrast(300%) hue-rotate(360deg);
+    }
+    100% {
+        transform: translate(0);
+        filter: brightness(150%) contrast(200%) hue-rotate(90deg);
+    }
+}
+
+@keyframes glitch-fade {
+    0% {
+        opacity: 1;
+    }
+    15% {
+        opacity: 0.6;
+    }
+    22% {
+        opacity: 0.8;
+    }
+    37% {
+        opacity: 0.4;
+        filter: grayscale(100%);
+    }
+    49% {
+        opacity: 0.7;
+    }
+    65% {
+        opacity: 0.5;
+    }
+    73% {
+        opacity: 1;
+    }
+    82% {
+        opacity: 0.3;
+        filter: none;
+    }
+    97% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 1;
+    }
+}
