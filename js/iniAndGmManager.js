@@ -117,24 +117,38 @@ class IniAndGmManager {
 
     /**
      * Toggles the resize of an element by cycling through predefined heights.
+     * Updates the button text to reflect the current maxHeight.
      * @param {string} targetId - The ID of the target element.
      */
     toggleResize(targetId) {
         const htmlElement = document.getElementById(targetId);
-        if (htmlElement) {
+        const resizeButton = document.getElementById('throw-log-resize-button');
+
+        if (htmlElement && resizeButton) {
             let currentHeight = window.getComputedStyle(htmlElement).maxHeight;
             currentHeight = parseInt(currentHeight); // Convert to integer
 
             // Toggle the max-height value
+            let newHeight;
             if (currentHeight === 70) {
-                htmlElement.style.maxHeight = '140px';
-            } else if (currentHeight == 140) {
-                htmlElement.style.maxHeight = '280px';
+                newHeight = 140;
+            } else if (currentHeight === 140) {
+                newHeight = 280;
             } else {
-                htmlElement.style.maxHeight = '70px';
+                newHeight = 70;
             }
+
+            htmlElement.style.maxHeight = `${newHeight}px`;
+
+            // Update the button text to include the new max-height in brackets
+            const baseText = resizeButton.dataset.baseText || 'resize log';
+            resizeButton.dataset.baseText = baseText; // Store the base text without the height
+
+            resizeButton.textContent = `${baseText} (${newHeight}px)`;
         }
     }
+
+
 
     /**
      * Toggles the visibility of a specified div.
@@ -828,7 +842,7 @@ class IniAndGmManager {
                 }
             }
         }
-        return "Not in list / no List"; // Return a message if the name is not found
+        return "No"; // Return a message if the name is not found
     }
 
     /**
@@ -851,7 +865,7 @@ class IniAndGmManager {
             } else {
                 // Create a pre element to display the message with proper formatting
                 const messageSpan = document.createElement('span');
-                messageSpan.textContent = 'Aktuell kein aktiver Initiative Durchgang.';
+                messageSpan.textContent = 'No current Ini-table';
                 initiativeListDiv.appendChild(messageSpan);
             }
             // Update TurnMeter
