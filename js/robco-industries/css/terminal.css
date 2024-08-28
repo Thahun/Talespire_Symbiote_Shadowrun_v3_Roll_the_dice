@@ -1,0 +1,162 @@
+body {
+	height: 100%;
+	background-color: transparent;
+}
+
+#minigame {
+	display: block;
+}
+
+#canvas, canvas {
+	width: 100%;
+	height: 150px; /* Reduziert die Höhe für kleinere Frames */
+	margin-top: -5px; /* Passt den oberen Rand an */
+}
+
+#terminal {
+	width: 100%; /* Verkleinert die Breite */
+	height: 330px; /* Verkleinert die Höhe */
+	background-image: url('../img/bg-off.png');
+	background-size: cover; /* Passt das Hintergrundbild an den neuen Rahmen an */
+	font-family: monospace;
+	font-weight: bold;
+	color: #33dd88;
+	font-size:10pt; /* Verkleinert die Schriftgröße */
+	overflow: auto;
+	z-index: 10;
+	/*position: absolute;*/
+	/*left: 50%;*/
+	/*margin-left: -187.5px; !* Zentriert das Element bei kleinerer Breite *!*/
+	/*top: 43px; !* Passt die obere Position an *!*/
+	background-color: black;
+}
+
+#terminal-background {
+	background-image: url('../img/monitorborder.png');
+	background-size: cover; /* Passt das Hintergrundbild an den neuen Rahmen an */
+	border: 1px solid black;
+	border-radius: 10px; /* Reduziert die Rundung */
+	width: 465px; /* Verkleinert die Breite */
+	height: 350px; /* Verkleinert die Höhe */
+	z-index: -25;
+	margin: 0 auto;
+	position: relative;
+}
+
+#terminal-background-off {
+	border: 1px solid black;
+	border-radius: 10px;
+	position: relative;
+	margin: 0;
+	visibility: visible;
+}
+
+#terminal-interior {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	z-index: 11;
+}
+
+.column {
+	float: left;
+	margin-top: 20px; /* Passt den oberen Rand an */
+	height: 145px; /* Verkleinert die Höhe */
+	top: 45px; /* Passt die obere Position an */
+	margin-left: 30px; /* Reduziert den linken Rand */
+}
+
+.pointers {
+	width: 25px; /* Verkleinert die Breite */
+}
+
+.words {
+	/*width: 85px; /* Verkleinert die Breite */
+}
+
+.character {
+	padding-left: 1px;
+	padding-right: 1px;
+	cursor: pointer;
+}
+
+.character-hover {
+	background-color: #33dd88;
+	color: #112211;
+}
+
+#console {
+	left: 270px; /* Passt die Position links an */
+	width: 5%; /* Verkleinert die Breite */
+	letter-spacing: 1px; /* Reduziert den Buchstabenabstand */
+	float: left;
+	margin-left: 5px; /* Reduziert den linken Rand */
+	margin-top:  20%; /* Passt den oberen Rand an */
+}
+
+#output {
+	width: 129px; /* Verkleinert die Breite */
+	height: 150px; /* Verkleinert die Höhe */
+	letter-spacing: 1px; /* Reduziert den Buchstabenabstand */
+	float: left;
+	margin-left: 5px; /* Reduziert den linken Rand */
+	/*margin-top: 15px; /* Passt den oberen Rand an */
+	overflow: revert;
+}
+
+#infoterm {
+	width: 70%; /* Verkleinert die Breite */
+	height: 30px; /* Verkleinert die Höhe */
+	margin-left: 10px; /* Reduziert den linken Rand */
+	position: relative;
+	top: 10px; /* Passt die obere Position an */
+}
+
+#attempts {
+	width: 70%; /* Verkleinert die Breite */
+	height: 15px; /* Verkleinert die Höhe */
+	margin-left: 10px; /* Reduziert den linken Rand */
+	position: relative;
+	top: 10px; /* Passt die obere Position an */
+}
+
+#column1 {
+	left: 10px; /* Passt die Position links an */
+	margin-left: 10px;
+}
+
+#column2 {
+	left: 70px; /* Passt die Position links an */
+}
+
+#column3 {
+	left: 161px; /* Passt die Position links an */
+}
+
+#column4 {
+	left: 196px; /* Passt die Position links an */
+}
+
+#adminalert {
+	margin: 0 auto;
+	position: relative;
+	top: 0%;
+	margin-top: 0px;
+	text-align: center;
+	width: 100%;
+}
+
+.alert-text {
+	display: inline;
+}
+
+#powerbutton {
+	/*position: absolute;*/
+	/*width: 27px; !* Verkleinert die Breite *!*/
+	/*height: 25px; !* Verkleinert die Höhe *!*/
+	/*margin-left: 50%;*/
+	/*left: 127.5px; !* Passt die Position links an *!*/
+	/*top: 305px; !* Passt die obere Position an *!*/
+	cursor: pointer;
+	z-index: 200;
+}
