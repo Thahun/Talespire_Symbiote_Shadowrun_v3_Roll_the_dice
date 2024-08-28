@@ -104,6 +104,11 @@ class Helm {
                 // Check the type and trigger the corresponding function
                 if (payloadData.type) {
                     switch (payloadData.type) {
+                        case "glitch":
+                            console.log("glitchevent",payloadData);
+                            info.show("Glitching!!: ");
+                            this.handleGlitchType(payloadData);
+                            break;
                         case "off":
                             info.show("The GM Sent you a throw!: " + payloadData.name);
                             this.handleOffType(payloadData);
@@ -208,6 +213,27 @@ class Helm {
         diceService.addMessageToLog(payload);
     }
 
+    handleGlitchType(payloadData) {
+        console.log("HandleGlitch", payloadData);
+       // diceService.toggleGlitchSectionVisibility(true);
+        switch (payloadData.command) {
+            case "glitch":
+                diceService.toggleGlitchSectionVisibility(true)
+                break;
+            case "fix":
+                diceService.toggleGlitchSectionVisibility(false)
+                break;
+            case "error":
+                diceService.activateGlitchEffect();
+                break;
+            case "patch-error":
+                diceService.deactivateGlitchEffect();
+                break;
+            default:
+                console.error("Unknown command:", payloadData.command);
+        }
+    }
+
     /**
      * Sends a sync message to specified recipients.
      * @param {string} message - The message to be sent.
@@ -225,7 +251,7 @@ class Helm {
                 });
             }
         } catch (error) {
-            //console.log("Failed to send: ", error);
+            console.log("Failed to send: ", error);
         }
     }
 

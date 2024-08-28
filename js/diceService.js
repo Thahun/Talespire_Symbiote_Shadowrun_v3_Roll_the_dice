@@ -64,6 +64,10 @@ class DiceService extends AbstractSheetHelper {
         this.loadDiceSets();
 
         this.loadThrowData();  // Load throw data on initialization
+
+       // document.getElementById('activate-glitch-button').addEventListener('click', this.activateGlitchEffect);
+       // document.getElementById('deactivate-glitch-button').addEventListener('click', this.deactivateGlitchEffect);
+
         this.initState = true;
     }
 
@@ -77,6 +81,73 @@ class DiceService extends AbstractSheetHelper {
             this.renderThrowData();  // Render the loaded throw data in the UI
         }
     }
+
+     activateGlitchEffect() {
+        // Check if the glitch effect is already active
+        if (document.getElementById('glitch-background') || document.getElementById('glitch-foreground')) {
+            return; // Exit the function if the effect is already active
+        }
+
+        // Create and add the glitch background
+        const glitchBackground = document.createElement('div');
+        glitchBackground.id = 'glitch-background';
+        glitchBackground.className = 'glitch-background';
+        document.body.appendChild(glitchBackground);
+
+        // Create and add the glitch foreground
+        const glitchForeground = document.createElement('div');
+        glitchForeground.id = 'glitch-foreground';
+        glitchForeground.className = 'glitch-foreground';
+
+        // Add multiple glitching icons with random sizes and positions
+        for (let i = 0; i < 5; i++) {
+            const glitchIcon = document.createElement('div');
+            glitchIcon.className = 'glitch-icon';
+            glitchIcon.style.width = `${Math.random() * 100 + 50}px`; // Random width between 50px and 150px
+            glitchIcon.style.height = glitchIcon.style.width; // Make it a square
+            glitchIcon.style.top = `${Math.random() * 90}vh`; // Random position in viewport height
+            glitchIcon.style.left = `${Math.random() * 90}vw`; // Random position in viewport width
+            glitchForeground.appendChild(glitchIcon);
+        }
+
+        document.body.appendChild(glitchForeground);
+    }
+
+
+     toggleGlitchSectionVisibility(show = null) {
+        const glitchSection = document.getElementById('glitch-section');
+
+        if (show === true || (show === null && glitchSection.classList.contains('glitch-hide'))) {
+            // Show the section with glitch effect
+            glitchSection.style.display = 'block';
+            glitchSection.classList.remove('glitch-hide');
+            glitchSection.classList.add('glitch-show');
+        } else if (show === false || (show === null && glitchSection.classList.contains('glitch-show'))) {
+            // Hide the section with glitch effect
+            glitchSection.classList.remove('glitch-show');
+            glitchSection.classList.add('glitch-hide');
+
+            // Set the section to hidden after the animation completes
+            setTimeout(() => {
+                glitchSection.style.display = 'none';
+            }, 500); // Duration of glitch-out animation
+        }
+    }
+
+    deactivateGlitchEffect() {
+        // Remove the glitch background
+        const glitchBackground = document.getElementById('glitch-background');
+        if (glitchBackground) {
+            glitchBackground.remove();
+        }
+
+        // Remove the glitch foreground
+        const glitchForeground = document.getElementById('glitch-foreground');
+        if (glitchForeground) {
+            glitchForeground.remove();
+        }
+    }
+
 
     /**
      * Checks if the service is initialized.
@@ -217,7 +288,7 @@ class DiceService extends AbstractSheetHelper {
 
     async rollGlitchDice(){
         let diceString = '1d6';
-        let rollId = await TS.dice.putDiceInTray([{ name: '"Glitch"', roll: "!" + diceString }], true);
+        await TS.dice.putDiceInTray([{ name: 'GlitchRollCode', roll: "!" + diceString }], true);
     }
 
     /**
@@ -347,6 +418,58 @@ class DiceService extends AbstractSheetHelper {
             console.error("Invalid event structure:", event);
             return [];
         }
+    }
+
+    isGlitch(data){
+        if (
+            data &&
+            data.kind === "rollResults" &&
+            data.payload &&
+            Array.isArray(data.payload.resultsGroups)
+        ) {
+            const glitchGroups = data.payload.resultsGroups.filter(group => group.name === "GlitchRollCode");
+            return glitchGroups.length === 1;
+        }
+        return false;
+    }
+
+    async evaluateGlitch(event) {
+        const rollResults = event.payload?.resultsGroups;
+        let glitchresult = 0;
+        let message = '';
+
+        if (!Array.isArray(rollResults)) {
+            return null; // Return null if rollResults is not an array or doesn't exist
+        }
+
+        // Find the group with the name "Glitch"
+        const glitchGroup = rollResults.find(group => group.name === "GlitchRollCode");
+
+        if (glitchGroup && glitchGroup.result && Array.isArray(glitchGroup.result.results)) {
+            glitchresult = glitchGroup.result.results[0]; // Return the results array
+            console.log(glitchresult);
+        }else{
+            console.error("Invalid event structure:", event);
+        }
+
+        let result = [{
+            name: "Glitch",
+            result: {
+                value: glitchresult
+                    }
+             }];
+        TS.dice.sendDiceResult(result);
+
+        if(glitchresult == 1){
+             message = 'G̸̛̔̾̏̓̔̓L̶̛̄̀̇̾̓̾̔Ǐ̵̄͛̔T̷̔͛͌̆̚C̵̽͌̚H̴̓̓̏̽̎̋̈́̕̚I̴̅̔N̸̏̐̃͗̅͌̕͝͝G̶̔̐͑̌̓̾͝';
+             this.toggleGlitchSectionVisibility(false);
+        }else{
+             message = `Had no glitch => ${glitchresult}`;
+             this.toggleGlitchSectionVisibility(false);
+        }
+
+        this.reportDiceLogMessage(message); //send dicelog to all
+
     }
 
     /**
@@ -1027,7 +1150,13 @@ function onRollResults(event) {
 
     switch (kind) {
         case 'rollResults':
-            //console.log("ROLL", event);
+            console.log("ROLL", event);
+            console.log("ISGLITCH?:", diceService.isGlitch(event));
+
+            if (diceService.isGlitch(event)){
+                diceService.evaluateGlitch(event);
+            }
+
             if(diceService.checkIfRollIsInitiative(event)){
                 diceService.evaluateInitiativeRoll(event);
             } else {

@@ -11,6 +11,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<!--
+<button id="activate-glitch-button" onclick="diceService.toggleGlitchSectionVisibility(false)">Activate Glitch</button>
+<button id="deactivate-glitch-button" onclick="diceService.toggleGlitchSectionVisibility(true)">Deactivate Glitch</button>
+-->
+
 <div id="loading">
     <div id="loading-animation" class="ts-icon-hourglass"></div>
 </div>
@@ -109,12 +115,20 @@
                     </div>
                 </div>
             </div>
+            <div class="section-body">
+                <div>
+                    <button id="send-glitch" onclick="iniAndGmManager.sendGlitch('glitch')">send Glitch</button>
+                    <button id="fix-glitch" onclick="iniAndGmManager.sendGlitch('fix')">fix Glitch</button>
+                    <button id="send-error" onclick="iniAndGmManager.sendGlitch('error')">send error</button>
+                    <button id="send-patch" onclick="iniAndGmManager.sendGlitch('patch-error')">patch error</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="section">
+    <div id="glitch-section" class="section" style="display: none">
         <div class="section-header" >
-            <span class="section-title" onclick="iniAndGmManager.toggleBodyDiv('glitch-body')">GliTCH</span>
+            <span class="section-title" onclick="iniAndGmManager.toggleBodyDiv('glitch-body')">G̸̛̔̾̏̓̔̓L̶̛̄̀̇̾̓̾̔Ǐ̵̄͛̔T̷̔͛͌̆̚C̵̽͌̚H̴̓̓̏̽̎̋̈́̕̚I̴̅̔N̸̏̐̃͗̅͌̕͝͝G̶̔̐͑̌̓̾͝'</span>
         </div>
         <div id="glitch-body" class="section-body">
             <div class="icon-container">
@@ -122,7 +136,6 @@
             </div>
         </div>
     </div>
-
 
     <div id="dice-log" class="section">
         <div class="section-header" >

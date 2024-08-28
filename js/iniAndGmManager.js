@@ -208,6 +208,19 @@ class IniAndGmManager {
         }
     }
 
+    sendGlitch(message) {
+        const to = this.collectRecipients();
+        const logEntry = {
+            type: "glitch",
+            command: message
+        };
+        let command = JSON.stringify(logEntry);
+
+        helm.SendSyncMessage(command, to);
+
+        console.log("TO:", to);
+    }
+
     /**
      * Collects the recipients from the selected breadcrumbs.
      * @param {boolean} [useOriginal=true] - Whether to use the original breadcrumb or the chatID breadcrumb.
