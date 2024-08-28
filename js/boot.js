@@ -1,27 +1,37 @@
 /**
  * @type {DebugBox} debug
  */
-var debug;
+let debug;
 /**
  * @type {InfoBox} info
  */
-var info;
+let info;
 /**
  * @type {ErrorBox} error
  */
-var error;
+let error;
 /**
  * @type {StorageService} storageService
  */
-var storageService;
+let storageService;
 /**
  * @type {SymbioteStorage} symbioteStorage
  */
-var symbioteStorage;
+let symbioteStorage;
 /**
  * @type {DiceService} diceService
  */
-var diceService;
+let diceService;
+/**
+ * @type {IniAndGmManager} diceService
+ */
+let iniAndGmManager;
+/**
+ * @type {Helm} helm
+ */
+let helm;
+
+let isGM = false;
 
 class BootLoader {
     initTimeout = 2000; //ms
@@ -40,6 +50,8 @@ class BootLoader {
 
         {src: 'js/diceTracker.js', loaded: false},
         {src: 'js/diceService.js', loaded: false},
+        {src: 'js/iniAndGmManager.js', loaded: false},
+        {src: 'js/helm.js', loaded: false},
     ]
 
     allScriptsLoaded() {
@@ -93,6 +105,12 @@ class BootLoader {
         console.log('... initialized');
     }
 
+    async checkIfGM(){
+        let user = await TS.players.whoAmI();
+        let userDetails = await TS.players.getMoreInfo([user.id]);
+        return userDetails[0].rights.canGm;
+    }
+
     initCommon() {
         debug = new DebugBox(/*true*/);
         info = new InfoBox();
@@ -103,6 +121,8 @@ class BootLoader {
         storageService = new StorageService();
         symbioteStorage = new SymbioteStorage(storageService);
         diceService = new DiceService(storageService);
+        iniAndGmManager = new IniAndGmManager(storageService);
+        helm = new Helm();
     }
 
     async waitingForInit() {
@@ -122,6 +142,10 @@ class BootLoader {
         console.log('... loaded');
 
         this.hideLoadingPanel();
+
+        console.log('Check GM...');
+        isGM = await this.checkIfGM();
+        console.log('Is GM: ' ,isGM);
     }
 
     hideLoadingPanel() {

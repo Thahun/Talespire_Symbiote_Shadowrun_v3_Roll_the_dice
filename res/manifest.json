@@ -1,6 +1,6 @@
 {
   "manifestVersion": 1,
-  "name": "Shadowrun v3.01D - Roll the dice local",
+  "name": "Shadowrun v3.01D - Roll the dice",
   "summary": "This symbiote enables you to easier roll dices for Shadowrun v3.01D, providing you the ones to reroll and telling you how many dices got above the defined threshold.",
   "descriptionFilePath": "/README.md",
   "version": "0.8.0",
@@ -34,7 +34,7 @@
       }
     },
     "interop": {
-      "id": "d9eda1bf-03f9-4e7e-b38f-6cf2ad64597b"
+      "id": "cc730d2b-621f-4e43-aefb-1b559286ce06"
     }
   },
   "environment": {
