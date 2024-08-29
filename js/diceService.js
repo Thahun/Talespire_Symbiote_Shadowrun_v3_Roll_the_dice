@@ -469,6 +469,7 @@ class DiceService extends AbstractSheetHelper {
         }
 
         this.reportDiceLogMessage(message); //send dicelog to all
+        TS.chat.send(message, 'board');
 
     }
 

@@ -47,7 +47,7 @@
                     <!-- Breadcrumbs will be appended here -->
                 </div>
             </div>
-            <div class="section-body">
+            <div id="gm-box-throw" class="section-body" style="display: none">
                 <div id="send-throw" class="section-grid-container" style="grid-template-columns: 40px repeat(6,auto) 20px;">
                     <div class="grid-item" style="grid-column-end: span 1;">
                         &nbsp;
@@ -115,7 +115,7 @@
                     </div>
                 </div>
             </div>
-            <div class="section-body">
+            <div id="gm-box-glitch" class="section-body" style="display: none">
                 <div>
                     <button id="send-glitch" onclick="iniAndGmManager.sendGlitch('glitch')">send Glitch</button>
                     <button id="fix-glitch" onclick="iniAndGmManager.sendGlitch('fix')">fix Glitch</button>
@@ -123,11 +123,49 @@
                     <button id="send-patch" onclick="iniAndGmManager.sendGlitch('patch-error')">patch error</button>
                 </div>
             </div>
+            <div id="gm-box-hacking" class="section-body" style="display: none">
+                    <div id="hacking-names" class="section-grid-container" style="grid-template-columns: 85px repeat(5,auto) 10px;">
+                        <div class="grid-item-header-label align-left" style="grid-column-end: span 1;">
+                            &nbsp;
+                        </div>
+                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                            <label>difficulty</label>
+                        </div>
+                        <div class="grid-item-header-label" style="text-align:left;grid-column-end: span 1;">
+                            <label >attempts</label>
+                        </div>
+                        <div class="grid-item-header-label" style="grid-column-end: span 1;">
+                            &nbsp;
+                        </div>
+                    </div>
+
+                    <div id="hacking" class="section-grid-container" style="margin-top: 10px;" >
+                        <div id="hacking-send" class="grid-item-data align-left" style="grid-column-end: span 1;">
+                                <button id="send-hack-button" onclick="iniAndGmManager.sendHack()">start hack</button>
+                        </div>
+                        <div id="difficulty" class="grid-item-data align-left" style="">
+                            <label>
+                                <input id="difficulty-input" class="field-data-short" type="number" value="7">
+                            </label>
+                        </div>
+                        <div id="att" class="grid-item-data align-left" style="">
+                            <label>
+                                <input id="att-input" class="field-data-short" type="number" value="4">
+                            </label>
+                        </div>
+                        <div id="hacking-end-good"  class="grid-item-data align-left" style="grid-column-end: span 1;">
+                            <button id="end-hack-good-button" onclick="iniAndGmManager.sendEndHack(true)">hack solved</button>
+                        </div>
+                        <div id="hacking-end-bad"  class="grid-item-data align-left" style="grid-column-end: span 1;">
+                            <button id="end-hack-bad-button" onclick="iniAndGmManager.sendEndHack(false)">hack fail</button>
+                        </div>
+                    </div>
+                </div>
         </div>
     </div>
 
 
-    <div id="minigame-section" class="section" style="">
+    <div id="minigame-section" class="section" style="display:none">
         <div class="section-header">
             <span class="section-title" onclick="iniAndGmManager.toggleBodyDiv('minigame-body')">Hacking</span>
         </div>
@@ -137,15 +175,13 @@
                 @import "js/robco-industries/css/terminal.css";
             </style>
             <div id="minigame">
-            <!--    <div id="terminal-background">
-                    <img id="terminal-background-off" src="js/robco-industries/img/monitorborder-off.png" />
-                </div> -->
                 <div id="terminal">
                 </div>
 
             </div>
-            <div id="powerbutton" onclick="TogglePower()">O</div>
-
+           <!--
+            <div id="powerbutton" onclick="iniAndGmManager.startHacking()">O</div>
+            -->
             <div id="otheraudiostuff">
                 <audio id="poweron" src="js/robco-industries/sound/poweron.ogg"></audio>
                 <audio id="poweroff" src="js/robco-industries/sound/poweroff.ogg"></audio>
@@ -167,9 +203,7 @@
             </div>
             <script src="js/robco-industries/js/three.min.js"></script>
             <script src="js/robco-industries/js/jquery.min.js"></script>
-            <script type="text/javascript" src="js/robco-industries/js/terminal.js"></script>
-
-
+            <script type="module" src="js/robco-industries/js/terminal.js" ></script>
         </div>
 
     </div>

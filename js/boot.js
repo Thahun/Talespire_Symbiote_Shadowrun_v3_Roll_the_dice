@@ -33,7 +33,9 @@ let helm;
 
 let isGM = false;
 
+
 class BootLoader {
+
     initTimeout = 2000; //ms
     ELEMENTID_LOADING = 'loading';
 
@@ -52,6 +54,7 @@ class BootLoader {
         {src: 'js/diceService.js', loaded: false},
         {src: 'js/iniAndGmManager.js', loaded: false},
         {src: 'js/helm.js', loaded: false},
+       // {src: 'js/robco-industries/js/terminal.js', loaded: false}
     ]
 
     allScriptsLoaded() {

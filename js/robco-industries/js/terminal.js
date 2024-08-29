@@ -7,10 +7,12 @@
 	{"words":["testacy","vespers","bewitch","recheck","stretch","busiest","bedrock","beakers","beleapt","bedewed","beshame","befrets"]}
 */
 
+// terminal.js
+
 var columnHeight = 17;
 var wordColumnWidth = 12;
 var Count = 12;
-var Difficulty = 7;
+export let Difficulty = 7;
 var DudLength = 8;
 var Sound = true;
 var InfoText = "RENRAKU INDUSTRIES (TM) INTRUSION PROTOCOL<br />ENTER PASSWORD NOW";
@@ -26,7 +28,7 @@ var Haikus = [
 var Correct = "";
 var Words = {};
 var OutputLines = [];
-var MaxAttempts = 4;
+export let MaxAttempts = 4;
 var AttemptsRemaining = 4;
 var Power = "off";
 
@@ -77,12 +79,29 @@ var gchars =
 // 	}
 // });
 
-Start = function()
+// Getter- und Setter-Funktionen
+export function setMaxAttempts(value) {
+	MaxAttempts = value;
+}
+
+export function setDifficulty(value) {
+	Difficulty = value;
+}
+
+export function getMaxAttempts() {
+	return MaxAttempts;
+}
+
+export function getDifficulty() {
+	return Difficulty;
+}
+
+export const Start = function()
 {
 	GetWords(Difficulty, Count);
 }
 
-GetWords = function(length, count) {
+export const GetWords = function(length, count) {
 	var NewWords = [];
 	var WordCount = 0;
 	AllWords = Shuffle(AllWords);
@@ -102,7 +121,7 @@ $(window).on("load", function() {
 	Initialize();
 });
 
-Initialize = function()
+export const Initialize = function()
 {
 	if (Power == "off")
 		return;
@@ -127,10 +146,9 @@ Initialize = function()
 		UpdateAttempts();
 	}, "", "");
 	Start();
-	
 }
 
-WordColumnsWithDots = function()
+export const WordColumnsWithDots = function()
 {
 	var column2 = $("#column2");
 	var column4 = $("#column4");
@@ -140,12 +158,12 @@ WordColumnsWithDots = function()
 	column4.html( dots );
 }
 
-PopulateScreen = function()
+export const PopulateScreen = function()
 {
 	$("#terminal").html('<div id="terminal-interior"><div id="infoterm"></div><div id="attempts"></div><div id="column1" class="column pointers"></div><div id="column2" class="column words"></div><div id="column3" class="column pointers"></div><div id="column4" class="column words"></div><div id="output"></div><div id="console">></div></div>');
 }
 
-UpdateAttempts = function()
+export const UpdateAttempts = function()
 {
 	var AttemptString = AttemptsRemaining + " ATTEMPT(S) LEFT: ";
 	JTypeFill("attempts", AttemptString, 20, function(){
@@ -159,8 +177,11 @@ UpdateAttempts = function()
 	}, "", "");
 }
 
-TogglePower = function()
+export const TogglePower = function(newMaxAttempts , newDifficulty)
 {
+	setMaxAttempts(newMaxAttempts);
+	setDifficulty(newDifficulty);
+
 	if (Power == "on")
 	{
 		Power = "off";
@@ -182,7 +203,7 @@ TogglePower = function()
 	}
 }
 
-JTypeFill = function(containerID, text, TypeSpeed, callback, TypeCharacter, Prefix)
+export const JTypeFill = function(containerID, text, TypeSpeed, callback, TypeCharacter, Prefix)
 {
 	var cont = $("#" + containerID);
 	
@@ -214,7 +235,7 @@ JTypeFill = function(containerID, text, TypeSpeed, callback, TypeCharacter, Pref
 	);
 }
 
-WordCallback = function(Response)
+export const WordCallback = function(Response)
 {
 	Words = JSON.parse(Response).words;
 	Correct = Words[0];
@@ -222,7 +243,7 @@ WordCallback = function(Response)
 	FillWordColumns();
 }
 
-SetupInteractions = function(column)
+export const SetupInteractions = function(column)
 {
 	column = $(column);
 	
@@ -351,7 +372,7 @@ SetupInteractions = function(column)
 	});
 }
 
-RemoveDud = function()
+export const RemoveDud = function()
 {
 	var LiveWords = $(".word").not("[data-word='" + Correct.toUpperCase() + "']");
 	
@@ -363,7 +384,7 @@ RemoveDud = function()
 	});
 }
 
-HandleBraces = function(DudCap)
+export const HandleBraces = function(DudCap)
 {
 	if ( Math.round( Math.random() - .3 ) )
 	{
@@ -418,7 +439,7 @@ HandleBraces = function(DudCap)
 		}
 }
 
-Failure = function()
+export const Failure = function()
 {
 	UpdateOutput("Access denied.");
 	UpdateOutput("Lockout in");
@@ -428,7 +449,7 @@ Failure = function()
 		top: -1 * $("#terminal-interior").height()
 	},
 	{
-		duration: 1000,
+		duration: 3000,
 		complete : function()
 		{
 			$("#terminal").html("<div id='canvas'></div><div id='adminalert'><div class='character-hover alert-text'>TERMINAL LOCKED</div><br />PLEASE CONTACT AN ADMINISTRATOR</div></div>");
@@ -463,19 +484,25 @@ Failure = function()
 				renderer.render( scene, camera );
 			}
 			render_sphere();
+			//console.log("LOST");
+			TS.chat.send("Hacking...failed", 'board');
+			diceService.reportDiceLogMessage('failed to hack');
+
+			iniAndGmManager.toggleBodyDiv('minigame-section');
 		}
 	});
 }
 
-Success = function()
+export const Success = function()
 {
+	console.log('Game Won');
 	UpdateOutput("Access granted.");
 
 	$("#terminal-interior").animate({
 		top: -1 * $("#terminal-interior").height()
 	},
 	{
-		duration: 1000,
+		duration: 2000,
 		complete : function()
 		{
 			$("#terminal").html("<div id='canvas'></div><div id='adminalert'><div id='msg' class='character-hover alert-text'>TERMINAL ACCESS GRANTED</div><br /><div onClick=\"WinCondition();return false;\" id='proceed' class='alert-text'>PRESS HERE TO PROCEED</div></div>");
@@ -521,17 +548,21 @@ Success = function()
 			{
 				$(this).removeClass("character-hover");
 				$("#msg").addClass("character-hover");
-			});				
+			});
+
+			TS.chat.send("Hacking...succeeded", 'board');
+			diceService.reportDiceLogMessage('hack succeeded!');
 		}
 	});
 }
 
-WinCondition = function() {
+export const WinCondition = function() {
 	TogglePower();
-	$.post(`https://${GetParentResourceName()}/Win`);
+	//$.post(`https://${GetParentResourceName()}/Win`);
+	iniAndGmManager.toggleBodyDiv('minigame-section');
 }
 
-CompareWords = function(first, second)
+export const CompareWords = function(first, second)
 {
 	if (first.length !== second.length)
 	{
@@ -552,7 +583,7 @@ CompareWords = function(first, second)
 	return correct;
 }
 
-UpdateConsole = function(word)
+export const UpdateConsole = function(word)
 {
 	var cont = $("#console");
 	var curName = cont.text();
@@ -579,7 +610,7 @@ UpdateConsole = function(word)
 	);
 }
 
-UpdateOutput = function(text)
+export const UpdateOutput = function(text)
 {
 	OutputLines.push(">" + text);
 	
@@ -595,7 +626,7 @@ UpdateOutput = function(text)
 	$("#output").html(output);
 }
 
-PopulateInfo = function()
+export const PopulateInfo = function()
 {
 	var cont = $("#info");
 	
@@ -623,7 +654,7 @@ PopulateInfo = function()
 	);
 }
 
-SetupOutput = function()
+export const SetupOutput = function()
 {
 	var i = 0;
 	while (i < columnHeight)
@@ -633,7 +664,7 @@ SetupOutput = function()
 	}
 }
 
-FillPointerColumns = function()
+export const FillPointerColumns = function()
 {
 	var column1 = document.getElementById("column1");
 	var column3 = document.getElementById("column3");
@@ -661,7 +692,7 @@ FillPointerColumns = function()
 	column3.innerHTML = pointers;
 }
 
-FillWordColumns = function()
+export const FillWordColumns = function()
 {
 	var column2 = document.getElementById("column2");
 	var column4 = document.getElementById("column4");
@@ -712,7 +743,7 @@ FillWordColumns = function()
 	PrintWordsAndShit( column4, AllChars );
 }
 
-AddDudBrackets = function(Nodes)
+export const AddDudBrackets = function(Nodes)
 {
 	var AllBlankIndices = GetContinuousBlanks(Nodes);
 	
@@ -743,7 +774,7 @@ AddDudBrackets = function(Nodes)
 	return Nodes;
 }
 
-GetContinuousBlanks = function(Nodes)
+export const GetContinuousBlanks = function(Nodes)
 {
 	var AllNodes = $( Nodes );
 	var ContinuousBlanks = [[]];
@@ -767,8 +798,9 @@ GetContinuousBlanks = function(Nodes)
 	return ContinuousBlanks;
 }
 
-PrintWordsAndShit = function(container, words)
+export const PrintWordsAndShit = function(container, words)
 {
+	let Nodes;
 	Nodes = $(container).find(".character");
 	Nodes.each(function(index, elem)
 	{
@@ -783,7 +815,7 @@ PrintWordsAndShit = function(container, words)
 	});
 }
 
-Shuffle = function(array)
+export const Shuffle = function(array)
 {
 	var tmp, current, top = array.length;
 	if(top) while(--top)
@@ -796,7 +828,7 @@ Shuffle = function(array)
 	return array;
 }
 
-GenerateDotColumn = function()
+export const GenerateDotColumn = function()
 {
 	var dots = "";
 	
@@ -817,7 +849,7 @@ GenerateDotColumn = function()
 	return dots;
 }
 
-GenerateGarbageCharacters = function()
+export const GenerateGarbageCharacters = function()
 {
 	var garbage = "";
 	
@@ -838,7 +870,7 @@ GenerateGarbageCharacters = function()
 	return garbage;
 }
 
-RandomPointer = function()
+export const RandomPointer = function()
 {
 	if (Sound)
 		return "0x" + (("0000" + Math.floor( Math.random() * 35535 ).toString(16).toUpperCase()).substr(-4));

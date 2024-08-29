@@ -106,7 +106,6 @@ class Helm {
                     switch (payloadData.type) {
                         case "glitch":
                             console.log("glitchevent",payloadData);
-                            info.show("Glitching!!: ");
                             this.handleGlitchType(payloadData);
                             break;
                         case "off":
@@ -131,6 +130,15 @@ class Helm {
                                 //console.log("setini:", payloadData);
                                 this.handleSetIniType(payloadData);
                             }
+                            break;
+                        case "hack":
+                            //console.log("setini:", payloadData);
+                            this.handleSetHack(payloadData);
+                            break;
+                        case "endHack":
+                            //console.log("setini:", payloadData);
+                            this.handleEndHack(payloadData);
+
                             break;
                         case "fetchini":
                             //console.log("fetchini:", payloadData);
@@ -213,12 +221,24 @@ class Helm {
         diceService.addMessageToLog(payload);
     }
 
+     handleSetHack(payloadData) {
+        console.log("handleSetHack", payloadData);
+        iniAndGmManager.startHacking(payloadData.attempts,payloadData.diff);
+    }
+
+
+    handleEndHack(payloadData){
+        console.log("handleEndHack", payloadData);
+
+    }
+
     handleGlitchType(payloadData) {
         console.log("HandleGlitch", payloadData);
        // diceService.toggleGlitchSectionVisibility(true);
         switch (payloadData.command) {
             case "glitch":
                 diceService.toggleGlitchSectionVisibility(true)
+                info.show("Glitching!!: ");
                 break;
             case "fix":
                 diceService.toggleGlitchSectionVisibility(false)
@@ -355,8 +375,43 @@ class Helm {
      */
     toggleBreadcrumbSelection(breadcrumb) {
         breadcrumb.classList.toggle('selected');
+
+        // Überprüfen, ob mindestens ein Breadcrumb ausgewählt ist
+        this.updateBreadcrumbSelectionState();
     }
+
+    updateBreadcrumbSelectionState() {
+        const selectedBreadcrumbs = this.GmBox.querySelectorAll('.breadcrumb.selected');
+        this.isAnyBreadcrumbSelected = selectedBreadcrumbs.length > 0;
+
+        if (this.isAnyBreadcrumbSelected) {
+            console.log("Mindestens ein Breadcrumb ist ausgewählt.");
+            this.toggleDivVisibility(true);
+
+        } else {
+            console.log("Kein Breadcrumb ist ausgewählt.");
+            this.toggleDivVisibility(false);
+        }
+    }
+
+    toggleDivVisibility(toggle) {
+        // Array der IDs der Div-Elemente, die gesteuert werden sollen
+        const divIds = ['gm-box-throw', 'gm-box-glitch', 'gm-box-hacking'];
+
+        // Schleife über alle IDs und setze den display-Wert
+        divIds.forEach(id => {
+            const div = document.getElementById(id);
+            if (div) {
+                div.style.display = toggle ? 'block' : 'none';
+            } else {
+                console.warn(`Div mit ID ${id} nicht gefunden`);
+            }
+        });
+    }
+
+
 }
+
 
 /**
  * Handles the sync message event.

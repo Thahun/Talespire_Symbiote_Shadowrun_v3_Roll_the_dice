@@ -1,3 +1,5 @@
+//import { TogglePower } from './robco-industries/js/terminal.js';
+
 /**
  * Class representing an initiative and GM manager.
  */
@@ -21,6 +23,7 @@ class IniAndGmManager {
      * Initialize the manager by setting up elements, event listeners, and loading data.
      */
     async init() {
+
         // Get elements
         this.nameInput = document.getElementById('player-npc-rolls-name');
         this.initiativeInput = document.getElementById('player-npc-rolls-init');
@@ -178,6 +181,8 @@ class IniAndGmManager {
         }
     }
 
+
+
     /**
      * Toggles the visibility of the GM box if the user can GM.
      */
@@ -208,6 +213,14 @@ class IniAndGmManager {
         }
     }
 
+    async startHacking(newMaxAttempts= 4, newDifficulty = 7){
+        let { TogglePower } = await import('./robco-industries/js/terminal.js');
+
+        this.toggleBodyDiv('minigame-section');
+        TogglePower(newMaxAttempts,newDifficulty);
+
+    }
+
     sendGlitch(message) {
         const to = this.collectRecipients();
         const logEntry = {
@@ -220,6 +233,38 @@ class IniAndGmManager {
 
         console.log("TO:", to);
     }
+
+    sendHack() {
+        let diff  = document.getElementById('difficulty-input').value;
+        let attempts  = document.getElementById('att-input').value;
+
+        const to = this.collectRecipients();
+        const logEntry = {
+            type: "hack",
+            diff: diff,
+            attempts: attempts
+        };
+        let command = JSON.stringify(logEntry);
+
+        helm.SendSyncMessage(command, to);
+
+        console.log("TO:", to, command);
+    }
+
+    sendEndHack(succ = true) {
+        const to = this.collectRecipients();
+        const logEntry = {
+            type: "endHack",
+            succ: succ
+        };
+
+        let command = JSON.stringify(logEntry);
+
+        helm.SendSyncMessage(command, to);
+
+        console.log("TO:", to, command);
+    }
+
 
     /**
      * Collects the recipients from the selected breadcrumbs.
