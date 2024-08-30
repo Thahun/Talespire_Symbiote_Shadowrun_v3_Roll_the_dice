@@ -157,15 +157,19 @@ class IniAndGmManager {
      * Toggles the visibility of a specified div.
      * @param {string} targetId - The ID of the target div.
      */
-    toggleBodyDiv(targetId) {
+    toggleBodyDiv(targetId, toggle = null) {
         const gmBoxContent = document.getElementById(targetId);
         if (gmBoxContent == null) {
             console.error("no valid html target: ", targetId);
         }
-        if (gmBoxContent.style.display === "none") {
-            gmBoxContent.style.display = "block";
+        if (toggle != null){
+            gmBoxContent.style.display = toggle ? "block" : "none";
         } else {
-            gmBoxContent.style.display = "none";
+            if (gmBoxContent.style.display === "none") {
+                gmBoxContent.style.display = "block";
+            } else {
+                gmBoxContent.style.display = "none";
+            }
         }
     }
 
@@ -213,12 +217,59 @@ class IniAndGmManager {
         }
     }
 
+     checkHackingState() {
+        const minigameSection = document.getElementById('minigame-section');
+        const accessGrantedTerminal = document.getElementById('access-granted-terminal');
+        const terminalLocked = document.getElementById('terminal-locked');
+
+        if (minigameSection && minigameSection.style.display === 'block') {
+            return 'run';
+        } else if (accessGrantedTerminal && accessGrantedTerminal.style.display === 'block') {
+            return 'granted';
+        } else if (terminalLocked && terminalLocked.style.display === 'block') {
+            return 'locked';
+        }
+
+        return null; // Optional: Falls keines der Elemente sichtbar ist, kannst du auch null oder einen anderen Standardwert zurückgeben.
+    }
+
+
     async startHacking(newMaxAttempts= 4, newDifficulty = 7){
+
         let { TogglePower } = await import('./robco-industries/js/terminal.js');
 
-        this.toggleBodyDiv('minigame-section');
-        TogglePower(newMaxAttempts,newDifficulty);
+        console.log("state",this.checkHackingState());
+        //check if hacking state
+        switch (this.checkHackingState()) {
+            case "run":
+                TogglePower()
+                TogglePower(newMaxAttempts,newDifficulty);
+                console.log('run');
+                break;
+            case "granted":
+                console.log('granted');
+                TogglePower();
+                TogglePower(newMaxAttempts,newDifficulty);
+                break;
+            case "locked":
+                console.log('locked');
+                TogglePower();
+                TogglePower(newMaxAttempts,newDifficulty);
+                break;
+            default:
+                this.toggleBodyDiv('minigame-section');
+                TogglePower(newMaxAttempts,newDifficulty);
+        }
+    }
 
+    async endHacking(solved = false){
+        let { Success, Failure  } = await import('./robco-industries/js/terminal.js');
+
+        if(solved){
+            Success();
+        } else {
+            Failure();
+        }
     }
 
     sendGlitch(message) {
@@ -1005,6 +1056,7 @@ class IniAndGmManager {
         } catch (error) {
             console.error("Error getting stats from picked creature:", error);
         }
+
     }
 }
 

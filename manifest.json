@@ -38,6 +38,10 @@
     }
   },
   "environment": {
+    "capabilities": [
+      "playAudio",
+      "runInBackground"
+    ],
     "extras": [
       "colorStyles",
       "fonts",

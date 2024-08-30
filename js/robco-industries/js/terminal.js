@@ -186,7 +186,7 @@ export const TogglePower = function(newMaxAttempts , newDifficulty)
 	{
 		Power = "off";
 		$("#terminal-background-off").css("visibility", "visible");
-		$("#terminal").css("background-image", "url('robco-industries/img/bg-off.png')");
+		$("#terminal").css("background-image", "url('../img/bg-off.png')");
 		$("#terminal").html("");
 		if (Sound)
 			$("#poweroff")[0].play();
@@ -198,7 +198,7 @@ export const TogglePower = function(newMaxAttempts , newDifficulty)
 	{
 		Power = "on";
 		$("#terminal-background-off").css("visibility", "hidden");
-		$("#terminal").css("background-image", "url('robco-industries/img/bg.png')");
+		$("#terminal").css("background-image", "url('../img/bg.png')");
 		Initialize();
 	}
 }
@@ -452,7 +452,7 @@ export const Failure = function()
 		duration: 3000,
 		complete : function()
 		{
-			$("#terminal").html("<div id='canvas'></div><div id='adminalert'><div class='character-hover alert-text'>TERMINAL LOCKED</div><br />PLEASE CONTACT AN ADMINISTRATOR</div></div>");
+			$("#terminal").html("<div id='canvas'></div><div id='adminalert'><div id='terminal-locked' class='character-hover alert-text'>TERMINAL LOCKED</div><br />PLEASE CONTACT AN ADMINISTRATOR</div></div>");
 			var container = $("#canvas");
 			var canvasWidth = container.width();
 			var canvasHeight = container.height();
@@ -477,18 +477,25 @@ export const Failure = function()
 
 			camera.position.z = 4;
 
-
 			function render_sphere() {
 				requestAnimationFrame( render_sphere );
 				cube.rotation.y += 0.008;
 				renderer.render( scene, camera );
 			}
 			render_sphere();
-			//console.log("LOST");
+
 			TS.chat.send("Hacking...failed", 'board');
 			diceService.reportDiceLogMessage('failed to hack');
 
-			iniAndGmManager.toggleBodyDiv('minigame-section');
+
+			const lockedTerminal = document.getElementById('terminal-locked');
+			lockedTerminal.addEventListener('click', () => {
+				TogglePower();
+				iniAndGmManager.toggleBodyDiv('minigame-section', false);
+			});
+
+			//iniAndGmManager.toggleBodyDiv('minigame-section',false);
+			//TogglePower();
 		}
 	});
 }
@@ -505,7 +512,7 @@ export const Success = function()
 		duration: 2000,
 		complete : function()
 		{
-			$("#terminal").html("<div id='canvas'></div><div id='adminalert'><div id='msg' class='character-hover alert-text'>TERMINAL ACCESS GRANTED</div><br /><div onClick=\"WinCondition();return false;\" id='proceed' class='alert-text'>PRESS HERE TO PROCEED</div></div>");
+			$("#terminal").html("<div id='canvas'></div><div id='adminalert'><div id='access-granted-terminal' class='character-hover alert-text'>ACCESS GRANTED!</div><br /><div onClick=\"iniAndGmManager.toggleBodyDiv('minigame-section');TogglePower();\" id='proceed' class='alert-text'>PRESS HERE TO PROCEED</div></div>");
 
 			var container = $("#canvas");
 			var canvasWidth = container.width();
@@ -552,14 +559,20 @@ export const Success = function()
 
 			TS.chat.send("Hacking...succeeded", 'board');
 			diceService.reportDiceLogMessage('hack succeeded!');
+
+			const lockedTerminal = document.getElementById('access-granted-terminal');
+			lockedTerminal.addEventListener('click', () => {
+				TogglePower();
+				iniAndGmManager.toggleBodyDiv('minigame-section', false);
+			});
 		}
 	});
 }
 
 export const WinCondition = function() {
+	iniAndGmManager.toggleBodyDiv('minigame-section');
 	TogglePower();
 	//$.post(`https://${GetParentResourceName()}/Win`);
-	iniAndGmManager.toggleBodyDiv('minigame-section');
 }
 
 export const CompareWords = function(first, second)

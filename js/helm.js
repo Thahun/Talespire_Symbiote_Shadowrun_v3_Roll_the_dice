@@ -226,10 +226,20 @@ class Helm {
         iniAndGmManager.startHacking(payloadData.attempts,payloadData.diff);
     }
 
-
     handleEndHack(payloadData){
         console.log("handleEndHack", payloadData);
-
+        switch (payloadData.succ) {
+            case true:
+                console.log("handleEndHack", 'got solved');
+                iniAndGmManager.endHacking(true)
+                break;
+            case false:
+                console.log("handleEndHack", 'got fail');
+                iniAndGmManager.endHacking(false)
+                break;
+            default:
+                console.error("Unknown command:", payloadData.command);
+        }
     }
 
     handleGlitchType(payloadData) {
