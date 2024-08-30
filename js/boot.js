@@ -137,7 +137,7 @@ class BootLoader {
                 error.show('Timeout: Failed to initialze!');
                 return;
             }
-            await sleep(100);
+            await sleep(1000);
         }
 
         console.log('Loading ...');

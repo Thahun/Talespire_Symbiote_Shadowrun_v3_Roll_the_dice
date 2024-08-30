@@ -248,7 +248,7 @@ class Helm {
         switch (payloadData.command) {
             case "glitch":
                 diceService.toggleGlitchSectionVisibility(true)
-                info.show("Glitching!!: ");
+                //info.show("Glitching!!: ");
                 break;
             case "fix":
                 diceService.toggleGlitchSectionVisibility(false)

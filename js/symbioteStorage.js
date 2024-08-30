@@ -15,7 +15,7 @@ class SymbioteStorage {
     async init() {
         debug.log("SymbioteStorage.init");
         // Wait to ensure TS is loaded and available
-        await sleep(500);
+        await sleep(1000);
         // Enable to flush storage in case it's broken
         //this.flushAll();
 

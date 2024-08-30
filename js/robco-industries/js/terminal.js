@@ -186,7 +186,7 @@ export const TogglePower = function(newMaxAttempts , newDifficulty)
 	{
 		Power = "off";
 		$("#terminal-background-off").css("visibility", "visible");
-		$("#terminal").css("background-image", "url('../img/bg-off.png')");
+		$("#terminal").css("background-image", "url('css/assets/bg-off.png')");
 		$("#terminal").html("");
 		if (Sound)
 			$("#poweroff")[0].play();
@@ -198,7 +198,7 @@ export const TogglePower = function(newMaxAttempts , newDifficulty)
 	{
 		Power = "on";
 		$("#terminal-background-off").css("visibility", "hidden");
-		$("#terminal").css("background-image", "url('../img/bg.png')");
+		//$("#terminal").css("background-image", "url('css/assets/glitch-background.gif')");
 		Initialize();
 	}
 }
@@ -512,7 +512,7 @@ export const Success = function()
 		duration: 2000,
 		complete : function()
 		{
-			$("#terminal").html("<div id='canvas'></div><div id='adminalert'><div id='access-granted-terminal' class='character-hover alert-text'>ACCESS GRANTED!</div><br /><div onClick=\"iniAndGmManager.toggleBodyDiv('minigame-section');TogglePower();\" id='proceed' class='alert-text'>PRESS HERE TO PROCEED</div></div>");
+			$("#terminal").html("<div id='canvas'></div><div id='adminalert'><div id='access-granted-terminal' class='character-hover alert-text'>ACCESS GRANTED!</div><br /><div  id='proceed-div' class='alert-text'>PRESS HERE TO PROCEED</div></div>");
 
 			var container = $("#canvas");
 			var canvasWidth = container.width();
@@ -561,7 +561,12 @@ export const Success = function()
 			diceService.reportDiceLogMessage('hack succeeded!');
 
 			const lockedTerminal = document.getElementById('access-granted-terminal');
+			const proceedDiv = document.getElementById('proceed-div');
 			lockedTerminal.addEventListener('click', () => {
+				TogglePower();
+				iniAndGmManager.toggleBodyDiv('minigame-section', false);
+			});
+			proceedDiv.addEventListener('click', () => {
 				TogglePower();
 				iniAndGmManager.toggleBodyDiv('minigame-section', false);
 			});
