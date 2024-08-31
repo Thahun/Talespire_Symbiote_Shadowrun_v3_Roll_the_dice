@@ -45,7 +45,7 @@ class DiceService extends AbstractSheetHelper {
      * Initializes the DiceService, waits for symbioteStorage to be ready.
      */
     async init() {
-        debug.log("DiceService.init");
+        debug.log("DiceService.init()");
 
         let retriesDelaySeconds = 1;
         let retriesMax = 10;
@@ -65,10 +65,9 @@ class DiceService extends AbstractSheetHelper {
 
         this.loadThrowData();  // Load throw data on initialization
 
-       // document.getElementById('activate-glitch-button').addEventListener('click', this.activateGlitchEffect);
-       // document.getElementById('deactivate-glitch-button').addEventListener('click', this.deactivateGlitchEffect);
-
         this.initState = true;
+        console.log('DiceService initialized!');
+
     }
 
     loadThrowData() {
@@ -193,6 +192,7 @@ class DiceService extends AbstractSheetHelper {
      */
     loadDiceSets() {
         debug.log("DiceService.loadDiceSets");
+        console.log('Initializing DiceSets ...');
 
         let diceSets = this.storage.getStorageAsObject();
 
@@ -200,6 +200,7 @@ class DiceService extends AbstractSheetHelper {
             this.sectionDiceSets.setData(diceSets);
             this.sectionDefenceDiceSets.setData(diceSets);
         }
+        console.log('DiceSets loaded');
     }
 
     /**

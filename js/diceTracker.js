@@ -73,7 +73,7 @@ class DiceTrackResultDTO {
     }
 }
 
-class DiceTracker {
+ class DiceTracker {
     diceTracks = {};
 
     /**

@@ -4,11 +4,12 @@
  */
 class Helm {
     constructor() {
-        //console.log("Hello Helm!");
+        console.log('Initializing Helm ...');
 
         // Initialize GM box and connect breadcrumbs
         this.GmBox = document.getElementById('gm-box-body');
         this.ConnectBreadcrumb = document.querySelectorAll('.breadcrumb');
+        console.log('Helm loaded');
     }
 
     /**

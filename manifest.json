@@ -11,7 +11,7 @@
   "entryPoint": "/index.html",
   "api": {
     "version": "0.1",
-    "initTimeout": 10,
+    "initTimeout": 20,
     "subscriptions": {
       "symbiote": {
         "onVisibilityEvent": "logSymbioteEvent",
