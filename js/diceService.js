@@ -61,8 +61,8 @@ class DiceService extends AbstractSheetHelper {
 
         this.version = this.manifestHelper.fetchKey(ManifestHelper.KEY_VERSION);
         this.showAppInfo();
-        this.loadDiceSets();
 
+        this.loadDiceSets();
         this.loadThrowData();  // Load throw data on initialization
 
         this.initState = true;
@@ -720,28 +720,28 @@ class DiceService extends AbstractSheetHelper {
             }
         }
 
-        let message = totalThresholdSuccesses + ' von ' + diceSet.amount + ' Würfeln des "' + diceSet.name + '" Wurfes ' + (totalThresholdSuccesses === 1 ? 'war' : 'waren') + ' erfolgreich.';
+        let message = totalThresholdSuccesses + ' of ' + diceSet.amount + ' dice in throw "' + diceSet.name + '" ' + (totalThresholdSuccesses === 1 ? 'were' : 'were') + ' successes.';
         let dicelog = diceSet.name + ' => ' + diceSet.amount + ' dice vs MW ' + diceSet.threshold + ' : ' + totalThresholdSuccesses + ' success(es).';
 
         if (damageCode !== null) {
             if (isDefence) {
                 if (totalThresholdSuccesses > 0) {
-                    info.show(diceSet.name + ' => ' + totalThresholdSuccesses + ' Erfolg(e)  =>  Effektiver Schaden: ' + damageCode, true);
-                    message += ' Effektiver Schaden: ' + damageCode;
+                    info.show(diceSet.name + ' => ' + totalThresholdSuccesses + ' success(es)  => dmg: ' + damageCode, true);
+                    message += ' DMG: ' + damageCode;
                     dicelog += ' DMG ' + damageCode;
                 } else {
-                    info.show('Keine Erfolge => voller Schaden: ' + damageCode);
-                    message += ' Voller Schaden: ' + damageCode;
+                    info.show('No successes => Max DMG: ' + damageCode);
+                    message += ' Max DMG: ' + damageCode;
                     dicelog += ' DMG ' + damageCode;
                 }
             } else {
                 if (totalThresholdSuccesses > 0) {
-                    info.show(diceSet.name + ' => ' + totalThresholdSuccesses + ' Erfolg(e)  =>  Effektiver Schaden: ' + damageCode, true);
-                    message += ' Effektiver Schaden: ' + damageCode;
+                    info.show(diceSet.name + ' => ' + totalThresholdSuccesses + ' success(es)  =>  DMG: ' + damageCode, true);
+                    message += ' DMG: ' + damageCode;
                     dicelog += ' DMG ' + damageCode;
                 } else {
-                    info.show('Kein Treffer => kein Schaden', true);
-                    message += ' Kein effektiver Schaden!';
+                    info.show('No Hits => no DMG', true);
+                    message += ' no DMG!';
                     dicelog += ' no DMG!' ;
                 }
             }
@@ -752,11 +752,11 @@ class DiceService extends AbstractSheetHelper {
                     dicelog = message;
                     info.show(message , false);
                 } else {
-                    info.show(diceSet.name + ' => ' + diceSet.amount + ' D6: '+ totalThresholdSuccesses + ' Erfolg(e) ', true);
-                    dicelog = diceSet.name + ' => ' + diceSet.amount + ' dice: '+ totalThresholdSuccesses + ' Erfolg(e) ';
+                    info.show(diceSet.name + ' => ' + diceSet.amount + ' D6: '+ totalThresholdSuccesses + 'no success(es)', true);
+                    dicelog = diceSet.name + ' => ' + diceSet.amount + ' dice: '+ totalThresholdSuccesses + ' no success(es)';
                   }
             } else {
-                info.show(diceSet.name + ' => ' + diceSet.amount + ' D6: Keine Erfolge  ' + damageCode + ' DMG', true);
+                info.show(diceSet.name + ' => ' + diceSet.amount + ' D6: no success(es)  ' + damageCode + ' DMG', true);
                 dicelog = diceSet.name + ' => ' + diceSet.amount + ' dice: no success(es)  ' + damageCode + ' DMG';
             }
         }

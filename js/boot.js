@@ -23,7 +23,7 @@ let symbioteStorage;
  */
 let diceService;
 /**
- * @type {IniAndGmManager} diceService
+ * @type {IniAndGmManager} iniAndGmManager
  */
 let iniAndGmManager;
 /**

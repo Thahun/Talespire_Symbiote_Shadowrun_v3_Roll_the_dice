@@ -158,7 +158,6 @@ class InfoBox {
     }
 }
 
-
 class VersionSegments {
     mayor;
     minor;

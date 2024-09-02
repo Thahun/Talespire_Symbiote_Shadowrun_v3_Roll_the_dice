@@ -1,5 +1,3 @@
-//import { TogglePower } from './robco-industries/js/terminal.js';
-
 /**
  * Class representing an initiative and GM manager.
  */
@@ -8,22 +6,22 @@ class IniAndGmManager {
      * Create an instance of IniAndGmManager.
      * @param {Object} storage - The storage object to persist data.
      */
-    constructor(storage) {
+    async constructor(storage) {
         this.initiativeData = [];
         this.personalInitiativeData = [];
         this.storage = storage;
         this.currentIndex = -1; // Track the current index for "Next" and "Prev"
         this.canGM = false;
         this.selectedEntry = null; // Track the selected initiative entry
-        this.conditionPenalties = { row1: 0, row2: 0 }; // Track the penalties from each row
-        this.init();
+        this.conditionPenalties = {row1: 0, row2: 0}; // Track the penalties from each row
+        await this.init();
     }
 
     /**
      * Initialize the manager by setting up elements, event listeners, and loading data.
      */
     async init() {
-
+        console.log('Initializing IniAndGmManager...');
         // Get elements
         this.nameInput = document.getElementById('player-npc-rolls-name');
         this.initiativeInput = document.getElementById('player-npc-rolls-init');
@@ -96,6 +94,7 @@ class IniAndGmManager {
         // GM Box
         this.toggleGMBox();
         await helm.displayConnected();
+        console.log("Connected and IniManager loaded");
     }
 
     /**
