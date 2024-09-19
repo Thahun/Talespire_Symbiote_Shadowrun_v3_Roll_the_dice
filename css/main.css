@@ -324,7 +324,7 @@ div.section {
     border: solid 1px #007f7f; /* Neon green/teal */
     background-color: #202020; /* Dark background */
     margin-bottom: 3px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #c0c0c0;
 }
 
@@ -337,7 +337,7 @@ div.section-header {
 
 span.section-title {
     color: #00ffcc; /* Neon teal text */
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 div.section-body {

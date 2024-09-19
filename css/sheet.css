@@ -717,6 +717,14 @@ div.icon-center {
     animation: glitch-icon-animation 3s infinite;
 }
 
+/* Glitch Effect */
+.glitch-loader-icon {
+    background: url('assets/edgeloaderclear.gif') no-repeat center center !important;
+   /* background-size: contain;
+   /* animation: glitch-icon-animation 1s infinite; */
+    background-size: contain !important;
+}
+
 @keyframes glitch-background-animation {
     0% {
         transform: translate(0, 0);

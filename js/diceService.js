@@ -238,7 +238,7 @@ class DiceService extends AbstractSheetHelper {
             const Xd6 = splitParts[0];
             const Y = splitParts[1];
 
-            if (Xd6.endsWith('d6') && !isNaN(Xd6.slice(0, -2)) && !isNaN(Y)) {
+            if ((Xd6.endsWith('d6') || Xd6.endsWith('D6') )&& !isNaN(Xd6.slice(0, -2)) && !isNaN(Y)) {
                 //console.log("good format: ", diceString);
                 return true;
 
@@ -257,7 +257,7 @@ class DiceService extends AbstractSheetHelper {
         let diceString = iniAndGmManager.ownInitiativeValue.value;
 
         if(!this.parseDiceString(diceString) || name.length === 0){
-            info.show("Fehler im Initiative String oder Namen!");
+            error.show("Fehler im Initiative String oder Namen!");
             iniAndGmManager.toggleRedBorderIfEmpty(true,'ini-name-input', 'ini-value-input');
         } else {
             iniAndGmManager.toggleRedBorderIfEmpty(false,'ini-name-input', 'ini-value-input');
@@ -286,6 +286,38 @@ class DiceService extends AbstractSheetHelper {
             }
         });
     }
+
+     toggleGlitchLoader(diceSetIndex, shouldAddClass = true) {
+        const id = "dice-sets-cell-icon-dice[" + diceSetIndex + "]";
+        const parentElement = document.getElementById(id);
+
+        if (!parentElement) {
+            console.error(`Element with ID ${id} not found.`);
+            return;
+        }
+
+        const childElement = parentElement.querySelector('i'); // Da es nur ein Child-Element gibt und es ein <i>-Tag ist
+
+        if (!childElement) {
+            console.error(`Child <i> element not found inside the element with ID ${id}.`);
+            return;
+        }
+
+        if (shouldAddClass) {
+            if (!childElement.classList.contains('glitch-loader-icon')) {
+                childElement.classList.add('glitch-loader-icon');
+                childElement.classList.remove('ts-icon-d6');
+                childElement.classList.remove('icon-dice');
+            }
+        } else {
+            if (childElement.classList.contains('glitch-loader-icon')) {
+                childElement.classList.remove('glitch-loader-icon');
+                childElement.classList.add('ts-icon-d6');
+                childElement.classList.add('icon-dice');
+            }
+        }
+    }
+
 
     async rollGlitchDice(){
         let diceString = '1d6';
@@ -865,6 +897,92 @@ class DiceService extends AbstractSheetHelper {
         }
     }
 
+    clearGlobTextarea(){
+        const textArea = document.getElementById('local-storage-content');
+        textArea.innerHTML = '';
+    }
+
+    saveCustomGlob() {
+        // Get the content from the textarea
+        const textArea = document.getElementById('local-storage-content');
+        const content = textArea.value.trim();
+
+        // Check if the content is available before proceeding
+        if (!content) {
+            info.show('No content to save.');
+            console.error('No content to save.');
+            return;
+        }
+
+        // Perform flushAll() to clear previous data
+        symbioteStorage.flushAll();
+
+        // Call persist with the new content
+        symbioteStorage.persist(content);
+
+        // Optionally, you can add some confirmation log or message here
+        console.log('Custom data saved successfully.');
+        info.show('Custom data saved successfully....reloading');
+
+        // Wait for 1.5 seconds before reloading the page
+        setTimeout(() => {
+            location.reload();
+        }, 1500); // 1500 milliseconds = 1.5 seconds
+    }
+
+
+    loadCustomGlob() {
+        // Load the local storage data using symbioteStorage.load()
+        symbioteStorage.load().then((data) => {
+            // Find the div element where the loaded content will be displayed
+            const contentDiv = document.getElementById('local-storage-content');
+            const saveButton = document.getElementById('save-local-storage');
+            const clearButton = document.getElementById('clear-local-storage');
+            const resetButton = document.getElementById('reset-local-storage-view');
+
+
+            // Check if the data is available and handle it
+            if (data) {
+                // Display the data in the div
+                contentDiv.textContent = data;
+
+                // Make the div visible
+                contentDiv.style.display = 'block';
+                saveButton.style.display = 'inline-block';
+                clearButton.style.display = 'inline-block';
+                resetButton.style.display = 'inline-block';
+
+                // Copy the data to the clipboard
+                navigator.clipboard.writeText(data).then(() => {
+                    info.show('Data copied to clipboard successfully.');
+                }).catch((err) => {
+                    error.show('Failed to copy to clipboard');
+                    console.error('Failed to copy to clipboard:', err);
+
+                });
+            } else {
+                console.warn('No data found in local storage.');
+                contentDiv.textContent = 'No data available.';
+                contentDiv.style.display = 'block';
+            }
+        }).catch((error) => {
+            console.error('Error loading local storage:', error);
+        });
+    }
+
+    resetStorageSaveArea(){
+        const contentDiv = document.getElementById('local-storage-content');
+        const saveButton = document.getElementById('save-local-storage');
+        const clearButton = document.getElementById('clear-local-storage');
+        const resetButton = document.getElementById('reset-local-storage-view');
+
+        const MainDiv = document.getElementById('local-storage-controls');
+
+        contentDiv.style.display = 'none';
+        saveButton.style.display = 'none';
+        clearButton.style.display = 'none';
+        resetButton.style.display = 'none';
+    }
 
     persistThrowData() {
         debug.log("DiceService.persistThrowData");

@@ -6,7 +6,7 @@ class IniAndGmManager {
      * Create an instance of IniAndGmManager.
      * @param {Object} storage - The storage object to persist data.
      */
-    async constructor(storage) {
+     constructor(storage) {
         this.initiativeData = [];
         this.personalInitiativeData = [];
         this.storage = storage;
@@ -14,7 +14,7 @@ class IniAndGmManager {
         this.canGM = false;
         this.selectedEntry = null; // Track the selected initiative entry
         this.conditionPenalties = {row1: 0, row2: 0}; // Track the penalties from each row
-        await this.init();
+        this.init();
     }
 
     /**
@@ -124,7 +124,7 @@ class IniAndGmManager {
      */
     toggleResize(targetId) {
         const htmlElement = document.getElementById(targetId);
-        const resizeButton = document.getElementById('throw-log-resize-button');
+        const g = document.getElementById('throw-log-resize-button');
 
         if (htmlElement && resizeButton) {
             let currentHeight = window.getComputedStyle(htmlElement).maxHeight;
