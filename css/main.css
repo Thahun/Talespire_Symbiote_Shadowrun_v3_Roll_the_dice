@@ -253,14 +253,12 @@ div#loading > div#loading-animation {
 }
 
 div#loading-animation {
-    animation-name: rotate;
-    animation-duration:2s;
-    animation-iteration-count:infinite;
-    animation-timing-function:linear;
-    -webkit-animation-name: rotate;
-    -webkit-animation-duration:2s;
-    -webkit-animation-iteration-count:infinite;
-    -webkit-animation-timing-function:linear;
+    background-image: url('assets/edgeloaderclear.gif'); /* Pfad zum Loader-GIF */
+    background-size: cover; /* Passt das Bild an die Größe des Divs an */
+    background-repeat: no-repeat; /* Verhindert das Wiederholen des Bildes */
+    background-position: center; /* Zentriert das Bild */
+    width: 100px; /* Breite des Divs (kann nach Bedarf angepasst werden) */
+    height: 100px; /* Höhe des Divs (kann nach Bedarf angepasst werden) */
 }
 
 @keyframes rotate {

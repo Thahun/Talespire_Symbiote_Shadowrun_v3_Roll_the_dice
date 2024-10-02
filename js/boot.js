@@ -174,6 +174,8 @@ class BootLoader {
         console.log('Check GM...');
         isGM = await this.checkIfGM();
         console.log('Is GM: ', isGM);
+        this.smoothLoading();
+        this.loaderCacheBuster();
     }
 
     hideLoadingPanel() {
@@ -182,6 +184,75 @@ class BootLoader {
         let element = document.getElementById(this.ELEMENTID_LOADING);
         element.style.display = 'none';
     }
+
+    loaderCacheBuster() {
+        const imgElement = document.getElementById('main-loader-image');
+        if (imgElement) {
+            // Erzeuge einen zufälligen Wert
+            const randomValue = Math.random();
+            const currentSrc = imgElement.getAttribute('src');
+
+            // Füge den Cache-Busting-Parameter hinzu
+            const newSrc = `${currentSrc}?cache-buster=${randomValue}`;
+            imgElement.setAttribute('src', newSrc);
+
+            console.log(`Updated GIF src to: ${newSrc}`);
+        } else {
+            console.error('Image element not found.');
+        }
+    }
+
+     smoothLoading() {
+        // Elemente, die angezeigt werden sollen
+        const elements = [
+            //'gm-box',
+            'dice-log',
+            'section-ini-roller',
+            'checkbox-container',
+            'section-dice-sets',
+            'section-defence-dice-sets',
+            'dice-log-body',
+            'dice-sets-body',
+            'defence-dice-sets-body',
+            'section-control-ini'
+        ];
+
+        // Generiere zufällige Zeitpunkte innerhalb der 4 Sekunden für jedes Element
+        const delays = [];
+        for (let i = 0; i < elements.length; i++) {
+            delays.push(Math.random() * 4000); // Zufällige Zeitpunkte zwischen 0 und 4000 ms
+        }
+
+        // Sortiere die Delays, um sicherzustellen, dass die Elemente nacheinander erscheinen
+        delays.sort((a, b) => a - b);
+
+        // Zeige die Elemente in zufälliger Reihenfolge und mit Verzögerungen an
+        elements.forEach((elementId, index) => {
+            setTimeout(() => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.style.display = 'block';
+                    if (elementId !== 'checkbox-container'){
+                        element.classList.add('come-to-live-animation', 'transition-slide-up'); // Animation hinzufügen
+                    }else {
+                        element.style.display="flex";
+                        element.classList.add('transition-slide-up');
+                    }
+                } else {
+                    console.warn(`Element mit ID "${elementId}" nicht gefunden.`);
+                }
+            }, delays[index]);
+        });
+
+        // Verstecke den Loader nach 4 Sekunden
+        setTimeout(() => {
+            const loader = document.getElementById('base-loader');
+            if (loader) {
+                loader.classList.add('glitch-fade-out'); // Füge die Glitch-Animation hinzu
+            }
+        }, 5000); // Verstecke den Loader nach 4 Sekunden
+    }
+
 }
 
 document.addEventListener("DOMContentLoaded", (event) => {

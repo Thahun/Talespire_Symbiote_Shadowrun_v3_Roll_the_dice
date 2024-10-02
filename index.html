@@ -15,9 +15,14 @@
 <button id="activate-glitch-button" onclick="diceService.toggleGlitchSectionVisibility(false)">Activate Glitch</button>
 <button id="deactivate-glitch-button" onclick="diceService.toggleGlitchSectionVisibility(true)">Deactivate Glitch</button>
 -->
+<div id="base-loader">
+    <img id="main-loader-image" src="css/assets/loadercyber.gif" alt="Loading Animation" style="width: 100%; max-width: 100%; height: auto;">
+</div>
+
+<!--<button onclick="iniAndGmManager.resetGif()">Reset GIF</button>-->
 
 <div id="loading">
-    <div id="loading-animation" class="ts-icon-hourglass"></div>
+    <div id="loading-animation"></div>
 </div>
 <div id="error" style="display:none">
     <span class="error-label">Fehler:</span>
@@ -218,14 +223,14 @@
         </div>
     </div>
 
-    <div id="dice-log" class="section">
+    <div id="dice-log" class="section" style="display: none">
         <div class="section-header" >
             <span class="section-title" onclick="iniAndGmManager.toggleBodyDiv('dice-log-body')">Log</span>
             <span class="align-right section-title">
             <input type="text" id="player-filter-input" onchange="diceService.togglePlayerFilter()" placeholder="search log" class="field-data-medium player-filter-input">
             </span>
         </div>
-        <div id="dice-log-body" class="section-body" >
+        <div id="dice-log-body" class="section-body" style="display: none">
             <div style="min-height: 25px;font-size: 75%" id="throw-log">
             </div>
             <div class="section-body" style="padding-bottom: 25px">
@@ -235,7 +240,7 @@
         </div>
     </div>
 
-    <div id="section-ini-roller" class="section">
+    <div id="section-ini-roller" class="section" style="display: none">
         <div class="section-header" onclick="iniAndGmManager.toggleBodyDiv('section-control-ini')">
             <span class="section-title">Initiative</span>
         </div>
@@ -288,9 +293,9 @@
                 <span>No current Ini-table</span>
             </div>
          </div>
-    </div>
+    </div  >
 
-    <div id="checkbox-container" class="section-grid-container">
+    <div id="checkbox-container" class="section-grid-container" style="display: none">
         <!--<div id="gm-mode" class="checkbox-item">
             <input type="checkbox" value="true" onchange="diceService.toggleGMMode(this.checked);"></input>
             <label>GM-Modus</label>
@@ -305,7 +310,7 @@
            </div> -->
     </div>
 
-    <div id="section-dice-sets" class="section">
+    <div id="section-dice-sets" class="section" style="display: none">
         <div class="section-header" onclick="iniAndGmManager.toggleBodyDiv('dice-sets-body')">
             <span class="section-title">Offensive & open throws</span>
         </div>
@@ -342,7 +347,7 @@
         </div>
     </div>
 
-    <div id="section-defence-dice-sets" class="section">
+    <div id="section-defence-dice-sets" class="section" style="display: none">
         <div class="section-header" onclick="iniAndGmManager.toggleBodyDiv('defence-dice-sets-body')">
             <span class="section-title">Defensive throws</span>
         </div>
