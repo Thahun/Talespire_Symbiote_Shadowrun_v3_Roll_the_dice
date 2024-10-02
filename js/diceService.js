@@ -784,8 +784,8 @@ class DiceService extends AbstractSheetHelper {
                     dicelog = message;
                     info.show(message , false);
                 } else {
-                    info.show(diceSet.name + ' => ' + diceSet.amount + ' D6: '+ totalThresholdSuccesses + 'no success(es)', true);
-                    dicelog = diceSet.name + ' => ' + diceSet.amount + ' dice: '+ totalThresholdSuccesses + ' no success(es)';
+                    info.show(diceSet.name + ' => ' + diceSet.amount + ' D6: '+ totalThresholdSuccesses + ' success(es)', true);
+                    dicelog = diceSet.name + ' => ' + diceSet.amount + ' dice: '+ totalThresholdSuccesses + ' success(es)';
                   }
             } else {
                 info.show(diceSet.name + ' => ' + diceSet.amount + ' D6: no success(es)  ' + damageCode + ' DMG', true);
@@ -936,52 +936,55 @@ class DiceService extends AbstractSheetHelper {
         symbioteStorage.load().then((data) => {
             // Find the div element where the loaded content will be displayed
             const contentDiv = document.getElementById('local-storage-content');
+            const copyButton = document.getElementById('copy-to-clipboard');
             const saveButton = document.getElementById('save-local-storage');
             const clearButton = document.getElementById('clear-local-storage');
             const resetButton = document.getElementById('reset-local-storage-view');
-
 
             // Check if the data is available and handle it
             if (data) {
                 // Display the data in the div
                 contentDiv.textContent = data;
-
-                // Make the div visible
-                contentDiv.style.display = 'block';
-                saveButton.style.display = 'inline-block';
-                clearButton.style.display = 'inline-block';
-                resetButton.style.display = 'inline-block';
-
-                // Copy the data to the clipboard
-                navigator.clipboard.writeText(data).then(() => {
-                    info.show('Data copied to clipboard successfully.');
-                }).catch((err) => {
-                    error.show('Failed to copy to clipboard');
-                    console.error('Failed to copy to clipboard:', err);
-
-                });
             } else {
                 console.warn('No data found in local storage.');
                 contentDiv.textContent = 'No data available.';
-                contentDiv.style.display = 'block';
             }
+            contentDiv.style.display = 'block';
+            saveButton.style.display = 'inline-block';
+            clearButton.style.display = 'inline-block';
+            resetButton.style.display = 'inline-block';
+            copyButton.style.display = 'inline-block';
         }).catch((error) => {
             console.error('Error loading local storage:', error);
         });
     }
 
+    copyToClipboard(){
+        const contentDiv = document.getElementById('local-storage-content');
+
+        let data = contentDiv.textContent;
+
+        // Copy the data to the clipboard
+        navigator.clipboard.writeText(data).then(() => {
+            info.show('Data copied to clipboard successfully.');
+        }).catch((err) => {
+            error.show('Failed to copy to clipboard');
+            console.error('Failed to copy to clipboard:', err);
+        });
+    }
+
     resetStorageSaveArea(){
         const contentDiv = document.getElementById('local-storage-content');
+        const copyButton = document.getElementById('copy-to-clipboard');
         const saveButton = document.getElementById('save-local-storage');
         const clearButton = document.getElementById('clear-local-storage');
         const resetButton = document.getElementById('reset-local-storage-view');
-
-        const MainDiv = document.getElementById('local-storage-controls');
 
         contentDiv.style.display = 'none';
         saveButton.style.display = 'none';
         clearButton.style.display = 'none';
         resetButton.style.display = 'none';
+        copyButton.style.display = 'none';
     }
 
     persistThrowData() {

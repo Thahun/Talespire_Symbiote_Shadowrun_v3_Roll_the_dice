@@ -42,6 +42,7 @@
         </div>
         <div id="gm-box-content">
             <div class="section-body">
+                <button style="float:right" class="small-orange-button" id="refresh-connected" onclick="helm.displayConnected();">reload</button>
                 <div class="section-body-throw" id="gm-box-body">
                     <!-- Breadcrumbs will be appended here -->
                 </div>
@@ -443,18 +444,13 @@
     </div>
 
     <div id="local-storage-controls" style="margin-bottom: 15px;">
-        <!-- Load Button -->
-        <button id="load-local-storage" style="padding: 5px; font-size: 10px;" onclick="diceService.loadCustomGlob()">Load Local Storage</button>
 
-        <!-- Save Button -->
-        <button id="save-local-storage" style="padding: 5px; font-size: 10px; display: none;" onclick="diceService.saveCustomGlob()">Save Local Storage</button>
-
+        <button id="load-local-storage" style="padding: 5px; font-size: 10px;" onclick="diceService.loadCustomGlob()">Load storage</button>
+        <button id="copy-to-clipboard" style="padding: 5px; font-size: 10px; display: none" onclick="diceService.copyToClipboard()">Copy to clipboard</button>
+        <button id="save-local-storage" style="padding: 5px; font-size: 10px; display: none;" onclick="diceService.saveCustomGlob()">Save & Reload</button>
         <button id="reset-local-storage-view" style="padding: 5px; font-size: 10px;float: right; display: none; background-color: red" onclick="diceService.resetStorageSaveArea()">X</button>
+        <button id="clear-local-storage" style="padding: 5px; font-size: 10px;float: right; display: none" onclick="diceService.clearGlobTextarea()">Clear textarea</button>
 
-        <button id="clear-local-storage" style="padding: 5px; font-size: 10px;float: right; display: none" onclick="diceService.clearGlobTextarea()">clear Textarea</button>
-
-
-        <!-- Hidden Content Section for Load -->
         <textarea  id="local-storage-content" style="width:98%;margin-top: 10px;font-size: x-small; display: none; padding: 5px; border: 1px solid #932828; background-color: #9d9b9b ">
         <!-- Content will be loaded and displayed here -->
     </textarea>
