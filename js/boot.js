@@ -175,6 +175,7 @@ class BootLoader {
         isGM = await this.checkIfGM();
         console.log('Is GM: ', isGM);
         this.smoothLoading();
+        this.playSoundById('loader-sound');
         this.loaderCacheBuster();
     }
 
@@ -205,44 +206,50 @@ class BootLoader {
      smoothLoading() {
         // Elemente, die angezeigt werden sollen
         const elements = [
-            //'gm-box',
             'dice-log',
             'section-ini-roller',
             'checkbox-container',
             'section-dice-sets',
             'section-defence-dice-sets',
-            'dice-log-body',
-            'dice-sets-body',
-            'defence-dice-sets-body',
-            'section-control-ini'
+            'section-control-ini',
         ];
 
         // Generiere zufällige Zeitpunkte innerhalb der 4 Sekunden für jedes Element
         const delays = [];
         for (let i = 0; i < elements.length; i++) {
-            delays.push(Math.random() * 4000); // Zufällige Zeitpunkte zwischen 0 und 4000 ms
+            delays.push(Math.random() * 3800); // Zufällige Zeitpunkte zwischen 0 und 4000 ms
         }
 
         // Sortiere die Delays, um sicherzustellen, dass die Elemente nacheinander erscheinen
         delays.sort((a, b) => a - b);
 
         // Zeige die Elemente in zufälliger Reihenfolge und mit Verzögerungen an
-        elements.forEach((elementId, index) => {
-            setTimeout(() => {
-                const element = document.getElementById(elementId);
-                if (element) {
-                    element.style.display = 'block';
-                    if (elementId !== 'checkbox-container'){
-                        element.classList.add('come-to-live-animation', 'transition-slide-up'); // Animation hinzufügen
-                    }else {
-                        element.style.display="flex";
-                        element.classList.add('transition-slide-up');
-                    }
-                } else {
-                    console.warn(`Element mit ID "${elementId}" nicht gefunden.`);
-                }
-            }, delays[index]);
-        });
+         elements.forEach((elementId, index) => {
+             setTimeout(() => {
+                 const element = document.getElementById(elementId);
+                 if (element) {
+                     element.style.display = 'block';
+                     if (elementId !== 'checkbox-container'){
+                         element.classList.add('come-to-live-animation', 'transition-slide-up'); // Animation hinzufügen
+                     } else {
+                         element.style.display="flex";
+                         element.classList.add('transition-slide-up');
+                     }
+                     const overlay = document.getElementById(elementId + "-overlay");
+                     if (overlay) {
+                         //overlay.style.display = 'block';
+
+                         // Warte 750ms, bevor das Overlay ausgeblendet wird
+                         setTimeout(() => {
+                             overlay.style.display = 'none';
+                         }, 2500);
+                     }
+                 } else {
+                     console.warn(`Element mit ID "${elementId}" nicht gefunden.`);
+                 }
+             }, delays[index]);
+         });
+
 
         // Verstecke den Loader nach 4 Sekunden
         setTimeout(() => {
@@ -250,8 +257,21 @@ class BootLoader {
             if (loader) {
                 loader.classList.add('glitch-fade-out'); // Füge die Glitch-Animation hinzu
             }
-        }, 5000); // Verstecke den Loader nach 4 Sekunden
+        }, 6000); // Verstecke den Loader nach 4 Sekunden
     }
+
+    playSoundById(soundId) {
+        const soundElement = document.getElementById(soundId);
+
+        if (soundElement) {
+            soundElement.play().catch((error) => {
+                console.error('Error playing sound:', error);
+            });
+        } else {
+            console.warn(`Sound with ID "${soundId}" not found.`);
+        }
+    }
+
 
 }
 

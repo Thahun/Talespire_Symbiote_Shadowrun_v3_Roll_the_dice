@@ -89,10 +89,10 @@ class IniAndGmManager {
         this.canGM = userDetails[0].rights.canGm; // to test set this true if you are no GM
 
         // Ini Box
-        this.toggleIniManager();
+        //this.toggleIniManager();
 
         // GM Box
-        this.toggleGMBox();
+        //this.toggleGMBox();
         await helm.displayConnected();
         console.log("Connected and IniManager loaded");
     }
