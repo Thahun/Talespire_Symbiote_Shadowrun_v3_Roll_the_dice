@@ -150,8 +150,6 @@ class IniAndGmManager {
         }
     }
 
-
-
     /**
      * Toggles the visibility of a specified div.
      * @param {string} targetId - The ID of the target div.
@@ -1055,7 +1053,6 @@ class IniAndGmManager {
         } catch (error) {
             console.error("Error getting stats from picked creature:", error);
         }
-
     }
 }
 

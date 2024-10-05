@@ -30,6 +30,10 @@ let iniAndGmManager;
  * @type {Helm} helm
  */
 let helm;
+/**
+ * @type {BootLoader} boot
+ */
+let boot;
 
 let isGM = false;
 
@@ -95,12 +99,29 @@ class BootLoader {
         });
     }
 
-    init() {
+    async init() {
         console.log('Initializing ...');
         this.initCommon();
         this.initSymbiote();
-        this.waitingForInit();
+        await this.waitingForInit();
+
+        this.hideLoadingPanel();
+
+        console.log('Check GM...');
+        isGM = await this.checkIfGM();
+        console.log('Is GM: ', isGM);
+
+        //this.engage();
+        this.startHackingSimulation();
+
         console.log('... initialized');
+    }
+
+    engage(){
+        this.hackEntry();
+        this.insertLoaderWithCacheBuster();
+        this.smoothLoading();
+        this.playSoundById('loader-sound');
     }
 
     async checkIfGM(){
@@ -124,6 +145,7 @@ class BootLoader {
         diceService = new DiceService(storageService);
         iniAndGmManager = new IniAndGmManager(storageService);
         helm = new Helm();
+        boot = new BootLoader();
         console.log('Symbiote loaded');
     }
 
@@ -134,6 +156,8 @@ class BootLoader {
         const initialDelay = 1000;  // Initial delay in milliseconds
         const maxDelay = 8000; // Maximum delay between retries
         let delay = initialDelay;
+
+        console.log('Loading ... DiceService');
 
         while (!diceService.isInit()) {
             attempts++;
@@ -162,21 +186,9 @@ class BootLoader {
                 await sleep(delay);
             }
 
-            await sleep(this.retryInterval);
+            await sleep(delay);
         }
-
-        console.log('Loading ...');
-        // Add your loading logic here if necessary
-        console.log('... loaded');
-
-        this.hideLoadingPanel();
-
-        console.log('Check GM...');
-        isGM = await this.checkIfGM();
-        console.log('Is GM: ', isGM);
-        this.smoothLoading();
-        this.playSoundById('loader-sound');
-        this.loaderCacheBuster();
+        console.log('DiceService ... loaded');
     }
 
     hideLoadingPanel() {
@@ -186,7 +198,85 @@ class BootLoader {
         element.style.display = 'none';
     }
 
-    loaderCacheBuster() {
+     insertLoaderWithCacheBuster(toggle = true) {
+        // Prüfen, ob der Loader bereits vorhanden ist
+        let loaderDiv = document.getElementById('base-loader');
+
+        if (!loaderDiv) {
+            // Wenn der Loader nicht existiert, füge ihn als erstes Element im Body hinzu
+            loaderDiv = document.createElement('div');
+            loaderDiv.id = 'base-loader';
+
+            const imgElement = document.createElement('img');
+            imgElement.id = 'main-loader-image';
+            imgElement.src = 'css/assets/loadercyber.gif';
+            imgElement.alt = 'Loading Animation';
+            imgElement.style.width = '100%';
+            imgElement.style.maxWidth = '100%';
+            imgElement.style.height = 'auto';
+            imgElement.style.display = 'block';
+
+            loaderDiv.appendChild(imgElement);
+            document.body.insertBefore(loaderDiv, document.body.firstChild);
+            console.log('Loader inserted into the DOM.');
+        } else {
+            console.log('Loader already exists in the DOM.');
+        }
+
+        // Cache-Busting-Logik
+        const imgElement = document.getElementById('main-loader-image');
+        if (imgElement) {
+            // Erzeuge einen zufälligen Wert
+            const randomValue = Math.random();
+            const currentSrc = imgElement.getAttribute('src').split('?')[0]; // Entferne alten Cache-Buster, falls vorhanden
+
+            // Füge den Cache-Busting-Parameter hinzu
+            const newSrc = `${currentSrc}?cache-buster=${randomValue}`;
+            imgElement.setAttribute('src', newSrc);
+
+            // Sichtbarkeit einstellen
+            if (toggle) {
+                imgElement.style.display = 'block';
+            } else {
+                imgElement.style.display = 'none';
+            }
+            console.log(`Updated GIF src to: ${newSrc}`);
+        } else {
+            console.error('Image element not found.');
+        }
+    }
+
+    startHackingSimulation() {
+        const terminalOutput = document.getElementById('terminal-output');
+        const loginBox = document.getElementById('login-box');
+        const commands = [
+            'Connecting to Matrix...',
+            'Bypassing security protocols...',
+            'Initializing hack on SAN network...',
+            'Access granted to Shadowrun system...',
+            'Injecting access token...',
+            'Connection established. Welcome!'
+        ];
+
+        let index = 0;
+        let delay = 500;
+
+        const simulateHacking = setInterval(() => {
+            if (index < commands.length) {
+                terminalOutput.textContent += `${commands[index]}\n`;
+                index++;
+                delay = Math.random() * 300 + 500; // zufälliger Zeitabstand zwischen 500 und 800ms
+            } else {
+                clearInterval(simulateHacking);
+                setTimeout(() => {
+                    //terminalOutput.style.display = 'none';
+                    loginBox.style.display = 'block'; // Zeige das Login-Feld
+                }, 1000); // 1 Sekunde warten, bevor das Eingabefeld erscheint
+            }
+        }, delay);
+    }
+
+    loaderCacheBuster(toggle = true) {
         const imgElement = document.getElementById('main-loader-image');
         if (imgElement) {
             // Erzeuge einen zufälligen Wert
@@ -197,68 +287,79 @@ class BootLoader {
             const newSrc = `${currentSrc}?cache-buster=${randomValue}`;
             imgElement.setAttribute('src', newSrc);
 
+            if (toggle){
+                imgElement.style.display = 'block';
+            } else {
+                imgElement.style.display = 'none';
+            }
             console.log(`Updated GIF src to: ${newSrc}`);
         } else {
             console.error('Image element not found.');
         }
     }
 
-     smoothLoading() {
+    hackEntry(){
+        const overlay = document.getElementById('login-overlay');
+        overlay.style.display = 'none';
+    }
+
+    smoothLoading() {
         // Elemente, die angezeigt werden sollen
         const elements = [
+            'gm-box',
             'dice-log',
             'section-ini-roller',
             'checkbox-container',
             'section-dice-sets',
             'section-defence-dice-sets',
             'section-control-ini',
+            'section-player-npc-rolls',
+            'local-storage-controls',
+            'app-info'
         ];
 
-        // Generiere zufällige Zeitpunkte innerhalb der 4 Sekunden für jedes Element
-        const delays = [];
-        for (let i = 0; i < elements.length; i++) {
-            delays.push(Math.random() * 3800); // Zufällige Zeitpunkte zwischen 0 und 4000 ms
-        }
+        // Feste Verzögerung von 750 ms zwischen den Elementen
+        const delayStep = 550; // Zeit zwischen den Elementen in ms
 
-        // Sortiere die Delays, um sicherzustellen, dass die Elemente nacheinander erscheinen
-        delays.sort((a, b) => a - b);
+        // Zeige die Elemente mit festgelegten Verzögerungen an, aber filtere GM-spezifische Elemente, wenn isGM false ist
+        elements.forEach((elementId, index) => {
+            if (!isGM && (elementId === 'gm-box' || elementId === 'section-player-npc-rolls')) {
+                // Wenn der Nutzer kein GM ist, werden diese Elemente übersprungen
+                return;
+            }
 
-        // Zeige die Elemente in zufälliger Reihenfolge und mit Verzögerungen an
-         elements.forEach((elementId, index) => {
-             setTimeout(() => {
-                 const element = document.getElementById(elementId);
-                 if (element) {
-                     element.style.display = 'block';
-                     if (elementId !== 'checkbox-container'){
-                         element.classList.add('come-to-live-animation', 'transition-slide-up'); // Animation hinzufügen
-                     } else {
-                         element.style.display="flex";
-                         element.classList.add('transition-slide-up');
-                     }
-                     const overlay = document.getElementById(elementId + "-overlay");
-                     if (overlay) {
-                         //overlay.style.display = 'block';
+            setTimeout(() => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.style.display = 'block';
+                    if (elementId !== 'checkbox-container') {
+                        element.classList.add('come-to-live-animation', 'transition-slide-up'); // Animation hinzufügen
+                    } else {
+                        element.style.display = "flex";
+                        element.classList.add('transition-slide-up');
+                    }
+                    const overlay = document.getElementById(elementId + "-overlay");
+                    if (overlay) {
+                        // Warte 750 ms, bevor das Overlay ausgeblendet wird
+                        setTimeout(() => {
+                            overlay.style.display = 'none';
+                        }, 700);
+                    }
+                } else {
+                    console.log(`Element mit ID "${elementId}" nicht gefunden.`);
+                }
+            }, index * delayStep); // Feste Verzögerung basierend auf dem Index
+        });
 
-                         // Warte 750ms, bevor das Overlay ausgeblendet wird
-                         setTimeout(() => {
-                             overlay.style.display = 'none';
-                         }, 2500);
-                     }
-                 } else {
-                     console.warn(`Element mit ID "${elementId}" nicht gefunden.`);
-                 }
-             }, delays[index]);
-         });
-
-
-        // Verstecke den Loader nach 4 Sekunden
+        // Verstecke den Loader nach 6 Sekunden
         setTimeout(() => {
             const loader = document.getElementById('base-loader');
             if (loader) {
                 loader.classList.add('glitch-fade-out'); // Füge die Glitch-Animation hinzu
             }
-        }, 6000); // Verstecke den Loader nach 4 Sekunden
+        }, 6000); // Verstecke den Loader nach 6 Sekunden
     }
+
 
     playSoundById(soundId) {
         const soundElement = document.getElementById(soundId);

@@ -1008,12 +1008,91 @@ div.icon-center {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.8); /* Halbtransparentes Overlay */
     display: flex;
-    justify-content: center; /* Zentrieren des GIF horizontal */
-    align-items: center; /* Zentrieren des GIF vertikal */
+    justify-content: center; /* Zentrieren des Inhalts horizontal */
+    align-items: center; /* Zentrieren des Inhalts vertikal */
     z-index: 1000; /* Höherer Stapelindex, damit das Overlay über allem anderen liegt */
+    background-image: url('assets/edgeloaderclear.gif'); /* Hintergrundbild (GIF) */
+    background-repeat: no-repeat; /* Wiederholt das Bild nicht */
+    background-position: center; /* Zentriert das Hintergrundbild */
+    background-size: 300px auto; /* Bildgröße (skalierbar), anpassbar nach Bedarf */
 }
 
-.overlay img {
-    width: 300px; /* Größe des GIFs anpassen */
-    height: auto;
+/* Vollbild-Overlay für den Login */
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95); /* Dunkler Hintergrund */
+    display: flex;
+    flex-direction: column; /* Ändert die Anordnung zu vertikal */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    font-family: 'Orbitron', monospace; /* Terminal-ähnliche Schrift */
 }
+
+/* Terminal-Box für das Hacking-Skript */
+.terminal-box {
+    background-color: #101010;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+    color: #00ffcc; /* Neon-teal Text */
+    width: 80%;
+    max-width: 600px;
+    min-height: 150px;
+    margin-bottom: 20px; /* Abstand zur Login-Box */
+}
+
+.terminal-output {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    white-space: pre-wrap; /* Textumbruch */
+    word-wrap: break-word; /* Zeilenumbruch */
+    color: #00ffcc; /* Neon-grüner Text */
+}
+
+/* Login-Box in der Mitte */
+.login-box {
+    background-color: #202020;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    color: white;
+    margin-top: 20px; /* Abstand nach oben */
+}
+
+.name-input {
+    width: 200px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #101010;
+    color: #00ffcc;
+    border: 1px solid #444444;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+.login-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: #45a049;
+}
+
+/* Glitch-Effekt für die Terminal-Box */
+.glitching-overlay {
+    filter: brightness(150%) contrast(200%) hue-rotate(90deg);
+    animation: glitch-animation 3s steps(20) infinite;
+}
+

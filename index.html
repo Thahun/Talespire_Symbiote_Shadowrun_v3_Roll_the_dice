@@ -11,13 +11,11 @@
 </head>
 <body>
 
-<!--
-<button id="activate-glitch-button" onclick="diceService.toggleGlitchSectionVisibility(false)">Activate Glitch</button>
-<button id="deactivate-glitch-button" onclick="diceService.toggleGlitchSectionVisibility(true)">Deactivate Glitch</button>
--->
-<div id="base-loader">
-    <img id="main-loader-image" src="css/assets/loadercyber.gif" alt="Loading Animation" style="width: 100%; max-width: 100%; height: auto;">
-</div>
+
+
+
+<!--<button id="activate-glitch-button" onclick="boot.engage()">boot</button>
+<button id="deactivate-glitch-button" onclick="iniAndGmManager.toggleBodyDiv('gm-box-overlay')">Deactivate Glitch</button>-->
 
 <audio id="loader-sound" src="css/assets/sounds/2077Breaching.wav"></audio>
 <audio id="open-sound" src="css/assets/sounds/2077OpenPhone.wav"></audio>
@@ -32,7 +30,21 @@
     <pre id="error-message" class="error-message">None</pre>
 </div>
 
-<div id="content">
+<!-- Simuliertes Login-Overlay -->
+<div id="login-overlay" class="login-overlay">
+    <div id="terminal-box" class="terminal-box">
+        <pre id="terminal-output" class="terminal-output"></pre>
+    </div>
+    <div id="login-box" class="login-box glitching-overlay" style="display:none;">
+        <label for="name-input">Name?</label>
+        <input type="text" id="name-input" class="name-input" placeholder="Name?">
+        <button id="login-button" class="login-button" onclick="boot.engage()">OK</button>
+    </div>
+</div>
+
+
+
+<div id="content" style="display:block">
     <div class="ts-icon-refresh symbiote-reload" onclick="location.reload();"></div>
         <div id="info" class="sticky-header" style="display: none">
             <span class="info-label">Hinweis:</span>
@@ -171,10 +183,10 @@
                 </div>
         </div>
 
-        <!-- Overlay mit GIF -->
+        <!-- Overlay mit Hintergrundbild (GIF) -->
         <div id="gm-box-overlay" class="overlay">
-            <img src="css/assets/edgeloaderclear.gif" alt="Loading...">
         </div>
+
     </div>
 
     <div id="minigame-section" class="section" style="display:none">
@@ -231,7 +243,7 @@
         </div>
     </div>
 
-    <div id="dice-log" class="section" style="display:run-in">
+    <div id="dice-log" class="section" style="display:none">
         <div class="section-header" >
             <span class="section-title" onclick="iniAndGmManager.toggleBodyDiv('dice-log-body')">Log</span>
             <span class="align-right section-title">
@@ -249,7 +261,6 @@
 
         <!-- Overlay mit GIF -->
         <div id="dice-log-overlay" class="overlay">
-            <img src="css/assets/edgeloaderclear.gif" alt="Loading...">
         </div>
     </div>
 
@@ -309,7 +320,6 @@
 
         <!-- Overlay mit GIF -->
         <div id="section-ini-roller-overlay" class="overlay">
-            <img src="css/assets/edgeloaderclear.gif" alt="Loading...">
         </div>
 
     </div >
@@ -368,7 +378,6 @@
 
         <!-- Overlay mit GIF -->
         <div id="section-dice-sets-overlay" class="overlay">
-            <img src="css/assets/edgeloaderclear.gif" alt="Loading...">
         </div>
     </div>
 
@@ -408,7 +417,6 @@
 
         <!-- Overlay mit GIF -->
         <div id="section-defence-dice-sets-overlay" class="overlay">
-            <img src="css/assets/edgeloaderclear.gif" alt="Loading...">
         </div>
 
     </div>
@@ -445,7 +453,6 @@
 
         <!-- Overlay mit GIF -->
         <div id="section-player-npc-rolls-overlay" class="overlay">
-            <img src="css/assets/edgeloaderclear.gif" alt="Loading...">
         </div>
 
     </div>
@@ -485,7 +492,7 @@
         </div>
     </div>
 
-    <div id="local-storage-controls" style="margin-bottom: 15px;">
+    <div id="local-storage-controls" style="margin-bottom: 15px;display: none">
 
         <button id="load-local-storage" style="padding: 5px; font-size: 10px;" onclick="diceService.loadCustomGlob()">Load storage</button>
         <button id="copy-to-clipboard" style="padding: 5px; font-size: 10px; display: none" onclick="diceService.copyToClipboard()">Copy to clipboard</button>
@@ -498,7 +505,7 @@
     </textarea>
     </div>
 
-    <div class="app-info">
+    <div id="app-info" class="app-info" style="display: none">
         <span id="app-name">-</span> Symbiote&nbsp;
         Version: <span id="app-version-number">-</span><br/>
         Created by: <span id="app-author-names">-</span>
