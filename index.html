@@ -32,16 +32,25 @@
 
 <!-- Simuliertes Login-Overlay -->
 <div id="login-overlay" class="login-overlay">
+
+
+    <div class="ts-icon-refresh symbiote-reload" onclick="location.reload();"></div>
+
     <div id="terminal-box" class="terminal-box">
         <pre id="terminal-output" class="terminal-output"></pre>
-    </div>
-    <div id="login-box" class="login-box glitching-overlay" style="display:none;">
-        <label for="name-input">Name?</label>
-        <input type="text" id="name-input" class="name-input" placeholder="Name?">
-        <button id="login-button" class="login-button" onclick="boot.engage()">OK</button>
+        <span id="username-input-container" class="username-input-container" style="display:none;">
+            <span id="username-label">Input Username: </span>
+            <span id="username-input" class="username-input" contenteditable="true"></span>
+        </span>
+        <div id="engage-prompt" class="engage-prompt" style="display:none;">
+            <span>ENGAGE?!</span>
+            <div id="engage-options">
+                <span id="option-yes" class="engage-option selected">YES</span> /
+                <span id="option-no" class="engage-option">NO</span>
+            </div>
+        </div>
     </div>
 </div>
-
 
 
 <div id="content" style="display:block">

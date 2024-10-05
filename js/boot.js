@@ -246,34 +246,103 @@ class BootLoader {
         }
     }
 
-    startHackingSimulation() {
+     startHackingSimulation() {
         const terminalOutput = document.getElementById('terminal-output');
-        const loginBox = document.getElementById('login-box');
-        const commands = [
-            'Connecting to Matrix...',
-            'Bypassing security protocols...',
-            'Initializing hack on SAN network...',
-            'Access granted to Shadowrun system...',
-            'Injecting access token...',
-            'Connection established. Welcome!'
+        const usernameInputContainer = document.getElementById('username-input-container');
+        const usernameInput = document.getElementById('username-input');
+        const engagePrompt = document.getElementById('engage-prompt');
+        const engageOptions = document.querySelectorAll('.engage-option');
+
+        let selectedOption = 0; // 0 für YES, 1 für NO
+
+        // Simuliertes Hacking-Skript
+        terminalOutput.textContent = '';
+        const hackingSteps = [
+            'Establishing connection...',
+            'Brute forcing access to Shadowrun SAN...',
+            'Decrypting firewall keys...',
+            'Access Granted. Welcome to the Matrix!',
+            '------------------------------------',
         ];
 
-        let index = 0;
-        let delay = 500;
+        let stepIndex = 0;
 
-        const simulateHacking = setInterval(() => {
-            if (index < commands.length) {
-                terminalOutput.textContent += `${commands[index]}\n`;
-                index++;
-                delay = Math.random() * 300 + 500; // zufälliger Zeitabstand zwischen 500 und 800ms
+        // Simuliert das Terminal, das nacheinander Text ausgibt
+        const interval = setInterval(() => {
+            if (stepIndex < hackingSteps.length) {
+                terminalOutput.textContent += hackingSteps[stepIndex] + '\n';
+                stepIndex++;
             } else {
-                clearInterval(simulateHacking);
-                setTimeout(() => {
-                    //terminalOutput.style.display = 'none';
-                    loginBox.style.display = 'block'; // Zeige das Login-Feld
-                }, 1000); // 1 Sekunde warten, bevor das Eingabefeld erscheint
+                clearInterval(interval);
+                // Zeige die Benutzername-Eingabe nach dem Hacking-Skript an
+                usernameInputContainer.style.display = 'inline-block';
+                usernameInput.focus();
             }
-        }, delay);
+        }, 700); // Zeigt jede Nachricht mit 700ms Verzögerung an
+
+        // Fängt den Benutzernamen ab und macht damit weiter
+        usernameInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const username = usernameInput.textContent.trim();
+                if (username) {
+                    usernameInputContainer.style.display = 'none';
+                    terminalOutput.textContent += `Injecting user: ${username}...\nSuccess!\n`;
+                    setTimeout(() => {
+                        terminalOutput.textContent += 'Cracking SAN...\n';
+                        setTimeout(() => {
+                            terminalOutput.textContent += 'System Ready.\n\n';
+                            // Zeige die Engage?-Frage an
+                            engagePrompt.style.display = 'block';
+                            document.addEventListener('keydown', handleKeyNavigation);
+                        }, 1500);
+                    }, 1000);
+                }
+            }
+        });
+
+        // Funktion zur Handhabung der Auswahl von YES/NO
+        function handleKeyNavigation(event) {
+            if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+                // Wechsle zwischen YES und NO
+                selectedOption = selectedOption === 0 ? 1 : 0;
+                updateEngageSelection();
+            } else if (event.key === 'Enter') {
+                if (selectedOption === 0) {
+                    // Wenn YES ausgewählt ist, starte die definierte JS-Funktion
+                    boot.engage();
+                } else {
+                    // Wenn NO ausgewählt ist, führe eine andere Aktion aus oder mache nichts
+                    terminalOutput.textContent += 'Operation aborted.\n';
+                    engagePrompt.style.display = 'none';
+                }
+                document.removeEventListener('keydown', handleKeyNavigation);
+            }
+        }
+
+        // Aktualisiert die visuelle Auswahl der Engage?-Optionen
+        function updateEngageSelection() {
+            engageOptions.forEach((option, index) => {
+                if (index === selectedOption) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+
+        // Maus-Klick-Event für die YES/NO-Auswahl
+        engageOptions.forEach((option, index) => {
+            option.addEventListener('click', () => {
+                selectedOption = index;
+                updateEngageSelection();
+                if (selectedOption === 0) {
+                    boot.engage(); // YES gewählt
+                } else {
+                    terminalOutput.textContent += 'Operation aborted.\n';
+                    engagePrompt.style.display = 'none'; // NO gewählt
+                }
+            });
+        });
     }
 
     loaderCacheBuster(toggle = true) {

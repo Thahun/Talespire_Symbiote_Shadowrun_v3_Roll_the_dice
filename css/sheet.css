@@ -1026,7 +1026,6 @@ div.icon-center {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.95); /* Dunkler Hintergrund */
     display: flex;
-    flex-direction: column; /* Ändert die Anordnung zu vertikal */
     justify-content: center;
     align-items: center;
     z-index: 9999;
@@ -1042,57 +1041,78 @@ div.icon-center {
     color: #00ffcc; /* Neon-teal Text */
     width: 80%;
     max-width: 600px;
-    min-height: 150px;
-    margin-bottom: 20px; /* Abstand zur Login-Box */
+    min-height: 200px;
 }
 
 .terminal-output {
     font-family: 'Courier New', Courier, monospace;
-    font-size: 14px;
+    font-size: 16px; /* Größere Schrift für das Terminal */
     white-space: pre-wrap; /* Textumbruch */
     word-wrap: break-word; /* Zeilenumbruch */
     color: #00ffcc; /* Neon-grüner Text */
+    margin-bottom: 20px; /* Abstand zum Eingabebereich */
 }
 
-/* Login-Box in der Mitte */
-.login-box {
-    background-color: #202020;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
-    text-align: center;
-    color: white;
-    margin-top: 20px; /* Abstand nach oben */
-}
-
-.name-input {
-    width: 200px;
-    padding: 10px;
+/* Benutzername-Eingabe im Terminal-Box-Stil */
+.username-input-container {
+    display: flex;
+    font-family: 'Courier New', Courier, monospace;
     font-size: 16px;
-    background-color: #101010;
-    color: #00ffcc;
-    border: 1px solid #444444;
-    margin-right: 10px;
-    border-radius: 5px;
+    color: #00ffcc; /* Neon-grüner Text */
+    margin-top: 10px;
 }
 
-.login-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4CAF50;
-    color: white;
+/* Ändere den Cursor in einen Block-Cursor */
+.username-input {
+    display: inline-block;
     border: none;
-    border-radius: 5px;
+    background: none;
+    outline: none;
+    color: #00ffcc;
+    width: auto;
+    padding-left: 5px;
+    min-width: 150px;
+    border-bottom: 1px solid #00ffcc; /* Linie zum besseren Erkennen des Eingabebereichs */
+    caret-color: transparent; /* Versteckt den Standard-Cursor */
+    position: relative;
+}
+
+/* Animation für den blockartigen Cursor */
+.username-input::after {
+    content: '';
+    position: absolute;
+    left: -1px;  /* Setzt den Cursor auf die linke Seite */
+    bottom: 1px;
+    width: 8px; /* Breite des Kästchens */
+    height: 20px; /* Höhe des Kästchens, passt sich der Schriftgröße an */
+    background-color: #00ffcc; /* Neon-Teal, gleiche Farbe wie der Text */
+    animation: blink 1s step-end infinite; /* Blink-Animation */
+}
+
+/* Blinkende Cursor-Animation */
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Engage-Prompt-Stil */
+.engage-prompt {
+    margin-top: 20px;
+    color: #ff5500; /* Neon-oranger Text */
+    font-size: 16px;
+    text-align: center;
+}
+
+.engage-option {
     cursor: pointer;
+    padding: 5px;
 }
 
-.login-button:hover {
-    background-color: #45a049;
+.engage-option.selected {
+    color: #00ffcc; /* Neon-teal für ausgewählte Option */
+    text-decoration: underline;
 }
-
-/* Glitch-Effekt für die Terminal-Box */
-.glitching-overlay {
-    filter: brightness(150%) contrast(200%) hue-rotate(90deg);
-    animation: glitch-animation 3s steps(20) infinite;
-}
-
