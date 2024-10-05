@@ -10,8 +10,7 @@
     <script src="js/boot.js" defer></script>
 </head>
 <body>
-
-
+<div class="ts-icon-refresh symbiote-reload" onclick="location.reload();"></div>
 
 
 <!--<button id="activate-glitch-button" onclick="boot.engage()">boot</button>
@@ -33,10 +32,11 @@
 <!-- Simuliertes Login-Overlay -->
 <div id="login-overlay" class="login-overlay">
 
-
-    <div class="ts-icon-refresh symbiote-reload" onclick="location.reload();"></div>
+    <!-- Hier wird das Icon über dem anderen Inhalt angezeigt -->
+    <div class="overlay-icon"></div>
 
     <div id="terminal-box" class="terminal-box">
+
         <pre id="terminal-output" class="terminal-output"></pre>
         <span id="username-input-container" class="username-input-container" style="display:none;">
             <span id="username-label">Input Username: </span>
@@ -49,11 +49,14 @@
                 <span id="option-no" class="engage-option">NO</span>
             </div>
         </div>
+        <!-- Reload Button -->
+        <div id="reload-button" class="reload-button" onclick="location.reload();"></div>
     </div>
 </div>
 
 
-<div id="content" style="display:block">
+
+<div id="content" style="display:block"0>
     <div class="ts-icon-refresh symbiote-reload" onclick="location.reload();"></div>
         <div id="info" class="sticky-header" style="display: none">
             <span class="info-label">Hinweis:</span>

@@ -117,11 +117,12 @@ class BootLoader {
         console.log('... initialized');
     }
 
-    engage(){
+    engage(username){
         this.hackEntry();
         this.insertLoaderWithCacheBuster();
         this.smoothLoading();
         this.playSoundById('loader-sound');
+        iniAndGmManager.setOwnIniName(username);
     }
 
     async checkIfGM(){
@@ -253,17 +254,12 @@ class BootLoader {
         const engagePrompt = document.getElementById('engage-prompt');
         const engageOptions = document.querySelectorAll('.engage-option');
 
+        let userInput = '';
         let selectedOption = 0; // 0 für YES, 1 für NO
 
         // Simuliertes Hacking-Skript
         terminalOutput.textContent = '';
-        const hackingSteps = [
-            'Establishing connection...',
-            'Brute forcing access to Shadowrun SAN...',
-            'Decrypting firewall keys...',
-            'Access Granted. Welcome to the Matrix!',
-            '------------------------------------',
-        ];
+        let hackingSteps = this.generateHackingSteps();
 
         let stepIndex = 0;
 
@@ -278,19 +274,20 @@ class BootLoader {
                 usernameInputContainer.style.display = 'inline-block';
                 usernameInput.focus();
             }
-        }, 700); // Zeigt jede Nachricht mit 700ms Verzögerung an
+        }, 600); // Zeigt jede Nachricht mit 700ms Verzögerung an
 
         // Fängt den Benutzernamen ab und macht damit weiter
         usernameInput.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 const username = usernameInput.textContent.trim();
                 if (username) {
+                    userInput = username;
                     usernameInputContainer.style.display = 'none';
-                    terminalOutput.textContent += `Injecting user: ${username}...\nSuccess!\n`;
+                    terminalOutput.textContent += `Injecting user: ${username}\n`;
                     setTimeout(() => {
-                        terminalOutput.textContent += 'Cracking SAN...\n';
+                        terminalOutput.textContent += 'Success!\nCracking SAN...\n';
                         setTimeout(() => {
-                            terminalOutput.textContent += 'System Ready.\n\n';
+                            terminalOutput.textContent += 'DONE! System Ready.\n\n';
                             // Zeige die Engage?-Frage an
                             engagePrompt.style.display = 'block';
                             document.addEventListener('keydown', handleKeyNavigation);
@@ -309,7 +306,7 @@ class BootLoader {
             } else if (event.key === 'Enter') {
                 if (selectedOption === 0) {
                     // Wenn YES ausgewählt ist, starte die definierte JS-Funktion
-                    boot.engage();
+                    boot.engage(userInput);
                 } else {
                     // Wenn NO ausgewählt ist, führe eine andere Aktion aus oder mache nichts
                     terminalOutput.textContent += 'Operation aborted.\n';
@@ -336,7 +333,7 @@ class BootLoader {
                 selectedOption = index;
                 updateEngageSelection();
                 if (selectedOption === 0) {
-                    boot.engage(); // YES gewählt
+                    boot.engage(userInput); // YES gewählt
                 } else {
                     terminalOutput.textContent += 'Operation aborted.\n';
                     engagePrompt.style.display = 'none'; // NO gewählt
@@ -344,6 +341,79 @@ class BootLoader {
             });
         });
     }
+
+     generateHackingSteps() {
+        // Arrays mit verschiedenen Shadowrun-typischen Phrasen
+        const connectionPhrases = [
+            'Establishing Shadowlands connection...',
+            'Connecting to Aztechnology matrix node...',
+            'Linking with Renraku secure network...',
+            'Brute-forcing entry to Evo Corporation grid...',
+            'Connecting to Knight Errant security matrix...',
+            'Connecting to Horizon media cloud...'
+        ];
+
+        const connectionSuccess = [
+            '...connected!',
+            '...access granted!',
+            '...link established!',
+            '...network breached!'
+        ];
+
+        const firewallPhrases = [
+            'Decrypting firewall keys...',
+            'Bypassing matrix security protocols...',
+            'Injecting ICE-disabling routines...',
+            'Cracking Renraku entry firewall...',
+            'Hijacking IC defense protocols...'
+        ];
+
+        const backdoorAccessPhrases = [
+            'Accessing SAN backdoor...',
+            'Exploiting SAN vulnerability...',
+            'Backdoor access through GridGuide...',
+            'Using "Black Hammer" exploit...',
+            'Running "Shedim" ICE-breaker...'
+        ];
+
+        const preparationPhrases = [
+            `Prepare to inject new user: $user`,
+            'Preparing system for data injection...',
+            'Securing $user access...',
+            'Loading user credentials...',
+            'Creating matrix avatar for $user...'
+        ];
+
+        const finalPhrases = [
+            'Access Granted!',
+            'Security compromised, ready for entry!',
+            'Injection ready, waiting for confirmation!',
+            'System prepared for user interaction...',
+            'Matrix node compromised, awaiting further instructions...'
+        ];
+
+        // Generiere zufällige SAN-Nummern
+        function generateRandomSAN() {
+            return `SAN-${Math.floor(1000 + Math.random() * 9000)}`;
+        }
+
+        // Wähle zufällig bis zu 10 Schritte aus
+        const steps = [
+            connectionPhrases[Math.floor(Math.random() * connectionPhrases.length)],
+            connectionSuccess[Math.floor(Math.random() * connectionSuccess.length)],
+            backdoorAccessPhrases[Math.floor(Math.random() * backdoorAccessPhrases.length)],
+            connectionSuccess[Math.floor(Math.random() * connectionSuccess.length)],
+            firewallPhrases[Math.floor(Math.random() * firewallPhrases.length)],
+            finalPhrases[Math.floor(Math.random() * finalPhrases.length)],
+            preparationPhrases[Math.floor(Math.random() * preparationPhrases.length)],
+            'Injecting ' + generateRandomSAN() + ' into local net...',
+            'Checking bandwidth limits...',
+            '------------------------------------'
+        ];
+
+        return steps;
+    }
+
 
     loaderCacheBuster(toggle = true) {
         const imgElement = document.getElementById('main-loader-image');

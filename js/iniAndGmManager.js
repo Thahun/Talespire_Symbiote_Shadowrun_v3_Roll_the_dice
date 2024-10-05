@@ -1009,6 +1009,9 @@ class IniAndGmManager {
         this.updateConditionMonitor(); // Update condition monitor display
     }
 
+    setOwnIniName(name){
+        this.ownInitiativeName.value = name;
+    }
     /**
      * Retrieves the own initiative from a creature and updates the input fields.
      */
