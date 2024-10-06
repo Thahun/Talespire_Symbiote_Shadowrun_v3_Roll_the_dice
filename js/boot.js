@@ -199,7 +199,261 @@ class BootLoader {
         element.style.display = 'none';
     }
 
-     insertLoaderWithCacheBuster(toggle = true) {
+    startHackingSimulation() {
+        const terminalOutput = document.getElementById('terminal-output');
+        const usernameInputContainer = document.getElementById('username-input-container');
+        const usernameInput = document.getElementById('username-input');
+        const engagePrompt = document.getElementById('engage-prompt');
+        const engageOptions = document.querySelectorAll('.engage-option');
+
+        let userInput = '';
+        let selectedOption = 0; // 0 für YES, 1 für NO
+
+        // Funktion, um den blinkenden Cursor zu aktivieren
+        const startCursorBlink = () => {
+            terminalOutput.classList.add('blinking-cursor'); // Klasse für Cursor hinzufügen
+        };
+
+        // Funktion, um den blinkenden Cursor zu deaktivieren
+        const stopCursorBlink = () => {
+            terminalOutput.classList.remove('blinking-cursor'); // Klasse für Cursor entfernen
+        };
+
+        // Simuliertes Hacking-Skript
+        terminalOutput.textContent = '';
+        let hackingSteps = this.generateHackingSteps();
+
+        let stepIndex = 0;
+
+        const executeHackingStep = () => {
+            stopCursorBlink(); // Stoppe den blinkenden Cursor vor jedem neuen Schritt
+            if (stepIndex < hackingSteps.length) {
+                terminalOutput.textContent += hackingSteps[stepIndex] + '\n';
+                stepIndex++;
+                startCursorBlink(); // Starte den blinkenden Cursor nach jedem Schritt
+
+                const delay = Math.random() * 1300 + 300; // Zufällige Verzögerung
+
+                setTimeout(() => {
+                    if (stepIndex < hackingSteps.length) {
+                        executeHackingStep();
+                    } else {
+                        stopCursorBlink(); // Stoppe den Cursor am Ende des Hacking-Prozesses
+                        usernameInputContainer.style.display = 'inline-block';
+                        usernameInput.focus();
+                        usernameInput.classList.add('blinking-cursor'); // Cursor auch für das Username-Eingabefeld
+                    }
+                }, delay);
+            }
+        };
+
+        executeHackingStep(); // Starte den Hacking-Prozess
+
+        // Fängt den Benutzernamen ab und macht damit weiter
+        usernameInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const username = usernameInput.textContent.trim();
+                if (username) {
+                    userInput = username;
+                    usernameInput.classList.remove('blinking-cursor'); // Entferne den Cursor vom Username-Eingabefeld
+                    usernameInputContainer.style.display = 'none';
+                    terminalOutput.textContent += `Injecting user: ${username}\n`;
+                    setTimeout(() => {
+                        terminalOutput.textContent += 'Success!\nCracking SAN...\n';
+                        setTimeout(() => {
+                            terminalOutput.textContent += 'System Ready.\n\n';
+                            engagePrompt.style.display = 'block';
+                            document.addEventListener('keydown', handleKeyNavigation); // Listener für Tasten
+                        }, 1500);
+                    }, 1000);
+                }
+            }
+        });
+
+        // Funktion zur Handhabung der Auswahl von YES/NO
+        function handleKeyNavigation(event) {
+            if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+                // Wechsle zwischen YES und NO
+                selectedOption = selectedOption === 0 ? 1 : 0;
+                updateEngageSelection();
+            } else if (event.key === 'Enter') {
+                if (selectedOption === 0) {
+                    // Wenn YES ausgewählt ist, starte die definierte JS-Funktion
+                    boot.engage(userInput); // Hier wird die gewünschte Funktion aufgerufen
+                } else {
+                    // Wenn NO ausgewählt ist, führe eine andere Aktion aus oder mache nichts
+                    terminalOutput.textContent += 'Operation aborted.\n';
+                    engagePrompt.style.display = 'none';
+                }
+                document.removeEventListener('keydown', handleKeyNavigation);
+            }
+        }
+
+        // Aktualisiert die visuelle Auswahl der Engage?-Optionen
+        function updateEngageSelection() {
+            engageOptions.forEach((option, index) => {
+                if (index === selectedOption) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+
+        // Maus-Klick-Event für die YES/NO-Auswahl
+        engageOptions.forEach((option, index) => {
+            option.addEventListener('click', () => {
+                selectedOption = index;
+                updateEngageSelection();
+                if (selectedOption === 0) {
+                    boot.engage(userInput); // YES gewählt, JS-Funktion ausführen
+                } else {
+                    terminalOutput.textContent += 'Operation aborted.\n'; // NO gewählt, Abbruch
+                    engagePrompt.style.display = 'none';
+                }
+            });
+        });
+    }
+
+     generateHackingSteps() {
+        // Arrays mit verschiedenen Shadowrun-typischen Phrasen
+         const connectionPhrases = [
+             'Establishing Shadowlands connection...',
+             'Connecting to Aztechnology matrix node...',
+             'Linking with Renraku secure network...',
+             'Brute-forcing entry to Evo Corporation grid...',
+             'Connecting to Knight Errant security matrix...',
+             'Connecting to Horizon media cloud...',
+             'Pinging Shiawase corporate grid...',
+             'Probing Mitsuhama security net...',
+             'Connecting to NeoNET node cluster...',
+             'Attempting access to Wuxing secure node...',
+             'Initializing link with Ares Macrotechnology network...',
+             'Diving into Matrix subgrid...',
+             'Accessing Shadownet relays...',
+             'Connecting to CrashCart grid network...',
+             'Establishing secure link to corporate matrix...'
+         ];
+
+         const connectionSuccess = [
+             '...connected!',
+             '...access granted!',
+             '...link established!',
+             '...network breached!',
+             '...connection stable!',
+             '...grid penetrated!',
+             '...backdoor active!',
+             '...secure node access confirmed!',
+             '...host system compromised!',
+             '...matrix connection secured!'
+         ];
+
+         const firewallPhrases = [
+             'Decrypting firewall keys...',
+             'Bypassing matrix security protocols...',
+             'Injecting ICE-disabling routines...',
+             'Cracking Renraku entry firewall...',
+             'Hijacking IC defense protocols...',
+             'Neutralizing corporate ICE...',
+             'Overriding firewall encryption...',
+             'Circumventing security layers...',
+             'Disabling active intrusion countermeasures...',
+             'Decoding firewall countermeasures...',
+             'Brute-forcing access control nodes...',
+             'Overloading node encryption...',
+             'Scrambling IC detection matrix...',
+             'Penetrating grid defenses...',
+             'Defeating Black ICE safeguards...'
+         ];
+
+         const backdoorAccessPhrases = [
+             'Accessing SAN backdoor...',
+             'Exploiting SAN vulnerability...',
+             'Backdoor access through GridGuide...',
+             'Using "Black Hammer" exploit...',
+             'Running "Shedim" ICE-breaker...',
+             'Tunneling through corporate ICE...',
+             'Deploying "Slicer" backdoor routine...',
+             'Subverting IC defense routines...',
+             'Hijacking admin-level access keys...',
+             'Activating "Ghost Protocol" exploit...',
+             'Launching "Fade" backdoor sequence...',
+             'Inserting payload into secure node...',
+             'Routing through matrix blacksite...',
+             'Exfiltrating through secure backdoor...'
+         ];
+
+         const preparationPhrases = [
+             `Prepare to inject new user: $user...`,
+             'Preparing system for data injection...',
+             'Securing $user access...',
+             'Loading user credentials...',
+             'Creating matrix avatar for $user...',
+             'Initializing user proxy node...',
+             'Finalizing injection protocol...',
+             'Configuring access for $user...',
+             'Setting up network privileges for $user...',
+             'Prepping system buffers for data transfer...',
+             'Running pre-access diagnostics...',
+             'Injecting user credentials into secure grid...',
+             'Spawning matrix entity for $user...',
+             'Syncing matrix avatar data...',
+             'Verifying system integrity for $user...'
+         ];
+
+         const finalPhrases = [
+             'Access Granted!',
+             'Security compromised, ready for entry!',
+             'Injection ready, waiting for confirmation!',
+             'System prepared for user interaction...',
+             'Matrix node compromised, awaiting further instructions...',
+             'Access to corporate grid confirmed...',
+             'Firewall bypassed, full control acquired...',
+             'SAN-Override initialized...',
+             'Connection stabilized, execute next protocol...',
+             'Data stream decrypted, system awaiting commands...',
+             'Encryption cracked, system vulnerability exploited...',
+             'Admin privileges obtained, system under control...',
+             'Backdoor established, awaiting payload injection...',
+             'System breach confirmed, initiating next sequence...',
+             'Core system compromised, secure shell ready...',
+             'Routing through secured nodes, system access granted...',
+             'Critical system fault triggered, defensive protocols bypassed...',
+             'Shadow protocols activated, proceed with caution...',
+             'Host network breached, internal monitoring disabled...',
+             'Encryption disabled, full matrix access acquired...',
+             'Intrusion successful, payload ready for deployment...',
+             'Target system fully compromised, standby for further instructions...',
+             'SAN subroutines overridden, system awaits user input...',
+             'Corporate grid access confirmed, exploit completed...',
+             'Matrix firewall neutralized, injection point secured...',
+             'Secure node infiltrated, control routines engaged...',
+             'ICE neutralized, control transfer successful...'
+         ];
+
+        // Generiere zufällige SAN-Nummern
+        function generateRandomSAN() {
+            return `SAN-${Math.floor(1000 + Math.random() * 900000)}`;
+        }
+
+        // Wähle zufällig bis zu 10 Schritte aus
+        const steps = [
+            connectionPhrases[Math.floor(Math.random() * connectionPhrases.length)],
+            connectionSuccess[Math.floor(Math.random() * connectionSuccess.length)],
+            backdoorAccessPhrases[Math.floor(Math.random() * backdoorAccessPhrases.length)],
+            connectionSuccess[Math.floor(Math.random() * connectionSuccess.length)],
+            firewallPhrases[Math.floor(Math.random() * firewallPhrases.length)],
+            connectionSuccess[Math.floor(Math.random() * connectionSuccess.length)],
+            finalPhrases[Math.floor(Math.random() * finalPhrases.length)],
+            preparationPhrases[Math.floor(Math.random() * preparationPhrases.length)],
+            'Injecting ' + generateRandomSAN() + ' into local net...',
+            '------------------------------------'
+        ];
+
+        return steps;
+    }
+
+    insertLoaderWithCacheBuster(toggle = true) {
         // Prüfen, ob der Loader bereits vorhanden ist
         let loaderDiv = document.getElementById('base-loader');
 
@@ -246,174 +500,6 @@ class BootLoader {
             console.error('Image element not found.');
         }
     }
-
-     startHackingSimulation() {
-        const terminalOutput = document.getElementById('terminal-output');
-        const usernameInputContainer = document.getElementById('username-input-container');
-        const usernameInput = document.getElementById('username-input');
-        const engagePrompt = document.getElementById('engage-prompt');
-        const engageOptions = document.querySelectorAll('.engage-option');
-
-        let userInput = '';
-        let selectedOption = 0; // 0 für YES, 1 für NO
-
-        // Simuliertes Hacking-Skript
-        terminalOutput.textContent = '';
-        let hackingSteps = this.generateHackingSteps();
-
-        let stepIndex = 0;
-
-        // Simuliert das Terminal, das nacheinander Text ausgibt
-        const interval = setInterval(() => {
-            if (stepIndex < hackingSteps.length) {
-                terminalOutput.textContent += hackingSteps[stepIndex] + '\n';
-                stepIndex++;
-            } else {
-                clearInterval(interval);
-                // Zeige die Benutzername-Eingabe nach dem Hacking-Skript an
-                usernameInputContainer.style.display = 'inline-block';
-                usernameInput.focus();
-            }
-        }, 600); // Zeigt jede Nachricht mit 700ms Verzögerung an
-
-        // Fängt den Benutzernamen ab und macht damit weiter
-        usernameInput.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                const username = usernameInput.textContent.trim();
-                if (username) {
-                    userInput = username;
-                    usernameInputContainer.style.display = 'none';
-                    terminalOutput.textContent += `Injecting user: ${username}\n`;
-                    setTimeout(() => {
-                        terminalOutput.textContent += 'Success!\nCracking SAN...\n';
-                        setTimeout(() => {
-                            terminalOutput.textContent += 'DONE! System Ready.\n\n';
-                            // Zeige die Engage?-Frage an
-                            engagePrompt.style.display = 'block';
-                            document.addEventListener('keydown', handleKeyNavigation);
-                        }, 1500);
-                    }, 1000);
-                }
-            }
-        });
-
-        // Funktion zur Handhabung der Auswahl von YES/NO
-        function handleKeyNavigation(event) {
-            if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
-                // Wechsle zwischen YES und NO
-                selectedOption = selectedOption === 0 ? 1 : 0;
-                updateEngageSelection();
-            } else if (event.key === 'Enter') {
-                if (selectedOption === 0) {
-                    // Wenn YES ausgewählt ist, starte die definierte JS-Funktion
-                    boot.engage(userInput);
-                } else {
-                    // Wenn NO ausgewählt ist, führe eine andere Aktion aus oder mache nichts
-                    terminalOutput.textContent += 'Operation aborted.\n';
-                    engagePrompt.style.display = 'none';
-                }
-                document.removeEventListener('keydown', handleKeyNavigation);
-            }
-        }
-
-        // Aktualisiert die visuelle Auswahl der Engage?-Optionen
-        function updateEngageSelection() {
-            engageOptions.forEach((option, index) => {
-                if (index === selectedOption) {
-                    option.classList.add('selected');
-                } else {
-                    option.classList.remove('selected');
-                }
-            });
-        }
-
-        // Maus-Klick-Event für die YES/NO-Auswahl
-        engageOptions.forEach((option, index) => {
-            option.addEventListener('click', () => {
-                selectedOption = index;
-                updateEngageSelection();
-                if (selectedOption === 0) {
-                    boot.engage(userInput); // YES gewählt
-                } else {
-                    terminalOutput.textContent += 'Operation aborted.\n';
-                    engagePrompt.style.display = 'none'; // NO gewählt
-                }
-            });
-        });
-    }
-
-     generateHackingSteps() {
-        // Arrays mit verschiedenen Shadowrun-typischen Phrasen
-        const connectionPhrases = [
-            'Establishing Shadowlands connection...',
-            'Connecting to Aztechnology matrix node...',
-            'Linking with Renraku secure network...',
-            'Brute-forcing entry to Evo Corporation grid...',
-            'Connecting to Knight Errant security matrix...',
-            'Connecting to Horizon media cloud...'
-        ];
-
-        const connectionSuccess = [
-            '...connected!',
-            '...access granted!',
-            '...link established!',
-            '...network breached!'
-        ];
-
-        const firewallPhrases = [
-            'Decrypting firewall keys...',
-            'Bypassing matrix security protocols...',
-            'Injecting ICE-disabling routines...',
-            'Cracking Renraku entry firewall...',
-            'Hijacking IC defense protocols...'
-        ];
-
-        const backdoorAccessPhrases = [
-            'Accessing SAN backdoor...',
-            'Exploiting SAN vulnerability...',
-            'Backdoor access through GridGuide...',
-            'Using "Black Hammer" exploit...',
-            'Running "Shedim" ICE-breaker...'
-        ];
-
-        const preparationPhrases = [
-            `Prepare to inject new user: $user`,
-            'Preparing system for data injection...',
-            'Securing $user access...',
-            'Loading user credentials...',
-            'Creating matrix avatar for $user...'
-        ];
-
-        const finalPhrases = [
-            'Access Granted!',
-            'Security compromised, ready for entry!',
-            'Injection ready, waiting for confirmation!',
-            'System prepared for user interaction...',
-            'Matrix node compromised, awaiting further instructions...'
-        ];
-
-        // Generiere zufällige SAN-Nummern
-        function generateRandomSAN() {
-            return `SAN-${Math.floor(1000 + Math.random() * 9000)}`;
-        }
-
-        // Wähle zufällig bis zu 10 Schritte aus
-        const steps = [
-            connectionPhrases[Math.floor(Math.random() * connectionPhrases.length)],
-            connectionSuccess[Math.floor(Math.random() * connectionSuccess.length)],
-            backdoorAccessPhrases[Math.floor(Math.random() * backdoorAccessPhrases.length)],
-            connectionSuccess[Math.floor(Math.random() * connectionSuccess.length)],
-            firewallPhrases[Math.floor(Math.random() * firewallPhrases.length)],
-            finalPhrases[Math.floor(Math.random() * finalPhrases.length)],
-            preparationPhrases[Math.floor(Math.random() * preparationPhrases.length)],
-            'Injecting ' + generateRandomSAN() + ' into local net...',
-            'Checking bandwidth limits...',
-            '------------------------------------'
-        ];
-
-        return steps;
-    }
-
 
     loaderCacheBuster(toggle = true) {
         const imgElement = document.getElementById('main-loader-image');

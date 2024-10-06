@@ -257,7 +257,7 @@ class DiceService extends AbstractSheetHelper {
         let diceString = iniAndGmManager.ownInitiativeValue.value;
 
         if(!this.parseDiceString(diceString) || name.length === 0){
-            error.show("Fehler im Initiative String oder Namen!");
+            info.show("Fehler im Initiative String oder Namen!");
             iniAndGmManager.toggleRedBorderIfEmpty(true,'ini-name-input', 'ini-value-input');
         } else {
             iniAndGmManager.toggleRedBorderIfEmpty(false,'ini-name-input', 'ini-value-input');

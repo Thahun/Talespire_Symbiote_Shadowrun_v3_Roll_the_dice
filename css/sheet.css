@@ -1076,6 +1076,11 @@ div.icon-center {
     font-family: 'Courier New', Courier, monospace;
 }
 
+/* Hover-Effekt für den Reload-Button */
+.reload-button:hover {
+    transform: rotate(180deg); /* Rotiert das Bild um 180 Grad */
+}
+
 .terminal-output {
     font-family: 'Courier New', Courier, monospace;
     font-size: 16px; /* Größere Schrift für das Terminal */
@@ -1104,7 +1109,7 @@ div.icon-center {
     width: auto;
     padding-left: 5px;
     min-width: 150px;
-    border-bottom: 1px solid #00ffcc; /* Linie zum besseren Erkennen des Eingabebereichs */
+    /*border-bottom: 1px solid #00ffcc; /* Linie zum besseren Erkennen des Eingabebereichs */
     caret-color: transparent; /* Versteckt den Standard-Cursor */
     position: relative;
 }
@@ -1121,13 +1126,32 @@ div.icon-center {
     animation: blink 1s step-end infinite; /* Blink-Animation */
 }
 
-/* Blinkende Cursor-Animation */
-@keyframes blink {
-    0%, 100% {
-        opacity: 1;
+/* Glitch-Effekt nur für ausgewählte (selected) YES/NO Text */
+.engage-option {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.engage-option.selected {
+    color: #00ffcc; /* Neon-teal für ausgewählte Option */
+    text-decoration: underline;
+    position: relative;
+    animation: glitch-selected 0.6s infinite alternate; /* Dauerhafter Glitch-Effekt */
+}
+
+/* Glitch-Animation für den YES/NO Text */
+@keyframes glitch-selected {
+    0% {
+        text-shadow: 2px 2px #00ffcc, -2px -2px #ff5500;
+        transform: translate(0);
     }
     50% {
-        opacity: 0;
+        text-shadow: -2px -2px #00ffcc, 2px 2px #ff5500;
+        transform: translate(1px, -1px);
+    }
+    100% {
+        text-shadow: 2px 2px #00ffcc, -2px -2px #ff5500;
+        transform: translate(-1px, 1px);
     }
 }
 
@@ -1139,12 +1163,23 @@ div.icon-center {
     text-align: center;
 }
 
-.engage-option {
-    cursor: pointer;
-    padding: 5px;
+.blinking-cursor::after {
+    content: ' '; /* Kästchen-Cursor */
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background-color: #00ffcc;
+    animation: blink 1s steps(1) infinite;
+    position: relative;
+    top: 0px;
 }
 
-.engage-option.selected {
-    color: #00ffcc; /* Neon-teal für ausgewählte Option */
-    text-decoration: underline;
+/* Blinkende Cursor-Animation */
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
 }
