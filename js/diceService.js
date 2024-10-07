@@ -112,6 +112,23 @@ class DiceService extends AbstractSheetHelper {
         document.body.appendChild(glitchForeground);
     }
 
+    toggleGlitchOverlayBoxes(show = true){
+        const elements = [
+            'section-ini-roller',
+            'section-dice-sets',
+            'section-defence-dice-sets',
+        ];
+
+        elements.forEach((elementId, index) => {
+            const overlay = document.getElementById(elementId + "-overlay");
+            if (show) {
+                console.log("overlay",overlay);
+                overlay.style.display = 'block';
+            } else {
+                overlay.style.display = 'none';
+            }
+        });
+    }
 
      toggleGlitchSectionVisibility(show = null) {
         const glitchSection = document.getElementById('glitch-section');
@@ -500,6 +517,7 @@ class DiceService extends AbstractSheetHelper {
              message = `Had no glitch => ${glitchresult}`;
              this.toggleGlitchSectionVisibility(false);
         }
+        this.toggleGlitchOverlayBoxes(false);
 
         this.reportDiceLogMessage(message); //send dicelog to all
         TS.chat.send(message, 'board');

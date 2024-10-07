@@ -18,8 +18,9 @@
 
 <audio id="loader-sound" src="css/assets/sounds/2077Breaching.wav"></audio>
 <audio id="open-sound" src="css/assets/sounds/2077OpenPhone.wav"></audio>
+<audio id="toggle-sound" src="css/assets/sounds/2077ClosePhone.wav"></audio>
+<audio id="message-sound" src="css/assets/sounds/2077TextMessage.wav"></audio>
 
-<!--<button onclick="iniAndGmManager.resetGif()">Reset GIF</button>-->
 
 <div id="loading">
     <div id="loading-animation"></div>
@@ -33,16 +34,16 @@
 <div id="login-overlay" class="login-overlay">
 
     <!-- Hier wird das Icon über dem anderen Inhalt angezeigt -->
-    <div class="overlay-icon"></div>
+    <div class="overlay-icon" onclick="boot.engage('');"></div>
 
     <div id="terminal-box" class="terminal-box">
 
-        <pre id="terminal-output" class="terminal-output"></pre>
+        <pre id="terminal-output" class="terminal-output blinking-cursor">Probing root access...</pre>
         <span id="username-input-container" class="username-input-container" style="display:none;">
             <span id="username-label">Input Username: </span>
             <span id="username-input" class="username-input" contenteditable="true"></span>
         </span>
-        <div id="engage-prompt" class="engage-prompt" style="display:none;">
+        <div id="engage-prompt" class="engage-prompt">
             <span>ENGAGE?!</span>
             <div id="engage-options">
                 <span id="option-yes" class="engage-option selected">YES</span> /
@@ -65,13 +66,12 @@
             <div id="info-timer" class="info-timer" ></div>
         </div>
 
-    <br/>
 
     <div id="gm-box" class="section" style="display: none">
-        <div class="section-header" onclick="iniAndGmManager.toggleGMBoxBody()">
-            <span class="section-title">GM-Box</span>
+        <div class="section-header" onclick="iniAndGmManager.toggleBodyDiv('gm-box-content')">
+            <span class="section-title">GM-Controls</span>
         </div>
-        <div id="gm-box-content">
+        <div id="gm-box-content" style="display: none">
             <div class="section-body">
                 <button style="float:right" class="small-orange-button" id="refresh-connected" onclick="helm.displayConnected();">reload</button>
                 <div class="section-body-throw" id="gm-box-body">
@@ -198,6 +198,77 @@
         <div id="gm-box-overlay" class="overlay">
         </div>
 
+    </div>
+
+    <div id="section-player-npc-rolls" class="section" style="display: none;">
+        <div class="section-header"  onclick="iniAndGmManager.toggleBodyDiv('section-player-npc-rolls-body')">
+            <span class="section-title">GM-Initiative</span>
+        </div>
+        <div id="section-player-npc-rolls-body" class="section-body" style="display: none">
+            <div class="control-buttons">
+                <button id="roll-initiative-button">Roll Initiative</button>
+                <button id="send-initiative-button">Send Initiative</button>
+                <button id="next-button">cross one out</button>
+                <button id="prev-button">clear cross</button>
+                <button id="reset-initiative-button" class="small-orange-button">Reset Initiative</button>
+            </div>
+            <div id="breadcrumbs" class="breadcrumbs"></div>
+            <div class="player-npc-rolls-container">
+                <div id="player-npc-rolls-text" contenteditable="true" ></div>
+                <div class="player-npc-rolls-inline">
+                    <label for="player-npc-rolls-name">Name:</label>
+                    <input type="text" id="player-npc-rolls-name" style="width: 100px"/>
+                    <label for="player-npc-rolls-init">Ini:</label>
+                    <input type="text" id="player-npc-rolls-init" style="width: 45px"/>
+                    <div class="player-npc-rolls-buttons">
+                        <button id="player-npc-rolls-add">+</button>
+                        <button id="player-npc-rolls-subtract">-</button>
+                        <button id="player-npc-rolls-info">i</button>
+                    </div>
+                </div>
+            </div>
+            <div id="initiative-boxes-container" class="initiative-boxes-container"></div>
+        </div>
+
+        <!-- Overlay mit GIF -->
+        <div id="section-player-npc-rolls-overlay" class="overlay">
+        </div>
+
+    </div>
+
+    <div id="condition-monitor-section" class="section" style="display:none;">
+        <div class="section-header">
+            <span class="section-title" id="condition-monitor-title">Condition-Monitor</span>
+        </div>
+        <div class="section-body">
+            <div id="condition-monitor-name" class="monitor-name"></div>
+            <div class="condition-monitor-grid">
+                <div class="row row1">
+                    <div class="box" id="row1-box1">L</div>
+                    <div class="box" id="row1-box2"></div>
+                    <div class="box" id="row1-box3">M</div>
+                    <div class="box" id="row1-box4"></div>
+                    <div class="box" id="row1-box5"></div>
+                    <div class="box" id="row1-box6">S</div>
+                    <div class="box" id="row1-box7"></div>
+                    <div class="box" id="row1-box8"></div>
+                    <div class="box" id="row1-box9"></div>
+                    <div class="box" id="row1-box10">T</div>
+                </div>
+                <div class="row row2">
+                    <div class="box" id="row2-box1">L</div>
+                    <div class="box" id="row2-box2"></div>
+                    <div class="box" id="row2-box3">M</div>
+                    <div class="box" id="row2-box4"></div>
+                    <div class="box" id="row2-box5"></div>
+                    <div class="box" id="row2-box6">S</div>
+                    <div class="box" id="row2-box7"></div>
+                    <div class="box" id="row2-box8"></div>
+                    <div class="box" id="row2-box9"></div>
+                    <div class="box" id="row2-box10">T</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="minigame-section" class="section" style="display:none">
@@ -335,7 +406,7 @@
 
     </div >
 
-    <div id="checkbox-container" class="section-grid-container" style="display: none">
+    <div id="checkbox-container" class="section-grid-container" style="margin:2px;display: none">
         <!--<div id="gm-mode" class="checkbox-item">
             <input type="checkbox" value="true" onchange="diceService.toggleGMMode(this.checked);"></input>
             <label>GM-Modus</label>
@@ -430,77 +501,6 @@
         <div id="section-defence-dice-sets-overlay" class="overlay">
         </div>
 
-    </div>
-
-    <div id="section-player-npc-rolls" class="section" style="display: none;">
-        <div class="section-header"  onclick="iniAndGmManager.toggleBodyDiv('section-player-npc-rolls-body')">
-            <span class="section-title">Initiative</span>
-        </div>
-        <div id="section-player-npc-rolls-body" class="section-body">
-            <div class="control-buttons">
-                <button id="roll-initiative-button">Roll Initiative</button>
-                <button id="send-initiative-button">Send Initiative</button>
-                <button id="next-button">cross one out</button>
-                <button id="prev-button">clear cross</button>
-                <button id="reset-initiative-button" class="small-orange-button">Reset Initiative</button>
-            </div>
-            <div id="breadcrumbs" class="breadcrumbs"></div>
-            <div class="player-npc-rolls-container">
-                <div id="player-npc-rolls-text" contenteditable="true" ></div>
-                <div class="player-npc-rolls-inline">
-                    <label for="player-npc-rolls-name">Name:</label>
-                    <input type="text" id="player-npc-rolls-name" style="width: 100px"/>
-                    <label for="player-npc-rolls-init">Ini:</label>
-                    <input type="text" id="player-npc-rolls-init" style="width: 45px"/>
-                    <div class="player-npc-rolls-buttons">
-                        <button id="player-npc-rolls-add">+</button>
-                        <button id="player-npc-rolls-subtract">-</button>
-                        <button id="player-npc-rolls-info">i</button>
-                    </div>
-                </div>
-            </div>
-            <div id="initiative-boxes-container" class="initiative-boxes-container"></div>
-        </div>
-
-        <!-- Overlay mit GIF -->
-        <div id="section-player-npc-rolls-overlay" class="overlay">
-        </div>
-
-    </div>
-
-    <div id="condition-monitor-section" class="section" style="display:none;">
-        <div class="section-header">
-            <span class="section-title" id="condition-monitor-title">Condition-Monitor</span>
-        </div>
-        <div class="section-body">
-            <div id="condition-monitor-name" class="monitor-name"></div>
-            <div class="condition-monitor-grid">
-                <div class="row row1">
-                    <div class="box" id="row1-box1">L</div>
-                    <div class="box" id="row1-box2"></div>
-                    <div class="box" id="row1-box3">M</div>
-                    <div class="box" id="row1-box4"></div>
-                    <div class="box" id="row1-box5"></div>
-                    <div class="box" id="row1-box6">S</div>
-                    <div class="box" id="row1-box7"></div>
-                    <div class="box" id="row1-box8"></div>
-                    <div class="box" id="row1-box9"></div>
-                    <div class="box" id="row1-box10">T</div>
-                </div>
-                <div class="row row2">
-                    <div class="box" id="row2-box1">L</div>
-                    <div class="box" id="row2-box2"></div>
-                    <div class="box" id="row2-box3">M</div>
-                    <div class="box" id="row2-box4"></div>
-                    <div class="box" id="row2-box5"></div>
-                    <div class="box" id="row2-box6">S</div>
-                    <div class="box" id="row2-box7"></div>
-                    <div class="box" id="row2-box8"></div>
-                    <div class="box" id="row2-box9"></div>
-                    <div class="box" id="row2-box10">T</div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div id="local-storage-controls" style="margin-bottom: 15px;display: none">

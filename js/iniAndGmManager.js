@@ -168,29 +168,7 @@ class IniAndGmManager {
                 gmBoxContent.style.display = "none";
             }
         }
-    }
-
-    /**
-     * Toggles the visibility of the GM box content.
-     */
-    toggleGMBoxBody() {
-        const gmBoxContent = document.getElementById('gm-box-content');
-        if (gmBoxContent.style.display === "none") {
-            gmBoxContent.style.display = "block";
-        } else {
-            gmBoxContent.style.display = "none";
-        }
-    }
-
-
-
-    /**
-     * Toggles the visibility of the GM box if the user can GM.
-     */
-    toggleGMBox() {
-        if (this.canGM || isGM) {
-            this.GmBox.style.display = 'block';
-        }
+        boot.playSoundById("toggle-sound");
     }
 
     /**

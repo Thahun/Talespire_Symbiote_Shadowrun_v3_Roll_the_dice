@@ -248,11 +248,13 @@ class Helm {
        // diceService.toggleGlitchSectionVisibility(true);
         switch (payloadData.command) {
             case "glitch":
-                diceService.toggleGlitchSectionVisibility(true)
+                diceService.toggleGlitchSectionVisibility(true);
+                diceService.toggleGlitchOverlayBoxes(true);
                 //info.show("Glitching!!: ");
                 break;
             case "fix":
-                diceService.toggleGlitchSectionVisibility(false)
+                diceService.toggleGlitchSectionVisibility(false);
+                diceService.toggleGlitchOverlayBoxes(false);
                 break;
             case "error":
                 diceService.activateGlitchEffect();

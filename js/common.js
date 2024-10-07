@@ -115,6 +115,8 @@ class InfoBox {
     }
 
     show(msg, showButton = false, successes = 0) {
+        boot.playSoundById("message-sound",0.3);
+
         this.divInfo.style.display = "block";
         this.spanInfoMessage.textContent = msg;
         this.currentSuccesses = successes; // Update the current successes

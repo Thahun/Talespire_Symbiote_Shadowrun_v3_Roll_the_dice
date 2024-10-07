@@ -108,10 +108,21 @@ class BootLoader {
         this.hideLoadingPanel();
 
         console.log('Check GM...');
-        isGM = await this.checkIfGM();
+
+        // Timeout nach 5 Sekunden für das isGM-Check
+        const timeoutPromise = new Promise((resolve) => {
+            setTimeout(() => {
+                console.warn('GM check timed out after 5 seconds.');
+                resolve(false); // Falls es abläuft, ist die Annahme, dass kein GM ist
+            }, 5000); // 5 Sekunden
+        });
+
+        // Await auf die kürzere Antwort zwischen checkIfGM und Timeout
+        isGM = await Promise.race([this.checkIfGM(), timeoutPromise]);
+
         console.log('Is GM: ', isGM);
 
-        //this.engage();
+        //this.engage(); // this would boot directly
         this.startHackingSimulation();
 
         console.log('... initialized');
@@ -200,11 +211,13 @@ class BootLoader {
     }
 
     startHackingSimulation() {
+        console.log("startHackingSimulation");
         const terminalOutput = document.getElementById('terminal-output');
         const usernameInputContainer = document.getElementById('username-input-container');
         const usernameInput = document.getElementById('username-input');
         const engagePrompt = document.getElementById('engage-prompt');
         const engageOptions = document.querySelectorAll('.engage-option');
+        const loginOverlay = document.getElementById('login-overlay');
 
         let userInput = '';
         let selectedOption = 0; // 0 für YES, 1 für NO
@@ -259,16 +272,30 @@ class BootLoader {
                     usernameInputContainer.style.display = 'none';
                     terminalOutput.textContent += `Injecting user: ${username}\n`;
                     setTimeout(() => {
-                        terminalOutput.textContent += 'Success!\nCracking SAN...\n';
+                        terminalOutput.textContent += 'Cracking SAN...\n';
                         setTimeout(() => {
-                            terminalOutput.textContent += 'System Ready.\n\n';
-                            engagePrompt.style.display = 'block';
+                            terminalOutput.textContent += 'Software Ready.\n\n';
+                            engagePrompt.classList.add('active'); // Füge die 'active' Klasse hinzu, um die Animation zu starten
                             document.addEventListener('keydown', handleKeyNavigation); // Listener für Tasten
                         }, 1500);
                     }, 1000);
                 }
             }
         });
+
+        function handleEngageSelection() {
+            // Start der Ausblendanimation, wenn YES ausgewählt wird
+            if (selectedOption === 0) { // YES
+                loginOverlay.classList.add('fade-out'); // Füge die fade-out Klasse hinzu
+                setTimeout(() => {
+                    boot.engage(userInput); // Deine JS-Funktion für die Bestätigung
+                    loginOverlay.style.display = 'none'; // Verberge das Overlay komplett nach der Animation
+                }, 1000); // Warte, bis die Animation abgeschlossen ist (1s)
+            } else { // NO
+                terminalOutput.textContent += 'Operation aborted.\n';
+                engagePrompt.style.display = 'none'; // Blendet das Engage-Prompt aus
+            }
+        }
 
         // Funktion zur Handhabung der Auswahl von YES/NO
         function handleKeyNavigation(event) {
@@ -277,14 +304,7 @@ class BootLoader {
                 selectedOption = selectedOption === 0 ? 1 : 0;
                 updateEngageSelection();
             } else if (event.key === 'Enter') {
-                if (selectedOption === 0) {
-                    // Wenn YES ausgewählt ist, starte die definierte JS-Funktion
-                    boot.engage(userInput); // Hier wird die gewünschte Funktion aufgerufen
-                } else {
-                    // Wenn NO ausgewählt ist, führe eine andere Aktion aus oder mache nichts
-                    terminalOutput.textContent += 'Operation aborted.\n';
-                    engagePrompt.style.display = 'none';
-                }
+                handleEngageSelection(); // Bestätigung der Auswahl
                 document.removeEventListener('keydown', handleKeyNavigation);
             }
         }
@@ -305,17 +325,12 @@ class BootLoader {
             option.addEventListener('click', () => {
                 selectedOption = index;
                 updateEngageSelection();
-                if (selectedOption === 0) {
-                    boot.engage(userInput); // YES gewählt, JS-Funktion ausführen
-                } else {
-                    terminalOutput.textContent += 'Operation aborted.\n'; // NO gewählt, Abbruch
-                    engagePrompt.style.display = 'none';
-                }
+                handleEngageSelection(); // Bestätigung der Auswahl per Klick
             });
         });
     }
 
-     generateHackingSteps() {
+    generateHackingSteps() {
         // Arrays mit verschiedenen Shadowrun-typischen Phrasen
          const connectionPhrases = [
              'Establishing Shadowlands connection...',
@@ -436,8 +451,17 @@ class BootLoader {
             return `SAN-${Math.floor(1000 + Math.random() * 900000)}`;
         }
 
+        let rootProbeResult;
+
+        if (isGM) {
+             rootProbeResult =  "Welcome Admin."
+        } else {
+             rootProbeResult =  "No root Access detected."
+        }
+
         // Wähle zufällig bis zu 10 Schritte aus
         const steps = [
+            rootProbeResult,
             connectionPhrases[Math.floor(Math.random() * connectionPhrases.length)],
             connectionSuccess[Math.floor(Math.random() * connectionSuccess.length)],
             backdoorAccessPhrases[Math.floor(Math.random() * backdoorAccessPhrases.length)],
@@ -501,44 +525,40 @@ class BootLoader {
         }
     }
 
-    loaderCacheBuster(toggle = true) {
-        const imgElement = document.getElementById('main-loader-image');
-        if (imgElement) {
-            // Erzeuge einen zufälligen Wert
-            const randomValue = Math.random();
-            const currentSrc = imgElement.getAttribute('src');
-
-            // Füge den Cache-Busting-Parameter hinzu
-            const newSrc = `${currentSrc}?cache-buster=${randomValue}`;
-            imgElement.setAttribute('src', newSrc);
-
-            if (toggle){
-                imgElement.style.display = 'block';
-            } else {
-                imgElement.style.display = 'none';
-            }
-            console.log(`Updated GIF src to: ${newSrc}`);
-        } else {
-            console.error('Image element not found.');
-        }
-    }
-
-    hackEntry(){
+    hackEntry() {
         const overlay = document.getElementById('login-overlay');
-        overlay.style.display = 'none';
+        const usernameInput = document.getElementById('username-input');
+        const engageOptions = document.querySelectorAll('.engage-option');
+
+        // Event-Listener für die Username-Eingabe entfernen
+        usernameInput.removeEventListener('keydown', this.usernameKeydownHandler);
+
+        // Event-Listener für die YES/NO Auswahl entfernen
+        engageOptions.forEach((option) => {
+            option.removeEventListener('click', this.engageOptionClickHandler);
+        });
+
+        // Event-Listener für die Tastatur-Navigation der YES/NO Auswahl entfernen
+        document.removeEventListener('keydown', this.handleKeyNavigation);
+
+        // Blende das Overlay aus
+        overlay.classList.add('fade-out'); // Füge eine fade-out Animation hinzu (optional)
+        setTimeout(() => {
+            overlay.style.display = 'none'; // Verberge das Overlay
+        }, 1000); // Warte, bis die Animation abgeschlossen ist (1s)
     }
 
     smoothLoading() {
         // Elemente, die angezeigt werden sollen
         const elements = [
             'gm-box',
+            'section-player-npc-rolls',
             'dice-log',
             'section-ini-roller',
             'checkbox-container',
             'section-dice-sets',
             'section-defence-dice-sets',
             'section-control-ini',
-            'section-player-npc-rolls',
             'local-storage-controls',
             'app-info'
         ];
@@ -559,6 +579,7 @@ class BootLoader {
                     element.style.display = 'block';
                     if (elementId !== 'checkbox-container') {
                         element.classList.add('come-to-live-animation', 'transition-slide-up'); // Animation hinzufügen
+                      //  this.playSoundById('toggle-sound');
                     } else {
                         element.style.display = "flex";
                         element.classList.add('transition-slide-up');
@@ -576,20 +597,43 @@ class BootLoader {
             }, index * delayStep); // Feste Verzögerung basierend auf dem Index
         });
 
-        // Verstecke den Loader nach 6 Sekunden
+        // Verstecke den Loader nach 6 Sekunden und füge einen kurzen Glitch-Effekt hinzu
         setTimeout(() => {
             const loader = document.getElementById('base-loader');
             if (loader) {
                 loader.classList.add('glitch-fade-out'); // Füge die Glitch-Animation hinzu
+
+                // Glitch-Effekt für alle Elemente nach dem Ausblenden des Loaders
+                this.playSoundById('open-sound');
+                setTimeout(() => {
+                    elements.forEach((elementId) => {
+                        const element = document.getElementById(elementId);
+                        if (element) {
+                            element.classList.add('glitching'); // Kurzer Glitch-Effekt
+                            setTimeout(() => {
+                                element.classList.remove('glitching'); // Glitch-Effekt entfernen
+                            }, 850); // Entferne den Glitch-Effekt nach 500ms
+                        }
+                    });
+                }, 500); // Der Glitch-Effekt startet 1 Sekunde nach dem Ausblenden des Loaders
             }
         }, 6000); // Verstecke den Loader nach 6 Sekunden
     }
 
-
-    playSoundById(soundId) {
+    playSoundById(soundId, volume = 1.0) { // Volume optional, Standardwert 1.0 (volle Lautstärke)
         const soundElement = document.getElementById(soundId);
 
         if (soundElement) {
+            // Setze die Lautstärke des Sounds
+            soundElement.volume = volume;
+
+            // Überprüfen, ob der Sound bereits abgespielt wird
+            if (!soundElement.paused) {
+                soundElement.pause(); // Pausieren, falls er läuft
+                soundElement.currentTime = 0; // Zum Startpunkt zurücksetzen
+            }
+
+            // Sound neu starten
             soundElement.play().catch((error) => {
                 console.error('Error playing sound:', error);
             });
@@ -597,7 +641,6 @@ class BootLoader {
             console.warn(`Sound with ID "${soundId}" not found.`);
         }
     }
-
 
 }
 
