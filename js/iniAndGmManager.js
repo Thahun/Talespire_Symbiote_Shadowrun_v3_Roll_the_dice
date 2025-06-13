@@ -14,6 +14,7 @@ class IniAndGmManager {
         this.canGM = false;
         this.selectedEntry = null; // Track the selected initiative entry
         this.conditionPenalties = {row1: 0, row2: 0}; // Track the penalties from each row
+        this.anarchy = false;
         this.init();
     }
 
@@ -39,6 +40,8 @@ class IniAndGmManager {
         this.conditionMonitorSection = document.getElementById('condition-monitor-section');
         // this.conditionMonitorTitle = document.getElementById('condition-monitor-title');
         this.conditionMonitorName = document.getElementById('condition-monitor-name');
+        this.anarchyToggle = document.getElementById('anarchy-toggle');
+        this.anarchyCheckbox = document.getElementById('anarchy-checkbox');
 
         // Initiative Roll Box
         this.ownInitiativeName = document.getElementById('ini-name-input');
@@ -168,7 +171,7 @@ class IniAndGmManager {
                 gmBoxContent.style.display = "none";
             }
         }
-        boot.playSoundById("toggle-sound");
+        boot.playSoundById("toggle-sound",0.3);
     }
 
     /**
@@ -1034,6 +1037,16 @@ class IniAndGmManager {
         } catch (error) {
             console.error("Error getting stats from picked creature:", error);
         }
+    }
+
+    /**
+     * Toggles the anarchy mode
+     * @param {boolean} state - The new state of anarchy mode
+     */
+    toggleAnarchy(state) {
+        this.anarchy = state;
+        console.log('Anarchy mode:', this.anarchy);
+        boot.playSoundById("toggle-sound", 0.3);
     }
 }
 
